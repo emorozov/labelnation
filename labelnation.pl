@@ -188,6 +188,21 @@ sub set_parameters_for_type ()
 }
 
 
+sub show_parameters ()
+{
+  print "LeftMargin      $Left_Margin\n";
+  print "BottomMargin    $Bottom_Margin\n";
+  print "LabelWidth      $Label_Width\n";
+  print "LabelHeight     $Label_Height\n";
+  print "HorizSpace      $Horiz_Space\n";
+  print "VertSpace       $Vert_Space\n";
+  print "HorizNumLabels  $Horiz_Num_Labels\n";
+  print "VertNumLabels   $Vert_Num_Labels\n";
+  print "FontName        $Font_Name\n";
+  print "FontSize        $Font_Size\n";
+}
+
+
 sub parse_param_file ()
 {
   my $cfile = shift;
@@ -298,12 +313,45 @@ sub parse_line_file ()
 }
 
 
+sub usage ()
+{
+  &version ();
+  print "\n";
+
+  &explain ();
+  print "\n";
+
+  &types ();
+  print "\n";
+
+  print "Options:\n";
+  print "\n";
+
+  print "  -h, --help, --usage, -?     Show this usage\n";
+  print "  --version                   Show version number\n";
+  print "  --explain                   Show instructions (lots of output!)\n";
+  print "  --list-types                Show all predefined label types\n";
+  print "  -t, --type TYPE             Generate labels of type TYPE\n";
+  print "  -p, --parameter-file FILE   Read label parameters from FILE\n";
+  print "  -c, --code-file FILE        Get PostScript code from FILE\n";
+  print "  -l, --label-line-file FILE  Get label text lines from FILE\n";
+  print "  -d, --delimiter DELIM       Labels separated by DELIM\n";
+  print "  --show-bounding-box         Print rectangle around each label\n";
+  print "                                (recommended for testing only)\n";
+  print "  --font-name NAME            Use PostScript font FONT\n";
+  print "  --font-size SIZE            Scale font to SIZE\n";
+  print "  -o, --outfile FILE          Output to FILE (\"-\" means stdin)\n";
+}
+
+
+# Print version number.
 sub version ()
 {
   print "labelnation.pl version $Version.\n";
 }
 
 
+# Print all predefined label types
 sub types ()
 {
   print "Predefined label types:\n";
@@ -313,31 +361,110 @@ sub types ()
 }
 
 
-sub usage ()
+# Print a general explanation of how this program works.
+sub explain ()
 {
-  &version ();
+  print <<END;
+LabelNation is a program for making labels.  By "label", I mean
+address labels, business cards, or anything else involving rectangles
+arranged regularly on a printer-ready sheet.  You can even use it to
+make a calendar (that took some work, though).
 
-  print "\n";
-  print "More documentation to come!\n";
-  print "\n";
-  &types ();
-  print "\n";
-  print "Options:\n";
-  print "\n";
+Here's the basic concept: you tell LabelNation what you want on each
+label (i.e., each rectangle).  You can specify plain lines of text, or
+arbitrary PostScript code.  You also tell it what kind of labels it
+should print for.  From this information, LabelNation produces a
+PostScript file, which you can send to your printer.
 
-  print "  -h, --help, --usage, -?     Show this usage\n";
-  print "  --version                   Show version number\n";
-  print "  --list-types                Show all predefined label types\n";
-  print "  -t, --type TYPE             Generate labels of type TYPE\n";
-  print "  -p, --parameter-file FILE   Read label parameters from FILE\n";
-  print "  -c, --code-file FILE        Read PostScript code from FILE\n";
-  print "  -l, --label-line-file FILE  Get label text lines from FILE\n";
-  print "  -d, --delimiter DELIM       (Not yet implemented)\n";
-  print "  --show-bounding-box         Print rectangle around each label\n";
-  print "                                (recommended for testing only)\n";
-  print "  --font-name NAME            Use PostScript font FONT\n";
-  print "  --font-size SIZE            Scale font to SIZE\n";
-  print "  -o, --outfile FILE          Output to FILE (\"-\" means stdin)\n";
+Of course, you'll need a PostScript printer (or a PostScript filter,
+such as GNU GhostScript), and a sheet of special peel-off label paper
+in the tray.  Such paper is widely available at office supply stores.
+Two companies that offer it are Avery Dennison (www.averydennison.com)
+and Maco (www.maco.com).  Note that this is not a recommendation or an
+endorsement -- Avery and Maco are simply the names I've seen.
+
+How To Use It:
+==============
+
+Let's start with an example.  If you wanted to print a sheet of return
+address labels using the Avery 5167 standard (80 small labels per
+page), you might invoke LabelNation like this:
+
+   prompt\$ labelnation.pl -t avery5167 -l myaddress.txt -o myaddress.ps
+
+The "-t" stands for "type", followed by the name of one of the
+standard label sizes.  The "-l" stands for "label lines", followed by
+the name of a file containing the lines of text you want written on
+the label.  The "-o" specifies the output file, which is what you
+print to get the labels.
+
+To see a list of all valid types, run
+
+   prompt\$ labelnation.pl --list-types
+   Predefined label types:
+      Avery-5160 / Maco-LL5805  (30 address labels per page)
+      Avery-5167 / Maco-LL8100  (80 return address labels per page)
+      [etc...]
+
+Note that when you're specifying a label type, you can omit the
+capitalization and the hyphen (or you can leave them on, LabelNation
+will recognize it either way).
+
+
+What To Do If The Text Is A Little Bit Off From The Labels:
+===========================================================
+
+Printers vary -- the label parameters that work for me might not work
+for you.  Correcting the problem may merely be a matter of adjusting
+the bottom and/or left margin (that is, the distance from the bottom
+or left edge of the page to the first row or column, respectively).
+
+The two options to do this are
+
+   prompt\$ labelnation.pl --bottom-margin N --left-margin N ...
+
+where N is a number of PostScript points.  (Of course, you don't have
+to use the two options together, that's just this example.)
+
+In order to know where you're starting from, you can ask LabelNation
+to print out the parameters for a given label type:
+
+   prompt\$ labelnation.pl -t avery5167 --show-parameters
+   LeftMargin      14
+   BottomMargin    17
+   LabelWidth      126
+   LabelHeight     36
+   HorizSpace      22.5
+   VertSpace       0
+   HorizNumLabels  4
+   VertNumLabels   20
+   FontName        Times-Roman
+   FontSize        7
+
+fooo
+
+How To Print Labels That Aren't One Of The Predefined Standards:
+================================================================
+
+
+How To Use Arbitrary Postscript Code To Draw Labels:
+====================================================
+
+
+How To Print A Variety Of Addresses On A Sheet:
+===============================================
+
+
+
+
+
+
+
+LabelNation knows a few predefined label sizes
+
+
+
+END
 }
 
 
@@ -351,6 +478,9 @@ sub grab_next_argument ()
 
 sub parse_options ()
 {
+  my $exit_cleanly = 0;
+  my $show_parameters = 0;
+
   # If this gets set, we encountered unknown options and will exit at
   # the end of this subroutine.
   my $exit_with_admonishment = 0;
@@ -359,15 +489,22 @@ sub parse_options ()
   {
     if ($arg =~ /^-h$|^-help$|^--help$|^--usage$|^-?$/) {
       &usage ();
-      exit (0);
+      $exit_cleanly = 1;
     }
     elsif ($arg =~ /^--version$/) {
       &version ();
-      exit (0);
+      $exit_cleanly = 1;
     }
     elsif ($arg =~ /^--list-types$/) {
       &types ();
-      exit (0);
+      $exit_cleanly = 1;
+    }
+    elsif ($arg =~ /^--explain$/) {
+      &explain ();
+      $exit_cleanly = 1;
+    }
+    elsif ($arg =~ /^--show-parameters$/) {
+      $show_parameters = 1;
     }
     elsif ($arg =~ /^-t$|^--type$/) {
       $Type = &grab_next_argument ($arg);
@@ -394,6 +531,12 @@ sub parse_options ()
     elsif ($arg =~ /^--show-bounding-box$/) {
       $Show_Bounding_Box = 1;
     }
+    elsif ($arg =~ /^--left-margin$/) {
+      $Left_Margin = &grab_next_argument ($arg);
+    }
+    elsif ($arg =~ /^--bottom-margin$/) {
+      $Bottom_Margin = &grab_next_argument ($arg);
+    }
     elsif ($arg =~ /^-o$|^--outfile$/) {
       $Outfile = &grab_next_argument ($arg);
     }
@@ -401,6 +544,10 @@ sub parse_options ()
       print "Unrecognized option \"$arg\"\n";
       $exit_with_admonishment = 1;
     }
+  }
+
+  if ($exit_cleanly) {
+    exit (0);
   }
 
   # Do file parsing _after_ command line options have been processed
@@ -416,6 +563,11 @@ sub parse_options ()
   if ($Line_File) {
     # kff todo: what if have both line and code file??
     &parse_line_file ($Line_File);
+  }
+
+  if ($show_parameters) {
+    &show_parameters ();
+    exit (0);
   }
 
   # Check that required parameters have indeed been found.
@@ -502,7 +654,6 @@ sub print_labels ()
   # Set up subroutines
   my $clipper = &make_clipping_func ();
   print OUT "/labelclip {\n${clipper}\n} def\n";
-  # fooo print OUT "/labeldraw {\n${Label_Code}\n} def\n";
 
   print OUT "\n";
 
