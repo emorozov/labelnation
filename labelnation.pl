@@ -44,6 +44,7 @@ my $Horiz_Space       = -1;      # Unused inter-label horizontal space.
 my $Vert_Space        = -1;      # Unused inter-label vertical space.
 my $Horiz_Num_Labels  = -1;      # How many labels across?
 my $Vert_Num_Labels   = -1;      # How many labels up and down?
+my $First_Label       = 1;       # Start printing here.
 my $Font_Name         = "";      # Defaults to Times-Roman
 my $Font_Size         = "";      # Defaults to 12
 my $Outfile           = "";      # Defaults to labelnation.ps
@@ -318,6 +319,9 @@ sub usage ()
   print "  -d, --delimiter DELIM       Labels separated by DELIM\n";
   print "  --show-bounding-box         Print rectangle around each label\n";
   print "                                (recommended for testing only)\n";
+  print "  --first-label N             Start printing at label number N\n";
+  print "                                (bottom left is 1; count up each\n";
+  print "                                column in turn, top right is last)\n";
   print "  --font-name NAME            Use PostScript font FONT\n";
   print "  --font-size SIZE            Scale font to SIZE\n";
   print "  -o, --outfile FILE          Output to FILE (\"-\" means stdout)\n";
@@ -377,6 +381,9 @@ sub parse_options ()
     elsif ($arg =~ /^-c$|^--code-input$/) {
       $Code_Input = 1;
     }
+    elsif ($arg =~ /^--first-label$/) {
+      $First_Label = &grab_next_argument ($arg);
+    }
     elsif ($arg =~ /^-d$|^--delimiter$/) {
       $Delimiter = &grab_next_argument ($arg);
     }
@@ -431,7 +438,7 @@ sub parse_options ()
     exit (0);
   }
 
-  # Check that required parameters have indeed been found.
+  # Check that required parameters have been found and are sane.
   if ($Left_Margin < 0) {
     print "missing required left-margin parameter\n";
     $exit_with_admonishment = 1;
@@ -463,6 +470,16 @@ sub parse_options ()
   if ($Vert_Num_Labels < 0) {
     print "missing required vert-num-labels parameter\n";
     $exit_with_admonishment = 1;
+  }
+  if ($First_Label < 1) {
+    print "First label ${First_Label} too low; must be at least 1.\n";
+    exit (1);
+  }
+  if ($First_Label > ($Horiz_Num_Labels * $Vert_Num_Labels)) {
+    print "First label ${First_Label} is too high; there are only " .
+        "${Horiz_Num_Labels} * ${Vert_Num_Labels} == " .
+        $Horiz_Num_Labels * $Vert_Num_Labels . " labels available.\n";
+    exit (1);
   }
 
   # Set up defaults for things that could reasonably be omitted.
@@ -634,10 +651,15 @@ sub print_labels ()
   my @label_lines;            # Used only for $Line_Input;
   my $line_idx = 0;           # Used only for $Line_Input;
   my $code_accum;             # Used for both $Line_Input and $Code_Input;
-  my $x = 0;                  # Horiz position (by label)
-  my $y = 0;                  # Vertical position (by label)
   my $page_number = 1;        # Do you really need a comment?
   my $been_there = 0;         # For handling single-label-text input
+
+  # Horiz position (by label)
+  my $x = int (($First_Label - 1) / $Vert_Num_Labels);
+
+  # Vertical position (by label)
+  my $y = int (($First_Label - 1) % $Vert_Num_Labels);
+
 
   while (<IN>)
   {
