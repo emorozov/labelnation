@@ -11,6 +11,10 @@ self:
 	${PROG} -p office-80.param -t maco-ll8100 \
                 -l self.txt -o self.ps
 
+rachel:
+	${PROG} -p office-80.param -t maco-ll8100 \
+                -l rachel.txt -o rachel.ps
+
 collins-sussman:
 	${PROG} -p office-80.param -t maco-ll8100 \
                 -l collins-sussman.txt -o collins-sussman.ps
