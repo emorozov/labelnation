@@ -7,16 +7,15 @@ address on a sheet of 30 peel-and-stick labels (Maco LL-5805,
 compatible with Avery Dennison #5160, which appears to be a
 widely-used standard).
 
-As soon as I get done hacking, it will be a generalized label printing
-program, with pre-defined configurations for various standards, and
-will accept input files of addresses (so you can run a mailing list,
-whoo-whee!).
+Now it's transmogrified into a generalized labeling program, with
+pre-defined configurations for various standards and the option to
+define your own standards, and accepts input files of addresses (so
+you can run a snail-mailing list, whoo-whee!).
 
-The Plan:
----------
+If you read this far, you probably want to know how to use it.  Under
+Unix, do this
 
-Perl script does all the hard work of converting inputs to PostScript.
+   prompt$ labelnation.pl --help | more
 
-A GTK front-end will drive the Perl script, for those who prefer
-visual interfaces to command lines.
-
+Enjoy,
+-Karl Fogel  <kfogel@red-bean.com>

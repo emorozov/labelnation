@@ -31,15 +31,20 @@ my $Font_Size         = "";      # Defaults to 12
 my $Outfile           = "";      # Defaults to labelnation.ps
 
 # User-specified PostScript code, one string of code for each label.
-# If all the labels are the same, then only the first element in this
-# array is set, and it is used for each label.
-my @Label_Codes       = ();      # User-specified PostScript code...
+# Each element of the array is a string of PostScript code, and each
+# will be drawn once to a label, then it will cycle again from the
+# beginning of the array.  If the sheet holds 30 labels and there are
+# 4 different labels defined in this array, then each label will be
+# repeated 7 times, with 2 extra labels on the end.  Thus, if all the
+# labels on the sheet are to have the same content, then only the
+# first element in this array would be set.
+my @Label_Codes = ();
 
-# User-specified label text, one array of lines for each label.
-# If all the labels are the same, then only the first element in this
-# array is set, and it is an array(ref) of strings, one string per
-# line of text.
-my @Label_Lines       = ();      # ... or just lines of label text.
+# User-specified label text, an array of lines for each label.
+# Each element is a reference to an array of text lines -- the lines
+# that go on that label.  Behaves otherwise the same as @Label_Codes,
+# see above.
+my @Label_Lines = ();
 
 # The version number is automatically updated by CVS.
 my $Version = '$Revision$';
@@ -366,22 +371,25 @@ sub explain ()
 {
   print <<END;
 LabelNation is a program for making labels.  By "label", I mean
-address labels, business cards, or anything else involving rectangles
-arranged regularly on a printer-ready sheet.  You can even use it to
-make a calendar (that took some work, though).
+address labels, business cards, or anything else involving
+regularly-arranged rectangles on a printer-ready sheet.  You can even
+use it to make a calendar (that took some work, though).
 
-Here's the basic concept: you tell LabelNation what you want on each
-label (i.e., each rectangle).  You can specify plain lines of text, or
-arbitrary PostScript code.  You also tell it what kind of labels it
-should print for.  From this information, LabelNation produces a
-PostScript file, which you can send to your printer.
+Here's the basic concept: you tell LabelNation what text you want on
+each label (i.e., each rectangle).  You can specify plain lines of
+text, or even arbitrary PostScript code.  You also tell it what kind
+of labels it should print for.  LabelNation takes all this information
+and produces a PostScript file, which you then send to your printer.
 
 Of course, you'll need a PostScript printer (or a PostScript filter,
 such as GNU GhostScript), and a sheet of special peel-off label paper
 in the tray.  Such paper is widely available at office supply stores.
 Two companies that offer it are Avery Dennison (www.averydennison.com)
-and Maco (www.maco.com).  Note that this is not a recommendation or an
+and Maco (www.maco.com).  This is not a recommendation or an
 endorsement -- Avery and Maco are simply the names I've seen.
+
+PostScript viewing software also helps, so you can see what your
+labels look like before you print.
 
 How To Use It:
 ==============
@@ -392,13 +400,31 @@ page), you might invoke LabelNation like this:
 
    prompt\$ labelnation.pl -t avery5167 -l myaddress.txt -o myaddress.ps
 
-The "-t" stands for "type", followed by the name of one of the
-standard label sizes.  The "-l" stands for "label lines", followed by
-the name of a file containing the lines of text you want written on
-the label.  The "-o" specifies the output file, which is what you
-print to get the labels.
+The "-t" stands for "type", followed by one of the standard predefined
+label types.  The "-l" stands for "label lines", followed by the name
+of a file containing the lines of text you want written on the label.
+The "-o" specifies the output file, which is what you'll print to get
+the labels.
 
-To see a list of all valid types, run
+Here is a sample label lines file:
+
+        J. Random User
+        1423 W. Rootbeer Ave
+        Chicago, IL 60622
+        USA
+
+Note that the indentation is significant -- the farther you indent a
+line, the more whitespace will be between it and the left edge of the
+label.  Three spaces is a typical indentation.  Also note that blank
+lines are ignored -- they will be printed just like regular text.
+
+You can have anywhere from 1 to 5 lines on a label.
+
+
+How To Discover The Predefined Label Types:
+===========================================
+
+To see a list of all known label types, run
 
    prompt\$ labelnation.pl --list-types
    Predefined label types:
@@ -407,17 +433,21 @@ To see a list of all valid types, run
       [etc...]
 
 Note that when you're specifying a label type, you can omit the
-capitalization and the hyphen (or you can leave them on, LabelNation
-will recognize it either way).
+capitalization and the hyphen (or you can leave them on -- LabelNation
+will recognize the type either way).
+
+A bit farther on, you'll learn how to define your own label types, in
+case none of the built-in ones are suitable.
 
 
 What To Do If The Text Is A Little Bit Off From The Labels:
 ===========================================================
 
-Printers vary -- the label parameters that work for me might not work
-for you.  Correcting the problem may merely be a matter of adjusting
-the bottom and/or left margin (that is, the distance from the bottom
-or left edge of the page to the first row or column, respectively).
+Printers vary -- the label parameters that work for me might not be
+quite right for your hardware.  Correcting the problem may merely be a
+matter of adjusting the bottom and/or left margin (that is, the
+distance from the bottom or left edge of the page to the first row or
+column, respectively).
 
 The two options to do this are
 
@@ -425,11 +455,11 @@ The two options to do this are
 
 where N is a number of PostScript points, each being 1/72 of an inch.
 (Of course, you don't have to use the two options together, that's
-just how it is in this example.)  The N you specify will not be added
-to the predefined quantity, but instead will replace it.
+just how it is in this example.)  The N you specify does not add to
+the predefined quantity, but rather replaces it.
 
 In order to know where you're starting from, you can ask LabelNation
-to print out the parameters for a given label type:
+to show you the parameters for a given label type:
 
    prompt\$ labelnation.pl -t avery5167 --show-parameters
    LeftMargin      14
@@ -451,23 +481,74 @@ own parameter files.  Which brings me to the next subject...
 How To Print Labels That Aren't One Of The Predefined Standards:
 ================================================================
 
+Use the -p option to tell LabelNation to use a parameter file.  A
+parameter file consists of lines of the form
+
+   PARAMETER   VALUE
+   PARAMETER   VALUE
+   PARAMETER   VALUE
+   ...
+
+you can see valid parameter names by running
+
+   prompt\$ labelnation.pl -t avery5167 --show-parameters
+
+as mentioned earlier (it doesn't have to be avery5167, it can be any
+built-in type).  Keep in mind that a "parameter file" is for
+specifying the dimensions and arrangement of the labels on the sheet,
+*not* for specifying the content you want printed on those labels.
+
 
 How To Use Arbitrary Postscript Code To Draw Labels:
 ====================================================
+
+Do you know how to write PostScript?  Do you want to be a Power User
+of LabelNation?  Then this section is for you:
+
+Instead of passing a file of label lines with the "-l" options, pass a
+file containing PostScript code using the "-c" option.
+
+The code will be run in a translated coordinate space, so 0,0 is at
+the bottom left corner of each label in turn.  Also, clipping will be
+in effect, so you can't draw past the edges of a label.  Obviously,
+you will have to experiment a lot using your favorite PostScript
+viewing software before you're ready to print.
 
 
 How To Print A Variety Of Addresses On A Sheet:
 ===============================================
 
+In a label lines file (or a PostScript code file), you can define
+multiple label contents.  Each label's content must be separated from
+the previous label by a delimiter of your choice.  For example, if the
+delimiter is "XXX", then you might invoke LabelNation like
+so
+
+   prompt\$ labelnation.pl -d "XXX" -t avery5167 -l 2addrs.txt -o 2addrs.ps
+
+where 2addrs.txt contains this
+
+        J. Random User
+        1423 W. Rootbeer Ave
+        Chicago, IL 60622
+        USA
+   XXX
+        William Lyon Phelps III
+        27 Rue d'Agonie
+        Paris, France
+   XXX
+
+(remember that all my example text is indented three spaces in this
+help message, so the content above is indented only three spaces in
+the file, while the XXX delimiters are not really indented at all).
 
 
+How To Report A Bug:
+====================
 
-
-
-
-LabelNation knows a few predefined label sizes
-
-
+Check http://www.red-bean.com/labelnation to make sure you have the
+latest version (perhaps your bug has been fixed).  Else, email
+<bug-labelnation\@red-bean.com>.
 
 END
 }
