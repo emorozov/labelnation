@@ -2,20 +2,54 @@
                 Label Nation: prints address labels
                 -----------------------------------
 
-This started out as a single PostScript file that printed my name and
-address on a sheet of 30 peel-and-stick labels (Maco LL-5805,
-compatible with Avery Dennison #5160, which appears to be a
-widely-used standard).
+LabelNation is a program for making labels.  By "label", I mean
+address labels, business cards, or anything else involving
+regularly-arranged rectangles on a printer-ready sheet.  You can give
+it plain text lines and it will arrange them on the labels in a
+reasonable way -- or if you want to get really fancy, you can give it
+PostScript, and it will place and clip appropriately for whatever
+label size you specified.
 
-Now it's transmogrified into a generalized labeling program, with
-pre-defined configurations for various standards and the option to
-define your own standards, and accepts input files of addresses (so
-you can run a snail-mailing list, whoo-whee!).
+This started out as a single PostScript file that printed my name and
+address on a sheet of 30 peel-and-stick labels.  Now it's generalized,
+with pre-defined configurations for various standard label sizes, and
+the ability to define your own standards.  It even accepts input files
+with multiple addresses (so you can run a snail-mailing list,
+whoo-whee!).
 
 If you read this far, you probably want to know how to use it.  Under
-Unix, do this
+Unix, do this to find out:
 
    prompt$ labelnation.pl --help | more
 
-Enjoy,
+
+How To Get This Code Via CVS:
+-----------------------------
+
+(If you don't know what CVS is, just ignore this section.)
+
+   cvs -d :pserver:anonymous@cvs.red-bean.com:/usr/local/cvs login
+      (if prompted for a password, just hit return)
+
+   cvs -d :pserver:anonymous@cvs.red-bean.com:/usr/local/cvs co labelnation
+   
+
+
+How To Report A Bug:
+--------------------
+
+Please send bug reports to <bug-labelnation@red-bean.com>.
+
+I'm especially interested in reports about alignment or sizes being
+off, as I don't have wide enough experience with other printers to
+know that the built-in label standards work everywhere.  I know they
+work on _my_ printer, but my printer is an old Okidata emulating an
+old HP, and being driven by ghostscript.  It wouldn't surprise me in
+the least if some scaling factors get stretched somewhere in that
+chain... So let me know how this works for you.
+
+And of course, contributions of new label parameters are always
+welcome.
+
+Thanks,
 -Karl Fogel  <kfogel@red-bean.com>
