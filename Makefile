@@ -1,6 +1,13 @@
 
 all: www
 
+changelog: log
+
+ChangeLog: log
+
+log:
+	cvs2cl.pl --fsf -S -r 
+
 dist:
 	./labelnation.pl --version | cut -d " " -f 3 - | cut -f 1 > vn.tmp
 	tar zcvf labelnation-`cat vn.tmp`.tar.gz \
