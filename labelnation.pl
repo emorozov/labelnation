@@ -719,7 +719,7 @@ flag.  The delimiter separates each label from the next.  For
 example, if you use a delimiter of "XXX", then you might invoke
 LabelNation like so
 
-   prompt\$ labelnation.pl -d "XXX" -t avery5167 -l addrs.txt -o addrs.ps
+   prompt\$ labelnation.pl -d "XXX" -t avery5167 -l -i addrs.txt -o addrs.ps
 
 where addrs.txt contains this
 
