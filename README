@@ -1,0 +1,22 @@
+
+                Label Nation: prints address labels
+                -----------------------------------
+
+This started out as a single PostScript file that printed my name and
+address on a sheet of 30 peel-and-stick labels (Maco LL-5805,
+compatible with Avery Dennison #5160, which appears to be a
+widely-used standard).
+
+As soon as I get done hacking, it will be a generalized label printing
+program, with pre-defined configurations for various standards, and
+will accept input files of addresses (so you can run a mailing list,
+whoo-whee!).
+
+The Plan:
+---------
+
+Perl script does all the hard work of converting inputs to PostScript.
+
+A GTK front-end will drive the Perl script, for those who prefer
+visual interfaces to command lines.
+
