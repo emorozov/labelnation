@@ -73,6 +73,11 @@ sub maybe_make_label_codes ()
     return;
   }
   
+  if (! (scalar (@Label_Lines))) {
+    # Default to a label showing the empty string
+    $Label_Lines[0][0] = "";
+  }
+
   # Else we need to generate PostScript code
   for (my $i = 0; $i < scalar (@Label_Lines); $i++)
   {
@@ -161,17 +166,16 @@ sub set_parameters_for_type ()
   elsif (($ntype eq "avery5371") or ($ntype eq "macoll8550"))
   {
     # Business cards
-    $Left_Margin           = 0;
-    $Bottom_Margin         = 0;
-    $Label_Width           = 0;
-    $Label_Height          = 0;
+    $Left_Margin           = 48;
+    $Bottom_Margin         = 16;
+    $Label_Width           = 253.5;
+    $Label_Height          = 145.3;
     $Horiz_Space           = 0;
     $Vert_Space            = 0;
     $Horiz_Num_Labels      = 2;
     $Vert_Num_Labels       = 5;
     $Font_Name             = "Times-Roman";
     $Font_Size             = 0;
-    die "Can't handle label type \"$otype\" yet\n";
   }
   elsif ($ntype eq "kffweekly") # My own private labels
   {
