@@ -22,7 +22,7 @@ www: dist
 	mv index.html.tmp index.html
 
 	(VN=`cat vn.tmp`; \
-  sed -e "s/Latest version: [0-9]*.[^<]/Latest version: $${VN}/g" \
+  sed -e "s/Latest version: [0-9]*.[0-9]*/Latest version: $${VN}/g" \
       index.html | tee index.html.tmp)
 	mv index.html.tmp index.html
 
@@ -32,6 +32,7 @@ www: dist
 	./labelnation.pl --help >> help.txt
 
 	cvs2cl.pl -r -R labelnation
+	(if [ -L labelnation.tar.gz ]; then rm labelnation.tar.gz; fi)
 	(VN=`cat vn.tmp`; ln -s labelnation-$${VN}.tar.gz labelnation.tar.gz)
 
 test:
