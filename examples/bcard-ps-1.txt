@@ -1,0 +1,43 @@
+newpath
+
+/Times-Italic findfont
+30 scalefont
+setfont
+
+77 95 moveto
+(Cafe \351\351)
+show
+
+% 86 200 moveto
+% 88 202 lineto
+
+77 75 moveto
+170 75 lineto
+
+/Times-Roman findfont
+12 scalefont
+setfont
+
+60 45 moveto
+(Books)
+show
+
+newpath
+101.5 49 1 0 360 arc
+fill
+closepath
+
+112 45 moveto
+(Drinks)
+show
+
+newpath
+155 49 1 0 360 arc
+fill
+closepath
+
+164 45 moveto
+(Jews)
+show
+
+stroke
