@@ -129,7 +129,8 @@ sub set_parameters_for_type ()
          or ($ntype eq "avery5980")
          or ($ntype eq "avery6241")
          or ($ntype eq "avery6460")
-         or ($ntype eq "avery6245") # not listed on Avery's equivalence sheet
+         or ($ntype eq "avery8660") # But offset differently from 5160 etc?
+         or ($ntype eq "avery6245") # Not listed on Avery's equivalence sheet.
          or ($ntype eq "macoll5805"))
   {
     # Large address labels, 30 per page
@@ -855,7 +856,7 @@ sub types ()
   print "   Maco-LL5805                            (30 labels per page)\n";
   print "   Avery-5160, 5260, 5660, 5960, 5970,\n";
   print "         5971, 5972, 5979, 5980, 6241,\n";
-  print "         6460, 6245\n";
+  print "         6460, 6245, 8660\n";
   print "\n";
   print "   Maco-LL8100                            (80 labels per page)\n";
   print "   Avery-5167, 5667, 6467\n";
