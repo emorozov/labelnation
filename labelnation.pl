@@ -490,14 +490,14 @@ sub make_clipping_func ()
   my $upper_bound = $Label_Height - $Inner_Margin;
   my $right_bound = $Label_Width  - $Inner_Margin;
 
-  $clipper .= "newpath\n";
-  $clipper .= "$Inner_Margin $Inner_Margin moveto\n";
-  $clipper .= "$right_bound $Inner_Margin lineto\n";
-  $clipper .= "$right_bound $upper_bound lineto\n";
-  $clipper .= "$Inner_Margin $upper_bound lineto\n";
-  $clipper .= "closepath\n";
-  $clipper .= "clip\n";
-  $clipper .= "stroke\n" if ($Show_Bounding_Box);
+  $clipper .= "\tnewpath\n";
+  $clipper .= "\t$Inner_Margin $Inner_Margin moveto\n";
+  $clipper .= "\t$right_bound $Inner_Margin lineto\n";
+  $clipper .= "\t$right_bound $upper_bound lineto\n";
+  $clipper .= "\t$Inner_Margin $upper_bound lineto\n";
+  $clipper .= "\tclosepath\n";
+  $clipper .= "\tclip\n";
+  $clipper .= "\tstroke\n" if ($Show_Bounding_Box);
 
   return $clipper;
 }
@@ -509,18 +509,119 @@ sub print_labels ()
   open (OUT, ">$Outfile") or die ("trouble opening $Outfile for writing ($!)");
 
   # Start off with standard Postscript header
-  print OUT "%!PS-Adobe-1.0\n";
+  print OUT <<END;
+%!PS-Adobe-3.0
 
-  # Set up fonts
-  print OUT "/${Font_Name} findfont\n";
-  print OUT "${Font_Size} scalefont\n";
-  print OUT "setfont\n";
+/deffont {
+  findfont exch scalefont def
+} bind def
+
+/reencode_font {
+  findfont reencode 2 copy definefont pop def
+} bind def
+
+% reencode the font
+% <encoding-vector> <fontdict> -> <newfontdict>
+/reencode { %def
+  dup length 5 add dict begin
+    { %forall
+      1 index /FID ne
+      { def }{ pop pop } ifelse
+    } forall
+    /Encoding exch def
+
+    % Use the font's bounding box to determine the ascent, descent,
+    % and overall height; don't forget that these values have to be
+    % transformed using the font's matrix.
+    % We use `load' because sometimes BBox is executable, sometimes not.
+    % Since we need 4 numbers an not an array avoid BBox from being executed
+    /FontBBox load aload pop
+    FontMatrix transform /Ascent exch def pop
+    FontMatrix transform /Descent exch def pop
+    /FontHeight Ascent Descent sub def
+
+    % Define these in case they're not in the FontInfo (also, here
+    % they're easier to get to.
+    /UnderlinePosition 1 def
+    /UnderlineThickness 1 def
+
+    % Get the underline position and thickness if they're defined.
+    currentdict /FontInfo known {
+      FontInfo
+
+      dup /UnderlinePosition known {
+        dup /UnderlinePosition get
+        0 exch FontMatrix transform exch pop
+        /UnderlinePosition exch def
+      } if
+
+      dup /UnderlineThickness known {
+        /UnderlineThickness get
+        0 exch FontMatrix transform exch pop
+        /UnderlineThickness exch def
+      } if
+
+    } if
+    currentdict
+  end
+} bind def
+
+/ISO-8859-1Encoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright
+/parenleft /parenright /asterisk /plus /comma /minus /period /slash
+/zero /one /two /three /four /five /six /seven
+/eight /nine /colon /semicolon /less /equal /greater /question
+/at /A /B /C /D /E /F /G
+/H /I /J /K /L /M /N /O
+/P /Q /R /S /T /U /V /W
+/X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore
+/quoteleft /a /b /c /d /e /f /g
+/h /i /j /k /l /m /n /o
+/p /q /r /s /t /u /v /w
+/x /y /z /braceleft /bar /braceright /asciitilde /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/space /exclamdown /cent /sterling /currency /yen /brokenbar /section
+/dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen /registered /macron
+/degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph /bullet
+/cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown
+/Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla
+/Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis
+/Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply
+/Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls
+/agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla
+/egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis
+/eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide
+/oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis
+] def
+
+% Dictionary for ISO-8859-1 support
+/iso1dict 8 dict begin
+  /fCourier ISO-8859-1Encoding /Courier reencode_font
+  /fCourier-Bold ISO-8859-1Encoding /Courier-Bold reencode_font
+  /fCourier-BoldOblique ISO-8859-1Encoding /Courier-BoldOblique reencode_font
+  /fCourier-Oblique ISO-8859-1Encoding /Courier-Oblique reencode_font
+  /fHelvetica ISO-8859-1Encoding /Helvetica reencode_font
+  /fHelvetica-Bold ISO-8859-1Encoding /Helvetica-Bold reencode_font
+  /fTimes-Bold ISO-8859-1Encoding /Times-Bold reencode_font
+  /fTimes-Roman ISO-8859-1Encoding /Times-Roman reencode_font
+currentdict end def
+
+END
 
   # Set up subroutines
   my $clipfunc = &make_clipping_func ();
   print OUT "/labelclip {\n${clipfunc}\n} def\n";
 
   print OUT "\n";
+  print OUT "iso1dict begin\n% end prologue\n\n";
+  print OUT "% set font type and size\nf${Font_Name} ${Font_Size} scalefont setfont\n";
 
   # Set up some loop vars.
   my @label_lines;            # Used only for $Line_Input;
@@ -545,17 +646,19 @@ sub print_labels ()
         my $text_margin = $Inner_Margin + 2;
         # kff todo: need to be more sophisticated about divining the
         # font sizes and acting accordingly, here.
-        my $upmost_line_start = (($Label_Height / 5) * $num_lines);
-        my $distance_down = ($Label_Height / 6);
+        my $upmost_line_start = $Label_Height / ($num_lines+1) * $num_lines;
+        my $distance_down = $Label_Height / ($num_lines+2);
+        my $fontsize = ${Font_Size} / (1 + (($num_lines-4)/10));
         
         $code_accum .= "newpath\n";
+        $code_accum .= "f${Font_Name} ${fontsize} scalefont setfont\n";
         for (my $line = 0; $line < $num_lines; $line++)
         {
           my $this_line = ($upmost_line_start - ($line * $distance_down));
-          $code_accum .= "$text_margin $this_line\n";
-          $code_accum .= "moveto\n";
-          $code_accum .= "(" . $label_lines[$line] . ")\n";
-          $code_accum .= "show\n";
+          $code_accum .= "$text_margin $this_line moveto\n";
+          # $code_accum .= "moveto\n";
+          $code_accum .= "(" . $label_lines[$line] . ") show\n";
+          # $code_accum .= "show\n";
         }
         $code_accum .= "stroke\n";
       }
@@ -639,7 +742,7 @@ sub print_labels ()
   }
 
   unless (($x == 0) && ($y == 0)) {
-    print OUT "showpage\n";
+    print OUT "% begin epilog\nend % of iso1dict\nshowpage";
   }
   
   close (OUT);
