@@ -32,6 +32,7 @@ www: dist
 	./labelnation.pl --help >> help.txt
 
 	cvs2cl.pl -r -R labelnation
+	(VN=`cat vn.tmp`; ln -s labelnation-$${VN}.tar.gz labelnation.tar.gz)
 
 test:
 	@echo "Generating PostScript in examples/ directory..."
