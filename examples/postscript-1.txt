@@ -1,0 +1,19 @@
+newpath
+3 43.2
+moveto
+(     Fish me oh yeah)
+show
+3 31.2
+moveto
+(     I am not an octopus)
+show
+3 31 moveto
+31 31 lineto
+31 3 lineto
+3 3 lineto
+fill
+3 19.2
+moveto
+(     I am the fearless backhoe!)
+show
+stroke
