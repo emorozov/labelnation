@@ -785,6 +785,10 @@ sub print_labels ()
 {
   open (OUT, ">$Outfile") or die ("Unable to open $Outfile ($!)");
 
+  # Generate Postscript header
+
+  print OUT "%!PS-Adobe-1.0\n";
+
   # Set up fonts
   print OUT "/${Font_Name} findfont\n";
   print OUT "${Font_Size} scalefont\n";
