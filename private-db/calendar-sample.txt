@@ -7,6 +7,7 @@ labelnation.pl --show-bounding-box -p calendar.param       \
 
 
 --------------------8-<-------cut-here---------8-<-----------------------
+
                                Sun 25 Feb 2001
 
 
