@@ -31,7 +31,7 @@ for.  LabelNation takes all this information and produces a PostScript
 file, which you then send to your PostScript printer (or through a
 filter such as <a href="http://www.gnu.org/software/ghostscript/">GNU
 GhostScript</a>).  Of course, there must be a sheet of peel-off labels
-in the tray.  Such sheets are widely available at office supply
+in the paper tray.  Such sheets are widely available at office supply
 stores.  Two companies that offer it are Avery Dennison and Maco.
 This is not a recommendation nor an endorsement; Avery and Maco are
 simply the names I've seen.
