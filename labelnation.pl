@@ -126,6 +126,21 @@ sub set_parameters_for_type ()
     $params[8] = "Times-Roman";   # Font_Name
     $params[9] = 12;              # Font_Size
   }
+  elsif ($ntype eq "avery7160")
+  {
+    # Large address labels, 21 per A4 page
+    my $k = 72/25.4;              # Convert mm to points
+    $params[0] = $k * 10.25;      # Left_Margin
+    $params[1] = $k * 19;         # Bottom_Margin
+    $params[2] = $k * 56;         # Label_Width
+    $params[3] = $k * 33.5;       # Label_Height
+    $params[4] = $k * 10.75;      # Horiz_Space
+    $params[5] = $k * 4.5;	  # Vert_Space
+    $params[6] = 3;               # Horiz_Num_Labels
+    $params[7] = 7;               # Vert_Num_Labels
+    $params[8] = "Times-Roman";   # Font_Name
+    $params[9] = 11;              # Font_Size
+  }
   elsif (($ntype eq "avery5167") or ($ntype eq "macoll8100"))
   {
     # Small address labels, 80 per page
@@ -794,6 +809,7 @@ sub types ()
   print "   Avery-5160 / Avery-6245 / Maco-LL5805  (30 labels per page)\n";
   print "   Avery-5167 / Maco-LL8100               (80 labels per page)\n";
   print "   Avery-5371 / Maco-LL8550               (10 bcards per page)\n";
+  print "   Avery-7160                             (21 labels per A4 page)\n";
 }
 
 
