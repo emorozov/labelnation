@@ -92,82 +92,96 @@ sub set_parameters_for_type ()
 {
   my $otype = shift;
   my $ntype = &normalize_string ($otype);
+  my @params;
 
-  if ($ntype eq "avery5261")  # don't know Maco's number for these yet
+  # Don't know Maco's number for Avery 5161/5261 yet...
+  if (($ntype eq "avery5161") or ($ntype eq "avery5261"))
   {
     # Large and wide address labels, 20 per page
-    $Left_Margin           = 11.25;
-    $Bottom_Margin         = 16;
-    $Label_Width           = 270;
-    $Label_Height          = 72;
-    $Horiz_Space           = 20;
-    $Vert_Space            = 0;
-    $Horiz_Num_Labels      = 2;
-    $Vert_Num_Labels       = 10;
-    $Font_Name             = "Times-Roman";
-    $Font_Size             = 12;
+    $params[0] = 11.25;           # Left_Margin
+    $params[1] = 16;              # Bottom_Margin
+    $params[2] = 270;             # Label_Width
+    $params[3] = 72;              # Label_Height
+    $params[4] = 20;              # Horiz_Space
+    $params[5] = 0;               # Vert_Space
+    $params[6] = 2;               # Horiz_Num_Labels
+    $params[7] = 10;              # Vert_Num_Labels
+    $params[8] = "Times-Roman";   # Font_Name
+    $params[9] = 12;              # Font_Size
   }
   elsif (($ntype eq "avery5160")
          or ($ntype eq "avery6245")
          or ($ntype eq "macoll5805"))
   {
     # Large address labels, 30 per page
-    $Left_Margin           = 11.25;
-    $Bottom_Margin         = 16;
-    $Label_Width           = 180;
-    $Label_Height          = 72;
-    $Horiz_Space           = 20;
-    $Vert_Space            = 0;
-    $Horiz_Num_Labels      = 3;
-    $Vert_Num_Labels       = 10;
-    $Font_Name             = "Times-Roman";
-    $Font_Size             = 12;
+    $params[0] = 11.25;           # Left_Margin
+    $params[1] = 16;              # Bottom_Margin
+    $params[2] = 180;             # Label_Width
+    $params[3] = 72;              # Label_Height
+    $params[4] = 20;              # Horiz_Space
+    $params[5] = 0;               # Vert_Space
+    $params[6] = 3;               # Horiz_Num_Labels
+    $params[7] = 10;              # Vert_Num_Labels
+    $params[8] = "Times-Roman";   # Font_Name
+    $params[9] = 12;              # Font_Size
   }
   elsif (($ntype eq "avery5167") or ($ntype eq "macoll8100"))
   {
     # Small address labels, 80 per page
-    $Left_Margin           = 14;
-    $Bottom_Margin         = 17;
-    $Label_Width           = 126;
-    $Label_Height          = 36;
-    $Horiz_Space           = 22.5;
-    $Vert_Space            = 0;
-    $Horiz_Num_Labels      = 4;
-    $Vert_Num_Labels       = 20;
-    $Font_Name             = "Times-Roman";
-    $Font_Size             = 7;
+    $params[0] = 14;              # Left_Margin
+    $params[1] = 17;              # Bottom_Margin
+    $params[2] = 126;             # Label_Width
+    $params[3] = 36;              # Label_Height
+    $params[4] = 22.5;            # Horiz_Space
+    $params[5] = 0;               # Vert_Space
+    $params[6] = 4;               # Horiz_Num_Labels
+    $params[7] = 20;              # Vert_Num_Labels
+    $params[8] = "Times-Roman";   # Font_Name
+    $params[9] = 7;               # Font_Size
   }
   elsif (($ntype eq "avery5371") or ($ntype eq "macoll8550"))
   {
     # Business cards
-    $Left_Margin           = 48;
-    $Bottom_Margin         = 16;
-    $Label_Width           = 253.5;
-    $Label_Height          = 145.3;
-    $Horiz_Space           = 0;
-    $Vert_Space            = 0;
-    $Horiz_Num_Labels      = 2;
-    $Vert_Num_Labels       = 5;
-    $Font_Name             = "Times-Roman";
-    $Font_Size             = 0;
+    $params[0] = 48;              # Left_Margin
+    $params[1] = 16;              # Bottom_Margin
+    $params[2] = 253.5;           # Label_Width
+    $params[3] = 145.3;           # Label_Height
+    $params[4] = 0;               # Horiz_Space
+    $params[5] = 0;               # Vert_Space
+    $params[6] = 2;               # Horiz_Num_Labels
+    $params[7] = 5;               # Vert_Num_Labels
+    $params[8] = "Times-Roman";   # Font_Name
+    $params[9] = 0;               # Font_Size
   }
   elsif ($ntype eq "kffweekly") # My own private labels
   {
     # Weekly calendar, to fit on pages 252x486
-    $Left_Margin           = 47;
-    $Bottom_Margin         = 11;
-    $Label_Width           = 240;
-    $Label_Height          = 60;
-    $Horiz_Space           = 0;
-    $Vert_Space            = 5;
-    $Horiz_Num_Labels      = 1;
-    $Vert_Num_Labels       = 7;
-    $Font_Name             = "Times-Roman";
-    $Font_Size             = 12;
+    $params[0] = 47;              # Left_Margin
+    $params[1] = 11;              # Bottom_Margin
+    $params[2] = 240;             # Label_Width
+    $params[3] = 60;              # Label_Height
+    $params[4] = 0;               # Horiz_Space
+    $params[5] = 5;               # Vert_Space
+    $params[6] = 1;               # Horiz_Num_Labels
+    $params[7] = 7;               # Vert_Num_Labels
+    $params[8] = "Times-Roman";   # Font_Name
+    $params[9] = 12;              # Font_Size
   }
   else {
     die "Unknown label type \"$otype\"\n";
   }
+
+  # Set up standard params, but preserving manual overrides:
+  $Left_Margin      = $params[0]    if ($Left_Margin      < 0);
+  $Bottom_Margin    = $params[1]    if ($Bottom_Margin    < 0);
+  $Label_Width      = $params[2]    if ($Label_Width      < 0);
+  $Label_Height     = $params[3]    if ($Label_Height     < 0);
+  $Horiz_Space      = $params[4]    if ($Horiz_Space      < 0);
+  $Vert_Space       = $params[5]    if ($Vert_Space       < 0);
+  $Horiz_Num_Labels = $params[6]    if ($Horiz_Num_Labels < 0);
+  $Vert_Num_Labels  = $params[7]    if ($Vert_Num_Labels  < 0);
+  $Font_Name        = $params[8]    if ($Font_Name        eq "");
+  $Font_Size        = $params[9]    if ($Font_Size        eq "");
 }
 
 
