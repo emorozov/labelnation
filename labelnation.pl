@@ -601,27 +601,19 @@ sub print_labels ()
 /oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis
 ] def
 
-% Dictionary for ISO-8859-1 support
-/iso1dict 8 dict begin
-  /fCourier ISO-8859-1Encoding /Courier reencode_font
-  /fCourier-Bold ISO-8859-1Encoding /Courier-Bold reencode_font
-  /fCourier-BoldOblique ISO-8859-1Encoding /Courier-BoldOblique reencode_font
-  /fCourier-Oblique ISO-8859-1Encoding /Courier-Oblique reencode_font
-  /fHelvetica ISO-8859-1Encoding /Helvetica reencode_font
-  /fHelvetica-Bold ISO-8859-1Encoding /Helvetica-Bold reencode_font
-  /fTimes-Bold ISO-8859-1Encoding /Times-Bold reencode_font
-  /fTimes-Roman ISO-8859-1Encoding /Times-Roman reencode_font
-currentdict end def
-
 END
 
+  print OUT "/ISO${Font_Name} ISO-8859-1Encoding /${Font_Name} reencode_font\n";
   # Set up subroutines
   my $clipfunc = &make_clipping_func ();
   print OUT "/labelclip {\n${clipfunc}\n} def\n";
 
   print OUT "\n";
-  print OUT "iso1dict begin\n% end prologue\n\n";
-  print OUT "% set font type and size\nf${Font_Name} ${Font_Size} scalefont setfont\n";
+  # print OUT "iso1dict begin\n";
+  print OUT "\% end prologue\n";
+  print OUT "\n";
+  print OUT "\% set font type and size\n";
+  print OUT "ISO${Font_Name} ${Font_Size} scalefont setfont\n";
 
   # Set up some loop vars.
   my @label_lines;            # Used only for $Line_Input;
@@ -651,7 +643,7 @@ END
         my $fontsize = ${Font_Size} / (1 + (($num_lines-4)/10));
         
         $code_accum .= "newpath\n";
-        $code_accum .= "f${Font_Name} ${fontsize} scalefont setfont\n";
+        $code_accum .= "ISO${Font_Name} ${fontsize} scalefont setfont\n";
         for (my $line = 0; $line < $num_lines; $line++)
         {
           my $this_line = ($upmost_line_start - ($line * $distance_down));
