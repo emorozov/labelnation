@@ -587,9 +587,9 @@ sub print_labels ()
   # Since there's no delimiter, we just jump straight to the printing
   # part in the `while' loop above, and let it increment x and y as it
   # normally does.  So the conditional below behaves like the guard of
-  # a `for' loop, except it's after the fact, and it shares its code
-  # body with the file-reading loop.  We use $been_there to stop after
-  # one page, otherwise it would go on forever.
+  # a `for' loop, except it's after the fact, and it shares its body
+  # with the file-reading loop.  We use $been_there to stop after one
+  # page, otherwise it would go on forever. 
   #
   if ((! $Delimiter)
       && (! ($y >= $Vert_Num_Labels))
