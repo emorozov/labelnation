@@ -487,6 +487,143 @@ sub make_clipping_func ()
   return $clipper;
 }
 
+sub set_up_iso8859
+{
+  # See http://library.wolfram.com/mathgroup/archive/1998/Oct/msg00013.html
+  # for more about this solution for iso8859 accented characters.  It
+  # pointed me to ftp://wilma.cs.brown.edu/pub/postscript/ddev.ps,
+  # the sample PostScript on which this is based.
+
+  local (*RECEIVER) = @_;
+
+  # I'd *much* rather do this trick:
+  #
+  #   print RECEIVER <<'END_ISO8859_PS';
+  #   ...
+  #   END_ISO8859_PS
+  #
+  # Unfortunately, that wreaks havoc with Emacs' indentation and
+  # colorization code.
+
+  print RECEIVER "\% Name: Define Difference Encoding Vector";
+  print RECEIVER "\% Description: Creates a new encoding vector based on the ";
+  print RECEIVER "\% BaseEncoding and the difference noted by the numbers and glyph ";
+  print RECEIVER "\% names after the STARTDIFFENC.";
+  print "\n";
+  print RECEIVER "/STARTDIFFENC { mark } bind def\n";
+  print RECEIVER "/ENDDIFFENC { \n";
+  print RECEIVER "\n";
+  print RECEIVER "\% /NewEnc BaseEnc STARTDIFFENC number or glyphname ... ENDDIFFENC -\n";
+  print RECEIVER "	counttomark 2 add -1 roll 256 array copy\n";
+  print RECEIVER "	/TempEncode exch def\n";
+  print RECEIVER "	\n";
+  print RECEIVER "	\% pointer for sequential encodings\n";
+  print RECEIVER "	/EncodePointer 0 def\n";
+  print RECEIVER "	{\n";
+  print RECEIVER "		\% Get the bottom object\n";
+  print RECEIVER "		counttomark -1 roll\n";
+  print RECEIVER "		\% Is it a mark?\n";
+  print RECEIVER "		dup type dup /marktype eq {\n";
+  print RECEIVER "			\% End of encoding\n";
+  print RECEIVER "			pop pop exit\n";
+  print RECEIVER "		} {\n";
+  print RECEIVER "			/nametype eq {\n";
+  print RECEIVER "			\% Insert the name at EncodePointer \n";
+  print RECEIVER "\n";
+  print RECEIVER "			\% and increment the pointer.\n";
+  print RECEIVER "			TempEncode EncodePointer 3 -1 roll put\n";
+  print RECEIVER "			/EncodePointer EncodePointer 1 add def\n";
+  print RECEIVER "			} {\n";
+  print RECEIVER "			\% Set the EncodePointer to the number\n";
+  print RECEIVER "			/EncodePointer exch def\n";
+  print RECEIVER "			} ifelse\n";
+  print RECEIVER "		} ifelse\n";
+  print RECEIVER "	} loop	\n";
+  print RECEIVER "\n";
+  print RECEIVER "	TempEncode def\n";
+  print RECEIVER "} bind def\n";
+  print RECEIVER "\n";
+  print RECEIVER "\% Define ISO Latin1 encoding if it doesn't exist\n";
+  print RECEIVER "/ISOLatin1Encoding where {\n";
+  print RECEIVER "	(ISOLatin1 exists!) =\n";
+  print RECEIVER "	pop\n";
+  print RECEIVER "} {\n";
+  print RECEIVER "	(ISOLatin1 does not exist, creating...) =\n";
+  print RECEIVER "	/ISOLatin1Encoding StandardEncoding STARTDIFFENC\n";
+  print RECEIVER "		144 /dotlessi /grave /acute /circumflex /tilde \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/macron /breve /dotaccent /dieresis /.notdef /ring \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/cedilla /.notdef /hungarumlaut /ogonek /caron /space \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/exclamdown /cent /sterling /currency /yen /brokenbar \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/section /dieresis /copyright /ordfeminine \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/guillemotleft /logicalnot /hyphen /registered \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/macron /degree /plusminus /twosuperior \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/threesuperior /acute /mu /paragraph /periodcentered \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/cedilla /onesuperior /ordmasculine /guillemotright \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/onequarter /onehalf /threequarters /questiondown \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/Agrave /Aacute /Acircumflex /Atilde /Adieresis \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/Aring /AE /Ccedilla /Egrave /Eacute /Ecircumflex \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/Edieresis /Igrave /Iacute /Icircumflex /Idieresis \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/Odieresis /multiply /Oslash /Ugrave /Uacute \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/Ucircumflex /Udieresis /Yacute /Thorn /germandbls \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/agrave /aacute /acircumflex /atilde /adieresis \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/aring /ae /ccedilla /egrave /eacute /ecircumflex \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/edieresis /igrave /iacute /icircumflex /idieresis \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/eth /ntilde /ograve /oacute /ocircumflex /otilde \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/odieresis /divide /oslash /ugrave /uacute \n";
+  print RECEIVER "\n";
+  print RECEIVER "		/ucircumflex /udieresis /yacute /thorn /ydieresis\n";
+  print RECEIVER "	ENDDIFFENC\n";
+  print RECEIVER "} ifelse\n";
+  print RECEIVER "\n";
+  print RECEIVER "\% Name: Re-encode Font\n";
+  print RECEIVER "\% Description: Creates a new font using the named encoding. \n";
+  print RECEIVER "\n";
+  print RECEIVER "/REENCODEFONT { \% /Newfont NewEncoding /Oldfont\n";
+  print RECEIVER "	findfont dup length 4 add dict\n";
+  print RECEIVER "	begin\n";
+  print RECEIVER "		{ \% forall\n";
+  print RECEIVER "			1 index /FID ne \n";
+  print RECEIVER "\n";
+  print RECEIVER "			2 index /UniqueID ne and\n";
+  print RECEIVER "			2 index /XUID ne and\n";
+  print RECEIVER "			{ def } { pop pop } ifelse\n";
+  print RECEIVER "		} forall\n";
+  print RECEIVER "		/Encoding exch def\n";
+  print RECEIVER "		\% defs for DPS\n";
+  print RECEIVER "		/BitmapWidths false def\n";
+  print RECEIVER "		/ExactSize 0 def\n";
+  print RECEIVER "		/InBetweenSize 0 def\n";
+  print RECEIVER "		/TransformedChar 0 def\n";
+  print RECEIVER "		currentdict\n";
+  print RECEIVER "	end\n";
+  print RECEIVER "	definefont pop\n";
+  print RECEIVER "} bind def\n";
+  print RECEIVER "\n";
+  print RECEIVER "\n";
+  print RECEIVER "/ISO${Font_Name} ISOLatin1Encoding /${Font_Name} REENCODEFONT\n";
+}
+
 
 sub print_labels ()
 {
@@ -496,8 +633,12 @@ sub print_labels ()
   # Start off with standard Postscript header
   print OUT "%!PS-Adobe-1.0\n";
 
-  # Set up fonts
-  print OUT "/${Font_Name} findfont\n";
+  # Prepare for accented (iso8859) characters.
+  set_up_iso8859 (*OUT);
+
+  # Set up font.  Substitute an iso8859-ized version in place of the
+  # requested font.  The ISO version was defined by set_up_iso8859.
+  print OUT "/ISO${Font_Name} findfont\n";
   print OUT "${Font_Size} scalefont\n";
   print OUT "setfont\n";
 
