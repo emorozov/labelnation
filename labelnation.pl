@@ -643,7 +643,7 @@ sub print_labels ()
   {
     chomp;
 
-    if ($_ eq $Delimiter)
+    if ($Delimiter and ($_ eq $Delimiter))
     {
     print_what_have_so_far:
       if ($Line_Input)
