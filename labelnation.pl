@@ -64,8 +64,8 @@ my @Label_Codes = ();
 my @Label_Lines = ();
 
 # The version number is automatically updated by CVS.
-my $Version = '$Revision$';
-$Version =~ s/\S+\s+(\S+)\s+\S+/$1/;
+my $Version = "\$Revision$";
+# $Version =~ s/\S+\s+(\S+)\s+\S+/$1/;
 
 my $Inner_Margin = 1;
 
@@ -132,7 +132,9 @@ sub maybe_make_label_codes ()
 sub dedelimit_string ()
 {
   my $str = shift;
+  my $ignore = "";
   $str =~ s/[\n"' 	]//g;
+  $ignore =~ s/[\n" 	]//g;  # Placate Emacs indentation & font-lock.
   return $str;
 }
 
@@ -382,231 +384,6 @@ sub usage ()
 }
 
 
-# Print version number.
-sub version ()
-{
-  print "labelnation.pl version $Version.\n";
-}
-
-
-# Print all predefined label types
-sub types ()
-{
-  print "Predefined label types:\n";
-  print "   Avery-5160 / Avery-6245 / Maco-LL5805  (30 labels per page)\n";
-  print "   Avery-5167 / Maco-LL8100               (80 labels per page)\n";
-  print "   Avery-5371 / Maco-LL8550               (10 bcards per page)\n";
-}
-
-
-# Print a general explanation of how this program works.
-sub explain ()
-{
-  print <<END;
-LabelNation is a program for making labels.  By "label", I mean
-address labels, business cards, or anything else involving
-regularly-arranged rectangles on a printer-ready sheet.  You can even
-use it to make a calendar (that took some work, though).
-
-Here's the basic concept: you tell LabelNation what text you want on
-each label (i.e., each rectangle).  You can specify plain lines of
-text, or even arbitrary PostScript code.  You also tell it what kind
-of labels it should print for.  LabelNation takes all this information
-and produces a PostScript file, which you then send to your printer.
-
-Of course, you'll need a PostScript printer (or a PostScript filter,
-such as GNU GhostScript), and a sheet of special peel-off label paper
-in the tray.  Such paper is widely available at office supply stores.
-Two companies that offer it are Avery Dennison (www.averydennison.com)
-and Maco (www.maco.com).  This is not a recommendation or an
-endorsement -- Avery and Maco are simply the names I've seen.
-
-PostScript viewing software also helps, so you can see what your
-labels look like before you print.
-
-How To Use It:
-==============
-
-Let's start with an example.  If you wanted to print a sheet of return
-address labels using the Avery 5167 standard (80 small labels per
-page), you might invoke LabelNation like this:
-
-   prompt\$ labelnation.pl -t avery5167 -l myaddress.txt -o myaddress.ps
-
-The "-t" stands for "type", followed by one of the standard predefined
-label types.  The "-l" stands for "label lines", followed by the name
-of a file containing the lines of text you want written on the label.
-The "-o" specifies the output file, which is what you'll print to get
-the labels.
-
-Here is a sample label lines file:
-
-        J. Random User
-        1423 W. Rootbeer Ave
-        Chicago, IL 60622
-        USA
-
-Note that the indentation is significant -- the farther you indent a
-line, the more whitespace will be between it and the left edge of the
-label.  Three spaces is a typical indentation.  Also note that blank
-lines are ignored -- they will be printed just like regular text.
-
-You can have anywhere from 1 to 5 lines on a label.
-
-
-How To Discover The Predefined Label Types:
-===========================================
-
-To see a list of all known label types, run
-
-   prompt\$ labelnation.pl --list-types
-   Predefined label types:
-      Avery-5160 / Avery-6245 / Maco-LL5805  (30 labels per page)
-      Avery-5167 / Maco-LL8100               (80 labels per page)
-      [etc...]
-
-Note that when you're specifying a label type, you can omit the
-capitalization and the hyphen (or you can leave them on -- LabelNation
-will recognize the type either way).
-
-A bit farther on, you'll learn how to define your own label types, in
-case none of the built-in ones are suitable.
-
-
-What To Do If The Text Is A Little Bit Off From The Labels:
-===========================================================
-
-Printers vary -- the label parameters that work for me might not be
-quite right for your hardware.  Correcting the problem may merely be a
-matter of adjusting the bottom and/or left margin (that is, the
-distance from the bottom or left edge of the page to the first row or
-column, respectively).
-
-The two options to do this are
-
-   prompt\$ labelnation.pl --bottom-margin N --left-margin N ...
-
-where N is a number of PostScript points, each being 1/72 of an inch.
-(Of course, you don't have to use the two options together, that's
-just how it is in this example.)  The N you specify does not add to
-the predefined quantity, but rather replaces it.
-
-In order to know where you're starting from, you can ask LabelNation
-to show you the parameters for a given label type:
-
-   prompt\$ labelnation.pl -t avery5167 --show-parameters
-   LeftMargin      14
-   BottomMargin    17
-   LabelWidth      126
-   LabelHeight     36
-   HorizSpace      22.5
-   VertSpace       0
-   HorizNumLabels  4
-   VertNumLabels   20
-   FontName        Times-Roman
-   FontSize        7
-
-The first two parameters are usually the only ones you need to look
-at, although the others may come in handy when you're defining your
-own parameter files.  Which brings me to the next subject...
-
-
-How To Print Labels That Aren't One Of The Predefined Standards:
-================================================================
-
-Use the -p option to tell LabelNation to use a parameter file.  A
-parameter file consists of lines of the form
-
-   PARAMETER   VALUE
-   PARAMETER   VALUE
-   PARAMETER   VALUE
-   ...
-
-you can see valid parameter names by running
-
-   prompt\$ labelnation.pl -t avery5167 --show-parameters
-
-as mentioned earlier (it doesn't have to be avery5167, it can be any
-built-in type).  Keep in mind that a "parameter file" is for
-specifying the dimensions and arrangement of the labels on the sheet,
-*not* for specifying the content you want printed on those labels.
-
-
-How To Use Arbitrary Postscript Code To Draw Labels:
-====================================================
-
-Do you know how to write PostScript?  Do you want to be a Power User
-of LabelNation?  Then this section is for you:
-
-Instead of passing a file of label lines with the "-l" options, pass a
-file containing PostScript code using the "-c" option.
-
-The code will be run in a translated coordinate space, so 0,0 is at
-the bottom left corner of each label in turn.  Also, clipping will be
-in effect, so you can't draw past the edges of a label.  Obviously,
-you will have to experiment a lot using your favorite PostScript
-viewing software before you're ready to print.
-
-
-How To Print A Variety Of Addresses On A Sheet:
-===============================================
-
-In a label lines file (or a PostScript code file), you can define
-multiple label contents.  Each label's content must be separated from
-the previous label by a delimiter of your choice.  For example, if the
-delimiter is "XXX", then you might invoke LabelNation like
-so
-
-   prompt\$ labelnation.pl -d "XXX" -t avery5167 -l 2addrs.txt -o 2addrs.ps
-
-where 2addrs.txt contains this
-
-        J. Random User
-        1423 W. Rootbeer Ave
-        Chicago, IL 60622
-        USA
-   XXX
-        William Lyon Phelps III
-        27 Rue d'Agonie
-        Paris, France
-   XXX
-
-(remember that all my examples are indented three spaces in this help
-message, so the content above is indented only three spaces in the
-file, while the XXX delimiters are not really indented at all). 
-
-
-How To Report A Bug:
-====================
-
-Check http://www.red-bean.com/labelnation to make sure you have the
-latest version (perhaps your bug has been fixed).  Else, email
-<bug-labelnation\@red-bean.com>.
-
-Copyright:
-==========
-
-    Label Nation (labelnation.pl): command-line label printing
-    Copyright (C) 2000  Karl Fogel <kfogel\@red-bean.com>
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-END
-}
-
-
 sub grab_next_argument ()
 {
   my $arg = shift;
@@ -834,4 +611,228 @@ sub print_labels ()
   close (OUT);
 }
 
+
+# Print version number.
+sub version ()
+{
+  print "labelnation.pl version $Version.\n";
+}
+
+
+# Print all predefined label types
+sub types ()
+{
+  print "Predefined label types:\n";
+  print "   Avery-5160 / Avery-6245 / Maco-LL5805  (30 labels per page)\n";
+  print "   Avery-5167 / Maco-LL8100               (80 labels per page)\n";
+  print "   Avery-5371 / Maco-LL8550               (10 bcards per page)\n";
+}
+
+
+# Print a general explanation of how this program works.
+sub explain ()
+{
+  print <<END;
+LabelNation is a program for making labels.  By "label", I mean
+address labels, business cards, or anything else involving
+regularly-arranged rectangles on a printer-ready sheet.  You can even
+use it to make a calendar (that took some work, though).
+
+Here's the basic concept: you tell LabelNation what text you want on
+each label (i.e., each rectangle).  You can specify plain lines of
+text, or even arbitrary PostScript code.  You also tell it what kind
+of labels it should print for.  LabelNation takes all this information
+and produces a PostScript file, which you then send to your printer.
+
+Of course, you'll need a PostScript printer (or a PostScript filter,
+such as GNU GhostScript), and a sheet of special peel-off label paper
+in the tray.  Such paper is widely available at office supply stores.
+Two companies that offer it are Avery Dennison (www.averydennison.com)
+and Maco (www.maco.com).  This is not a recommendation or an
+endorsement -- Avery and Maco are simply the names I've seen.
+
+PostScript viewing software also helps, so you can see what your
+labels look like before you print.
+
+How To Use It:
+==============
+
+Let's start with an example.  If you wanted to print a sheet of return
+address labels using the Avery 5167 standard (80 small labels per
+page), you might invoke LabelNation like this:
+
+   prompt\$ labelnation.pl -t avery5167 -l myaddress.txt -o myaddress.ps
+
+The "-t" stands for "type", followed by one of the standard predefined
+label types.  The "-l" stands for "label lines", followed by the name
+of a file containing the lines of text you want written on the label.
+The "-o" specifies the output file, which is what you'll print to get
+the labels.
+
+Here is a sample label lines file:
+
+        J. Random User
+        1423 W. Rootbeer Ave
+        Chicago, IL 60622
+        USA
+
+Note that the indentation is significant -- the farther you indent a
+line, the more whitespace will be between it and the left edge of the
+label.  Three spaces is a typical indentation.  Also note that blank
+lines are ignored -- they will be printed just like regular text.
+
+You can have anywhere from 1 to 5 lines on a label.
+
+
+How To Discover The Predefined Label Types:
+===========================================
+
+To see a list of all known label types, run
+
+   prompt\$ labelnation.pl --list-types
+   Predefined label types:
+      Avery-5160 / Avery-6245 / Maco-LL5805  (30 labels per page)
+      Avery-5167 / Maco-LL8100               (80 labels per page)
+      [etc...]
+
+Note that when you're specifying a label type, you can omit the
+capitalization and the hyphen (or you can leave them on -- LabelNation
+will recognize the type either way).
+
+A bit farther on, you'll learn how to define your own label types, in
+case none of the built-in ones are suitable.
+
+
+What To Do If The Text Is A Little Bit Off From The Labels:
+===========================================================
+
+Printers vary -- the label parameters that work for me might not be
+quite right for your hardware.  Correcting the problem may merely be a
+matter of adjusting the bottom and/or left margin (that is, the
+distance from the bottom or left edge of the page to the first row or
+column, respectively).
+
+The two options to do this are
+
+   prompt\$ labelnation.pl --bottom-margin N --left-margin N ...
+
+where N is a number of PostScript points, each being 1/72 of an inch.
+(Of course, you don't have to use the two options together, that's
+just how it is in this example.)  The N you specify does not add to
+the predefined quantity, but rather replaces it.
+
+In order to know where you're starting from, you can ask LabelNation
+to show you the parameters for a given label type:
+
+   prompt\$ labelnation.pl -t avery5167 --show-parameters
+   LeftMargin      14
+   BottomMargin    17
+   LabelWidth      126
+   LabelHeight     36
+   HorizSpace      22.5
+   VertSpace       0
+   HorizNumLabels  4
+   VertNumLabels   20
+   FontName        Times-Roman
+   FontSize        7
+
+The first two parameters are usually the only ones you need to look
+at, although the others may come in handy when you're defining your
+own parameter files.  Which brings me to the next subject...
+
+
+How To Print Labels That Aren't One Of The Predefined Standards:
+================================================================
+
+Use the -p option to tell LabelNation to use a parameter file.  A
+parameter file consists of lines of the form
+
+   PARAMETER   VALUE
+   PARAMETER   VALUE
+   PARAMETER   VALUE
+   ...
+
+you can see valid parameter names by running
+
+   prompt\$ labelnation.pl -t avery5167 --show-parameters
+
+as mentioned earlier (it doesn't have to be avery5167, it can be any
+built-in type).  Keep in mind that a "parameter file" is for
+specifying the dimensions and arrangement of the labels on the sheet,
+*not* for specifying the content you want printed on those labels.
+
+
+How To Use Arbitrary Postscript Code To Draw Labels:
+====================================================
+
+Do you know how to write PostScript?  Do you want to be a Power User
+of LabelNation?  Then this section is for you:
+
+Instead of passing a file of label lines with the "-l" options, pass a
+file containing PostScript code using the "-c" option.
+
+The code will be run in a translated coordinate space, so 0,0 is at
+the bottom left corner of each label in turn.  Also, clipping will be
+in effect, so you can't draw past the edges of a label.  Obviously,
+you will have to experiment a lot using your favorite PostScript
+viewing software before you're ready to print.
+
+
+How To Print A Variety Of Addresses On A Sheet:
+===============================================
+
+In a label lines file (or a PostScript code file), you can define
+multiple label contents.  Each label's content must be separated from
+the previous label by a delimiter of your choice.  For example, if the
+delimiter is "XXX", then you might invoke LabelNation like
+so
+
+   prompt\$ labelnation.pl -d "XXX" -t avery5167 -l 2addrs.txt -o 2addrs.ps
+
+where 2addrs.txt contains this
+
+        J. Random User
+        1423 W. Rootbeer Ave
+        Chicago, IL 60622
+        USA
+   XXX
+        William Lyon Phelps III
+        27 Rue d'Agonie
+        Paris, France
+   XXX
+
+(remember that all my examples are indented three spaces in this help
+message, so the content above is indented only three spaces in the
+file, while the XXX delimiters are not really indented at all). 
+
+
+How To Report A Bug:
+====================
+
+Check http://www.red-bean.com/labelnation to make sure you have the
+latest version (perhaps your bug has been fixed).  Else, email
+<bug-labelnation\@red-bean.com>.
+
+Copyright:
+==========
+
+    Label Nation (labelnation.pl): command-line label printing
+    Copyright (C) 2000  Karl Fogel <kfogel\@red-bean.com>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+END
+}
 
