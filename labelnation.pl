@@ -423,8 +423,10 @@ The two options to do this are
 
    prompt\$ labelnation.pl --bottom-margin N --left-margin N ...
 
-where N is a number of PostScript points.  (Of course, you don't have
-to use the two options together, that's just this example.)
+where N is a number of PostScript points, each being 1/72 of an inch.
+(Of course, you don't have to use the two options together, that's
+just how it is in this example.)  The N you specify will not be added
+to the predefined quantity, but instead will replace it.
 
 In order to know where you're starting from, you can ask LabelNation
 to print out the parameters for a given label type:
@@ -441,7 +443,10 @@ to print out the parameters for a given label type:
    FontName        Times-Roman
    FontSize        7
 
-fooo
+The first two parameters are usually the only ones you need to look
+at, although the others may come in handy when you're defining your
+own parameter files.  Which brings me to the next subject...
+
 
 How To Print Labels That Aren't One Of The Predefined Standards:
 ================================================================
