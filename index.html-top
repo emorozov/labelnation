@@ -40,8 +40,8 @@ simply the names I've seen.
 
 LabelNation does automatic font resizing to fit all the lines of text
 on the label, supports the usual accented characters (<b>&aacute;</b>,
-<b>&agrave;</b>, <b>&oacute;</b>, and so forth, from ISO 8859-1), and
-has built-in knowledge of the following standard label types:
+<b>&agrave;</b>, <b>&oacute;</b>, etc, from ISO 8859-1), and has
+built-in knowledge of the following standard label types:
 
 <p>
 
