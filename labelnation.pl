@@ -153,6 +153,21 @@ sub set_parameters_for_type ()
     $params[8] = "Times-Roman";   # Font_Name
     $params[9] = 0;               # Font_Size
   }
+  elsif ($ntype eq "avery5263")
+  {
+    # Big mailing labels, 10 per page.  Usually the TO address goes
+    # on these.
+    $params[0] = 48;              # Left_Margin
+    $params[1] = 31;              # Bottom_Margin
+    $params[2] = 253.5;           # Label_Width
+    $params[3] = 145.3;           # Label_Height
+    $params[4] = 0;               # Horiz_Space
+    $params[5] = 0;               # Vert_Space
+    $params[6] = 2;               # Horiz_Num_Labels
+    $params[7] = 5;               # Vert_Num_Labels
+    $params[8] = "Times-Roman";   # Font_Name
+    $params[9] = 20;              # Font_Size
+  }
   elsif (($ntype eq "?avery6464?") or ($ntype eq "?maco????"))
   {
     # kff todo: got some labels from CollabNet HQ today, don't know
@@ -783,6 +798,7 @@ sub version ()
 sub types ()
 {
   print "Predefined label types:\n";
+  print "   Avery-5263                             (10 labels per page)\n";
   print "   Avery-5161 / Avery-5261                (20 labels per page)\n";
   print "   Avery-5160 / Avery-6245 / Maco-LL5805  (30 labels per page)\n";
   print "   Avery-5167 / Maco-LL8100               (80 labels per page)\n";
