@@ -691,7 +691,7 @@ label once, using as many sheets as necessary, leaving the unused
 remainder blank.
 
 To print many labels at once, you must pass a delimiter with the "-d"
-flag.  The delimiter separates each labels from the next.  For
+flag.  The delimiter separates each label from the next.  For
 example, if you use a delimiter of "XXX", then you might invoke
 LabelNation like so
 
