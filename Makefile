@@ -9,18 +9,22 @@ dist:
                  --exclude examples/.cvsignore
 
 www: dist
-	VN=`cat vn.tmp` \
+	(VN=`cat vn.tmp`; \
   sed -e "s/labelnation-[0-9]*.[0-9]*.tar.gz/labelnation-$${VN}.tar.gz/g" \
-      index.html | tee index.html.tmp
+      index.html | tee index.html.tmp)
 	mv index.html.tmp index.html
 
-	VN=`cat vn.tmp` \
-  sed -e "s/Current version: [0-9]*.[0-9]*/Current version: $${VN}/g" \
-      index.html | tee index.html.tmp
+	(VN=`cat vn.tmp`; \
+  sed -e "s/Latest version: [0-9]*.[^<]/Latest version: $${VN}/g" \
+      index.html | tee index.html.tmp)
 	mv index.html.tmp index.html
 
 	cvs ci -m "made www" index.html
-	rm vn.tmp
+
+	echo "    (This is the result of running 'labelnation.pl --help')" \
+             > help.txt
+	echo "" >> help.txt
+	./labelnation.pl --help >> help.txt
 
 test:
 	echo "Generating PostScript in examples/ directory..."
