@@ -48,4 +48,4 @@ test:
 
 
 clean: 
-	rm -f *~ *.tmp
+	rm -f *~ *.tmp labelnation-*.tar.gz
