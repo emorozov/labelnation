@@ -2,7 +2,24 @@
 exec perl -w -x $0 ${1+"$@"} # -*- mode: perl; perl-indent-level: 2; -*-
 #!perl -w
 
-### Generic labeling code.  Run with "--help" flag to see options.
+### Label Nation (labelnation.pl): command-line label printing
+### Copyright (C) 2000  Karl Fogel <kfogel\@red-bean.com>
+### 
+### This program is free software; you can redistribute it and/or modify
+### it under the terms of the GNU General Public License as published by
+### the Free Software Foundation; either version 2 of the License, or
+### (at your option) any later version.
+### 
+### This program is distributed in the hope that it will be useful,
+### but WITHOUT ANY WARRANTY; without even the implied warranty of
+### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+### GNU General Public License for more details.
+### 
+### You should have received a copy of the GNU General Public License
+### along with this program; if not, write to the Free Software
+### Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+###
+### Run with "--help" flag to see options.
 ### 
 ### By "label", I mean address labels, business cards, or any other
 ### rectangles arranged regularly on a printer-ready sheet.
@@ -553,6 +570,26 @@ How To Report A Bug:
 Check http://www.red-bean.com/labelnation to make sure you have the
 latest version (perhaps your bug has been fixed).  Else, email
 <bug-labelnation\@red-bean.com>.
+
+Copyright:
+==========
+
+    Label Nation (labelnation.pl): command-line label printing
+    Copyright (C) 2000  Karl Fogel <kfogel\@red-bean.com>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 END
 }

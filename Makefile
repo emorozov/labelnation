@@ -4,7 +4,7 @@ all: www
 dist:
 	./labelnation.pl --version | cut -d " " -f 3 - | cut -c 1,2,3 > vn.tmp
 	tar zcvf labelnation-`cat vn.tmp`.tar.gz \
-                 labelnation.pl README examples/ \
+                 labelnation.pl README COPYING examples/ \
                  --exclude examples/CVS          \
                  --exclude examples/.cvsignore
 
@@ -18,8 +18,6 @@ www: dist
   sed -e "s/Latest version: [0-9]*.[^<]/Latest version: $${VN}/g" \
       index.html | tee index.html.tmp)
 	mv index.html.tmp index.html
-
-	cvs ci -m "made www" index.html
 
 	echo "    (This is the result of running 'labelnation.pl --help')" \
              > help.txt
