@@ -206,28 +206,28 @@ sub parse_param_file ()
     }
 
     if ($key eq "leftmargin") {
-      $Left_Margin = &normalize_string ($val);
+      $Left_Margin = &dedelimit_string ($val);
     }
     elsif ($key eq "bottommargin") {
-      $Bottom_Margin = &normalize_string ($val);
+      $Bottom_Margin = &dedelimit_string ($val);
     }
     elsif ($key eq "labelwidth") {
-      $Label_Width = &normalize_string ($val);
+      $Label_Width = &dedelimit_string ($val);
     }
     elsif ($key eq "labelheight") {
-      $Label_Height = &normalize_string ($val);
+      $Label_Height = &dedelimit_string ($val);
     }
     elsif ($key eq "horizspace") {
-      $Horiz_Space = &normalize_string ($val);
+      $Horiz_Space = &dedelimit_string ($val);
     }
     elsif ($key eq "vertspace") {
-      $Vert_Space = &normalize_string ($val);
+      $Vert_Space = &dedelimit_string ($val);
     }
     elsif ($key eq "horiznumlabels") {
-      $Horiz_Num_Labels = &normalize_string ($val);
+      $Horiz_Num_Labels = &dedelimit_string ($val);
     }
     elsif ($key eq "vertnumlabels") {
-      $Vert_Num_Labels = &normalize_string ($val);
+      $Vert_Num_Labels = &dedelimit_string ($val);
     }
     # Remaining ones should never override command-line
     elsif (($key eq "fontname") && (! $Font_Name)) {
