@@ -166,7 +166,9 @@ sub set_parameters_for_type ()
     $Font_Name             = "Times-Roman";
     $Font_Size             = 12;
   }
-  elsif (($ntype eq "avery5160") or ($ntype eq "macoll5805"))
+  elsif (($ntype eq "avery5160")
+         or ($ntype eq "avery6245")
+         or ($ntype eq "macoll5805"))
   {
     # Large address labels, 30 per page
     $Left_Margin           = 11.25;
@@ -391,9 +393,9 @@ sub version ()
 sub types ()
 {
   print "Predefined label types:\n";
-  print "   Avery-5160 / Maco-LL5805  (30 address labels per page)\n";
-  print "   Avery-5167 / Maco-LL8100  (80 return address labels per page)\n";
-  print "   Avery-5371 / Maco-LL8550  (10 business cards per page)\n";
+  print "   Avery-5160 / Avery-6245 / Maco-LL5805  (30 labels per page)\n";
+  print "   Avery-5167 / Maco-LL8100               (80 labels per page)\n";
+  print "   Avery-5371 / Maco-LL8550               (10 bcards per page)\n";
 }
 
 
@@ -459,8 +461,8 @@ To see a list of all known label types, run
 
    prompt\$ labelnation.pl --list-types
    Predefined label types:
-      Avery-5160 / Maco-LL5805  (30 address labels per page)
-      Avery-5167 / Maco-LL8100  (80 return address labels per page)
+      Avery-5160 / Avery-6245 / Maco-LL5805  (30 labels per page)
+      Avery-5167 / Maco-LL8100               (80 labels per page)
       [etc...]
 
 Note that when you're specifying a label type, you can omit the
