@@ -26,6 +26,8 @@ www: dist
 	echo "" >> help.txt
 	./labelnation.pl --help >> help.txt
 
+	cvs2cl.pl -r
+
 test:
 	echo "Generating PostScript in examples/ directory..."
 	./labelnation.pl -d -------------        \
