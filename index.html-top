@@ -38,10 +38,10 @@ simply the names I've seen.
 
 <p>
 
-LabelNation supports standard accented characters (<b>&aacute;</b>, 
+LabelNation supports standard accented characters (<b>&aacute;</b>,
 <b>&agrave;</b>, <b>&oacute;</b>, and so forth, from the ISO 8859-1
-standard), and has built-in parameters for the following standard
-label types:
+standard), and has built-in knowledge of the following standard label
+types:
 
 <p>
 
