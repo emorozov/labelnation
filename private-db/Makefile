@@ -8,11 +8,15 @@ reminder:
 	echo "Rules are 'self', 'office-return', and 'office-out'."
 
 self:
-	${PROG} -p office-80.param -t maco-8100 \
+	${PROG} -p office-80.param -t maco-ll8100 \
                 -l self.txt -o self.ps
 
+collins-sussman:
+	${PROG} -p office-80.param -t maco-ll8100 \
+                -l collins-sussman.txt -o collins-sussman.ps
+
 office-return:
-	${PROG} -p office-80.param -t maco-8100 \
+	${PROG} -p office-80.param -t maco-ll8100 \
                 -l chi-collab.txt -o chi-collab.ps
 
 office-out:
