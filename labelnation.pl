@@ -503,113 +503,129 @@ sub make_clipping_func ()
 }
 
 
+sub set_up_iso8859
+{
+  local (*O) = @_;
+
+  # I'd *much* rather do this trick:
+  #
+  #   print RECEIVER <<'END';
+  #   ...
+  #   END
+  #
+  # Unfortunately, that wreaks havoc with FSF Emacs 21's indentation
+  # and colorization code.
+
+  print O "/deffont {\n";
+  print O "  findfont exch scalefont def\n";
+  print O "} bind def\n";
+  print O "\n";
+  print O "/reencode_font {\n";
+  print O "  findfont reencode 2 copy definefont pop def\n";
+  print O "} bind def\n";
+  print O "\n";
+  print O "\% reencode the font\n";
+  print O "\% <encoding-vector> <fontdict> -> <newfontdict>\n";
+  print O "/reencode { \%def\n";
+  print O "  dup length 5 add dict begin\n";
+  print O "    { \%forall\n";
+  print O "      1 index /FID ne\n";
+  print O "      { def }{ pop pop } ifelse\n";
+  print O "    } forall\n";
+  print O "    /Encoding exch def\n";
+  print O "\n";
+  print O "    \% Use the font's bounding box to determine the ascent, descent,\n";
+  print O "    \% and overall height; don't forget that these values have to be\n";
+  print O "    \% transformed using the font's matrix.\n";
+  print O "    \% We use `load' because sometimes BBox is executable, sometimes not.\n";
+  print O "    \% Since we need 4 numbers an not an array avoid BBox from being executed\n";
+  print O "    /FontBBox load aload pop\n";
+  print O "    FontMatrix transform /Ascent exch def pop\n";
+  print O "    FontMatrix transform /Descent exch def pop\n";
+  print O "    /FontHeight Ascent Descent sub def\n";
+  print O "\n";
+  print O "    \% Define these in case they're not in the FontInfo (also, here\n";
+  print O "    \% they're easier to get to.\n";
+  print O "    /UnderlinePosition 1 def\n";
+  print O "    /UnderlineThickness 1 def\n";
+  print O "\n";
+  print O "    \% Get the underline position and thickness if they're defined.\n";
+  print O "    currentdict /FontInfo known {\n";
+  print O "      FontInfo\n";
+  print O "\n";
+  print O "      dup /UnderlinePosition known {\n";
+  print O "        dup /UnderlinePosition get\n";
+  print O "        0 exch FontMatrix transform exch pop\n";
+  print O "        /UnderlinePosition exch def\n";
+  print O "      } if\n";
+  print O "\n";
+  print O "      dup /UnderlineThickness known {\n";
+  print O "        /UnderlineThickness get\n";
+  print O "        0 exch FontMatrix transform exch pop\n";
+  print O "        /UnderlineThickness exch def\n";
+  print O "      } if\n";
+  print O "\n";
+  print O "    } if\n";
+  print O "    currentdict\n";
+  print O "  end\n";
+  print O "} bind def\n";
+  print O "\n";
+  print O "/ISO-8859-1Encoding [\n";
+  print O "/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n";
+  print O "/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n";
+  print O "/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n";
+  print O "/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n";
+  print O "/space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright\n";
+  print O "/parenleft /parenright /asterisk /plus /comma /minus /period /slash\n";
+  print O "/zero /one /two /three /four /five /six /seven\n";
+  print O "/eight /nine /colon /semicolon /less /equal /greater /question\n";
+  print O "/at /A /B /C /D /E /F /G\n";
+  print O "/H /I /J /K /L /M /N /O\n";
+  print O "/P /Q /R /S /T /U /V /W\n";
+  print O "/X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore\n";
+  print O "/quoteleft /a /b /c /d /e /f /g\n";
+  print O "/h /i /j /k /l /m /n /o\n";
+  print O "/p /q /r /s /t /u /v /w\n";
+  print O "/x /y /z /braceleft /bar /braceright /asciitilde /.notdef\n";
+  print O "/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n";
+  print O "/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n";
+  print O "/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n";
+  print O "/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef\n";
+  print O "/space /exclamdown /cent /sterling /currency /yen /brokenbar /section\n";
+  print O "/dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen /registered /macron\n";
+  print O "/degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph /bullet\n";
+  print O "/cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown\n";
+  print O "/Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla\n";
+  print O "/Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis\n";
+  print O "/Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply\n";
+  print O "/Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls\n";
+  print O "/agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla\n";
+  print O "/egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis\n";
+  print O "/eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide\n";
+  print O "/oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis\n";
+  print O "] def\n";
+}
+
+
 sub print_labels ()
 {
   open (IN, "<$Infile") or die ("trouble opening $Infile for reading ($!)");
   open (OUT, ">$Outfile") or die ("trouble opening $Outfile for writing ($!)");
 
   # Start off with standard Postscript header
-  print OUT <<END;
-%!PS-Adobe-3.0
+  print OUT "%!PS-Adobe-3.0\n";
+  print OUT "\n";
+    
+  # Re-encode the requested font, so we can handle ISO-8859 chars.
+  set_up_iso8859 (*OUT);
+  print OUT "/ISO${Font_Name} ISO-8859-1Encoding ";  # continued line
+  print OUT "/${Font_Name} reencode_font\n";
 
-/deffont {
-  findfont exch scalefont def
-} bind def
-
-/reencode_font {
-  findfont reencode 2 copy definefont pop def
-} bind def
-
-% reencode the font
-% <encoding-vector> <fontdict> -> <newfontdict>
-/reencode { %def
-  dup length 5 add dict begin
-    { %forall
-      1 index /FID ne
-      { def }{ pop pop } ifelse
-    } forall
-    /Encoding exch def
-
-    % Use the font's bounding box to determine the ascent, descent,
-    % and overall height; don't forget that these values have to be
-    % transformed using the font's matrix.
-    % We use `load' because sometimes BBox is executable, sometimes not.
-    % Since we need 4 numbers an not an array avoid BBox from being executed
-    /FontBBox load aload pop
-    FontMatrix transform /Ascent exch def pop
-    FontMatrix transform /Descent exch def pop
-    /FontHeight Ascent Descent sub def
-
-    % Define these in case they're not in the FontInfo (also, here
-    % they're easier to get to.
-    /UnderlinePosition 1 def
-    /UnderlineThickness 1 def
-
-    % Get the underline position and thickness if they're defined.
-    currentdict /FontInfo known {
-      FontInfo
-
-      dup /UnderlinePosition known {
-        dup /UnderlinePosition get
-        0 exch FontMatrix transform exch pop
-        /UnderlinePosition exch def
-      } if
-
-      dup /UnderlineThickness known {
-        /UnderlineThickness get
-        0 exch FontMatrix transform exch pop
-        /UnderlineThickness exch def
-      } if
-
-    } if
-    currentdict
-  end
-} bind def
-
-/ISO-8859-1Encoding [
-/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
-/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
-/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
-/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
-/space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright
-/parenleft /parenright /asterisk /plus /comma /minus /period /slash
-/zero /one /two /three /four /five /six /seven
-/eight /nine /colon /semicolon /less /equal /greater /question
-/at /A /B /C /D /E /F /G
-/H /I /J /K /L /M /N /O
-/P /Q /R /S /T /U /V /W
-/X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore
-/quoteleft /a /b /c /d /e /f /g
-/h /i /j /k /l /m /n /o
-/p /q /r /s /t /u /v /w
-/x /y /z /braceleft /bar /braceright /asciitilde /.notdef
-/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
-/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
-/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
-/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
-/space /exclamdown /cent /sterling /currency /yen /brokenbar /section
-/dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen /registered /macron
-/degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph /bullet
-/cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown
-/Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla
-/Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis
-/Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply
-/Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls
-/agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla
-/egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis
-/eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide
-/oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis
-] def
-
-END
-
-  print OUT "/ISO${Font_Name} ISO-8859-1Encoding /${Font_Name} reencode_font\n";
   # Set up subroutines
   my $clipfunc = &make_clipping_func ();
   print OUT "/labelclip {\n${clipfunc}\n} def\n";
 
   print OUT "\n";
-  # print OUT "iso1dict begin\n";
   print OUT "\% end prologue\n";
   print OUT "\n";
   print OUT "\% set font type and size\n";
