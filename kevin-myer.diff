@@ -203,7 +203,7 @@ Lancaster-Lebanon Intermediate Unit 13
         print "Unknown parameter line \"$_\"\n";
       }
 ***************
-*** 795,810 ****
+*** 794,809 ****
     print OUT "/labelclip {\n${clipper}\n} def\n";
   
     print OUT "\n";
@@ -220,7 +220,7 @@ Lancaster-Lebanon Intermediate Unit 13
     for (my $x = 0; $x < $Horiz_Num_Labels; $x++)
     {
       my $this_x_step = ($x * ($Label_Width  + $Horiz_Space));
---- 812,834 ----
+--- 811,833 ----
     print OUT "/labelclip {\n${clipper}\n} def\n";
   
     print OUT "\n";
@@ -245,8 +245,8 @@ Lancaster-Lebanon Intermediate Unit 13
     {
       my $this_x_step = ($x * ($Label_Width  + $Horiz_Space));
 ***************
-*** 813,818 ****
---- 837,843 ----
+*** 812,817 ****
+--- 836,842 ----
       {
         my $this_y_step = ($y * ($Label_Height + $Vert_Space));
         my $this_code = $Label_Codes[$code_idx];
@@ -255,7 +255,7 @@ Lancaster-Lebanon Intermediate Unit 13
         print OUT "gsave\n";
         print OUT "$this_x_step $this_y_step\n";
 ***************
-*** 823,833 ****
+*** 822,832 ****
         print OUT "\n";
   
         $code_idx = ($code_idx + 1) % (scalar (@Label_Codes));
@@ -267,7 +267,7 @@ Lancaster-Lebanon Intermediate Unit 13
     close (OUT);
   }
   
---- 848,859 ----
+--- 847,858 ----
         print OUT "\n";
   
         $code_idx = ($code_idx + 1) % (scalar (@Label_Codes));
