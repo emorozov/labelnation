@@ -618,8 +618,7 @@ sub print_labels ()
     
   # Re-encode the requested font, so we can handle ISO-8859 chars.
   set_up_iso8859 (*OUT);
-  print OUT "/ISO${Font_Name} ISO-8859-1Encoding ";  # continued line
-  print OUT "/${Font_Name} reencode_font\n";
+  print OUT "/f${Font_Name} ISO-8859-1Encoding /${Font_Name} reencode_font\n";
 
   # Set up subroutines
   my $clipfunc = &make_clipping_func ();
@@ -629,7 +628,7 @@ sub print_labels ()
   print OUT "\% end prologue\n";
   print OUT "\n";
   print OUT "\% set font type and size\n";
-  print OUT "ISO${Font_Name} ${Font_Size} scalefont setfont\n";
+  print OUT "f${Font_Name} ${Font_Size} scalefont setfont\n";
 
   # Set up some loop vars.
   my @label_lines;            # Used only for $Line_Input;
@@ -659,7 +658,7 @@ sub print_labels ()
         my $fontsize = ${Font_Size} / (1 + (($num_lines-4)/10));
         
         $code_accum .= "newpath\n";
-        $code_accum .= "ISO${Font_Name} ${fontsize} scalefont setfont\n";
+        $code_accum .= "f${Font_Name} ${fontsize} scalefont setfont\n";
         for (my $line = 0; $line < $num_lines; $line++)
         {
           my $this_line = ($upmost_line_start - ($line * $distance_down));
