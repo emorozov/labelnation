@@ -2,7 +2,7 @@
 all: www
 
 dist:
-	./labelnation.pl --version | cut -d " " -f 3 - | cut -c 1,2,3 > vn.tmp
+	./labelnation.pl --version | cut -d " " -f 3 - | cut -f 1 > vn.tmp
 	tar zcvf labelnation-`cat vn.tmp`.tar.gz \
                  labelnation.pl README COPYING examples/ \
                  --exclude examples/CVS          \

@@ -611,7 +611,7 @@ sub print_labels ()
 # Print version number.
 sub version ()
 {
-  print "labelnation.pl version $Version.\n";
+  print "labelnation.pl version $Version\n";
 }
 
 
