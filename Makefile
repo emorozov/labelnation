@@ -16,14 +16,18 @@ dist:
                  --exclude examples/.cvsignore
 
 www: dist
+	./labelnation.pl --list-types | grep -v Predefined > types.tmp
+	cat index.html-top types.tmp index.html-bottom > index.html
+	rm types.tmp
+
 	(VN=`cat vn.tmp`; \
   sed -e "s/labelnation-[0-9]*.[0-9]*.tar.gz/labelnation-$${VN}.tar.gz/g" \
-      index.html | tee index.html.tmp)
+      index.html > index.html.tmp)
 	mv index.html.tmp index.html
 
 	(VN=`cat vn.tmp`; \
   sed -e "s/Latest version: [0-9]*.[0-9]*/Latest version: $${VN}/g" \
-      index.html | tee index.html.tmp)
+      index.html > index.html.tmp)
 	mv index.html.tmp index.html
 
 	echo "    (This is the result of running 'labelnation.pl --help')" \

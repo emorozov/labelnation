@@ -866,7 +866,9 @@ line, the more whitespace will be between it and the left edge of the
 label.  Three spaces is a typical indentation.  Also note that blank
 lines are significant -- they are printed like any other text.
 
-You can have anywhere from 1 to 5 lines on a label.
+You can have as many lines as you want on a label; fonts will be
+automatically scaled down if there are too many lines to fit using the
+default font size.
 
 
 How To Print A Variety Of Addresses:
@@ -996,6 +998,22 @@ right.
 You can still print multiple, different labels at
 once -- delimiters work just as well in code files as in linetext
 files.
+
+One user reported that he had to do some trickery to get encapsulated
+PostScript to work right:
+
+   From: Simon Wood <Simon.Wood\@pace.co.uk>
+   Subject: RE: Graphical Labels with labelnation.
+   To: "'kfogel\@red-bean.com'" <kfogel\@red-bean.com>
+   Date: Mon, 20 May 2002 08:54:57 +0100
+   
+   I managed to get some really simple graphics in last year (for a crop 
+   of plum chutney). I'll send you the files from home. The image was 
+   created in Dia and then exported to '.eps'.
+   
+   The trick was to remove the header from the '.ps', run labelnation to 
+   size and position the images and then manually re-insert the header into
+   the start of 'labelnation.ps'. 
 
 
 How To Report A Bug:

@@ -1,0 +1,76 @@
+</pre>
+
+<!-- above is an automatically generated list of label types. -->
+
+<p>
+
+Types not listed above are still supported -- you just have to tell
+LabelNation what sizes the labels are, and how many per page
+vertically and horizontally.  (And then please send in your
+parameters, so there will be built-in support for those labels in
+future releases.)
+
+<p>
+
+LabelNation requires Perl, and a user who's comfortable dealing with
+text- and option-based configuration, as opposed to a graphical user
+interface.
+
+<p>
+
+Still interested?  Then
+
+<ul>
+<li> <a href="labelnation-1.34.tar.gz">Download labelnation-1.34.tar.gz</a>
+<br>
+<li> <a href="help.txt">Read the complete documentation</a>
+<br>
+<li> <a href="cvs.html">Check it out via CVS</a>
+<br>
+<li> <a href="ChangeLog">View the ChangeLog</a>
+</ul>
+
+<p>
+
+If you have a bug to report, or would like to send in parameters for
+a new label type, please email 
+<a href="mailto:bug-labelnation@red-bean.com">
+bug-labelnation@red-bean.com</a>.
+
+<p>
+
+Another program that does something similar to Label Nation is the
+Perl <b>PostScript::MailLabel</b> module, available from 
+
+<p>
+
+<ul>
+<a href="http://www.perl.com/CPAN-local/modules/by-module/PostScript/">
+http://www.perl.com/CPAN-local/modules/by-module/PostScript/</a>
+</ul>
+
+<p>
+
+I've never used it, but it looks like it does basically the same
+thing.  I think it can handle bar-codes too.
+
+<p>
+
+<font size=tiny>Back to
+<a href="http://www.red-bean.com/~kfogel">Karl Fogel</a>'s
+home page.
+</font>
+
+<p>
+<hr>
+<p>
+
+<center>
+<a href="http://www.red-bean.com/">
+<img src="images/bean-brought.jpg" 
+     alt="brought to you by red-bean"
+     size="150x58"></img></a>
+</center>
+
+</body>
+</html>
