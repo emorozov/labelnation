@@ -153,6 +153,21 @@ sub set_parameters_for_type ()
     $params[8] = "Times-Roman";   # Font_Name
     $params[9] = 0;               # Font_Size
   }
+  elsif (($ntype eq "?avery6464?") or ($ntype eq "?maco????"))
+  {
+    # kff todo: got some labels from CollabNet HQ today, don't know
+    # the brand numbers yet.
+    $params[0] = 11;              # Left_Margin
+    $params[1] = 38;              # Bottom_Margin
+    $params[2] = 288.5;           # Label_Width
+    $params[3] = 238.2;           # Label_Height
+    $params[4] = 11.3;            # Horiz_Space
+    $params[5] = 0;               # Vert_Space
+    $params[6] = 2;               # Horiz_Num_Labels
+    $params[7] = 3;               # Vert_Num_Labels
+    $params[8] = "Times-Roman";   # Font_Name
+    $params[9] = 0;               # Font_Size
+  }
   elsif ($ntype eq "kffweekly") # My own private labels
   {
     # Weekly calendar, to fit on pages 252x486
