@@ -64,8 +64,8 @@ my @Label_Codes = ();
 my @Label_Lines = ();
 
 # The version number is automatically updated by CVS.
-my $Version = "\$Revision$";
-# $Version =~ s/\S+\s+(\S+)\s+\S+/$1/;
+my $Version = '$Revision$';
+$Version =~ s/\S+\s+(\S+)\s+\S+/$1/;
 
 my $Inner_Margin = 1;
 
