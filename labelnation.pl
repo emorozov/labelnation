@@ -159,6 +159,21 @@ sub set_parameters_for_type ()
     $params[8] = "Times-Roman";   # Font_Name
     $params[9] = 11;              # Font_Size
   }
+  elsif ($ntype eq "avery2651")
+  {
+    # 65 labels per A4 page
+    my $k = 72/25.4;              # Convert mm to points
+    $params[0] = $k * 4.7;        # Left_Margin
+    $params[1] = $k * 10.9;       # Bottom_Margin
+    $params[2] = $k * 38.1;       # Label_Width
+    $params[3] = $k * 21.2;       # Label_Height
+    $params[4] = $k * 2.5;        # Horiz_Space
+    $params[5] = $k * 0;          # Vert_Space
+    $params[6] = 5;               # Horiz_Num_Labels
+    $params[7] = 13;              # Vert_Num_Labels
+    $params[8] = "Times-Roman";   # Font_Name
+    $params[9] = 11;              # Font_Size
+  }
   elsif (($ntype eq "avery5167")
          or ($ntype eq "avery5267")
          or ($ntype eq "avery5667")
@@ -674,7 +689,8 @@ sub print_labels ()
     
   # Re-encode the requested font, so we can handle ISO-8859 chars.
   set_up_iso8859 (*OUT);
-  print OUT "/f${Font_Name} ISO-8859-1Encoding /${Font_Name} reencode_font\n";
+  print OUT "/ISO${Font_Name} ISO-8859-1Encoding "
+          . "/${Font_Name} reencode_font\n";
 
   # Set up subroutines
   my $clipfunc = &make_clipping_func ();
@@ -684,7 +700,7 @@ sub print_labels ()
   print OUT "\% end prologue\n";
   print OUT "\n";
   print OUT "\% set font type and size\n";
-  print OUT "f${Font_Name} ${Font_Size} scalefont setfont\n";
+  print OUT "ISO${Font_Name} ${Font_Size} scalefont setfont\n";
 
   # Set up some loop vars.
   my @label_lines;            # Used only for $Line_Input;
@@ -719,7 +735,7 @@ sub print_labels ()
         my $fontsize = ${Font_Size} / (1 + (($num_lines-4)/10));
         
         $code_accum .= "newpath\n";
-        $code_accum .= "f${Font_Name} ${fontsize} scalefont setfont\n";
+        $code_accum .= "ISO${Font_Name} ${fontsize} scalefont setfont\n";
         for (my $line = 0; $line < $num_lines; $line++)
         {
           my $this_line = ($upmost_line_start - ($line * $distance_down));
@@ -810,7 +826,7 @@ sub print_labels ()
   }
 
   unless (($x == 0) && ($y == 0)) {
-    print OUT "% begin epilog\nend % of iso1dict\nshowpage";
+    print OUT "\nshowpage";
   }
   
   close (OUT);
@@ -847,6 +863,8 @@ sub types ()
   print "   Avery-5371 / Maco-LL8550               (10 bcards per page)\n";
   print "\n";
   print "   Avery-7160                             (21 labels per A4 page)\n";
+  print "\n";
+  print "   Avery-2651                             (65 labels per A4 page)\n";
   print "\n";
   print "(Remember to always include the brand when specifying a label type\n"
       . " to LabelNation; for example, say \"avery-5979\" not \"5979\".)\n";
