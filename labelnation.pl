@@ -276,7 +276,7 @@ sub usage ()
   print "                                (recommended for testing only)\n";
   print "  --font-name NAME            Use PostScript font FONT\n";
   print "  --font-size SIZE            Scale font to SIZE\n";
-  print "  -o, --outfile FILE          Output to FILE (\"-\" means stdin)\n";
+  print "  -o, --outfile FILE          Output to FILE (\"-\" means stdout)\n";
 }
 
 
@@ -613,6 +613,7 @@ sub version ()
 sub types ()
 {
   print "Predefined label types:\n";
+  print "   Avery-5161 / Avery-5261                (20 labels per page)\n";
   print "   Avery-5160 / Avery-6245 / Maco-LL5805  (30 labels per page)\n";
   print "   Avery-5167 / Maco-LL8100               (80 labels per page)\n";
   print "   Avery-5371 / Maco-LL8550               (10 bcards per page)\n";
