@@ -538,9 +538,9 @@ where 2addrs.txt contains this
         Paris, France
    XXX
 
-(remember that all my example text is indented three spaces in this
-help message, so the content above is indented only three spaces in
-the file, while the XXX delimiters are not really indented at all).
+(remember that all my examples are indented three spaces in this help
+message, so the content above is indented only three spaces in the
+file, while the XXX delimiters are not really indented at all). 
 
 
 How To Report A Bug:
