@@ -1,0 +1,51 @@
+Use this command line, with calendar.param:
+
+labelnation.pl --show-bounding-box -p calendar.param       \
+                                   -d XXX                  \
+                                   -l calendar-sample}.txt \
+                                   -o ${name}.ps
+
+
+--------------------8-<-------cut-here---------8-<-----------------------
+                               Sun 25 Feb 2001
+
+
+
+XXX
+
+                               Sat 24 Feb 2001
+
+
+
+XXX
+
+                               Fri 23 Feb 2001
+
+
+
+XXX
+
+                               Thu 22 Feb 2001
+
+
+
+XXX
+
+                               Wed 21 Feb 2001
+
+
+
+XXX
+
+                               Tue 20 Feb 2001
+
+
+
+XXX
+
+                               Mon 19 Feb 2001
+
+
+
+XXX
+
