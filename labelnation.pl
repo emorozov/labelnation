@@ -95,8 +95,15 @@ sub set_parameters_for_type ()
   my $ntype = &normalize_string ($otype);
   my @params;
 
-  # Don't know Maco's number for Avery 5161/5261 yet...
-  if (($ntype eq "avery5161") or ($ntype eq "avery5261"))
+  ### kff todo: Okay, it's ridiculous to be maintaining these label
+  ### equivalences in two places.  Make a data structure to hold all
+  ### this, use it both here and in types().
+
+  # Don't know Maco's number for Avery 5x61 series yet...
+  if (($ntype eq "avery5161")
+      or ($ntype eq "avery5261")
+      or ($ntype eq "avery5661")
+      or ($ntype eq "avery5961"))
   {
     # Large and wide address labels, 20 per page
     $params[0] = 11.25;           # Left_Margin
@@ -111,7 +118,18 @@ sub set_parameters_for_type ()
     $params[9] = 12;              # Font_Size
   }
   elsif (($ntype eq "avery5160")
-         or ($ntype eq "avery6245")
+         or ($ntype eq "avery5260")
+         or ($ntype eq "avery5560")
+         or ($ntype eq "avery5660")
+         or ($ntype eq "avery5960")
+         or ($ntype eq "avery5970")
+         or ($ntype eq "avery5971")
+         or ($ntype eq "avery5972")
+         or ($ntype eq "avery5979")
+         or ($ntype eq "avery5980")
+         or ($ntype eq "avery6241")
+         or ($ntype eq "avery6460")
+         or ($ntype eq "avery6245") # not listed on Avery's equivalence sheet
          or ($ntype eq "macoll5805"))
   {
     # Large address labels, 30 per page
@@ -141,7 +159,11 @@ sub set_parameters_for_type ()
     $params[8] = "Times-Roman";   # Font_Name
     $params[9] = 11;              # Font_Size
   }
-  elsif (($ntype eq "avery5167") or ($ntype eq "macoll8100"))
+  elsif (($ntype eq "avery5167")
+         or ($ntype eq "avery5267")
+         or ($ntype eq "avery5667")
+         or ($ntype eq "avery6467")
+         or ($ntype eq "macoll8100"))
   {
     # Small address labels, 80 per page
     $params[0] = 14;              # Left_Margin
@@ -169,7 +191,9 @@ sub set_parameters_for_type ()
     $params[8] = "Times-Roman";   # Font_Name
     $params[9] = 0;               # Font_Size
   }
-  elsif ($ntype eq "avery5263")
+  elsif (($ntype eq "avery5263")
+         or ($ntype eq "avery5663")
+         or ($ntype eq "avery5963"))
   {
     # Big mailing labels, 10 per page.  Usually the TO address goes
     # on these.
@@ -803,13 +827,29 @@ sub version ()
 # Print all predefined label types
 sub types ()
 {
+  ### kff todo: Okay, it's ridiculous to be maintaining these label
+  ### equivalences in two places.  Make a data structure to hold all
+  ### this, use it both here and in set_parameters_for_type().
   print "Predefined label types:\n";
-  print "   Avery-5263                             (10 labels per page)\n";
-  print "   Avery-5161 / Avery-5261                (20 labels per page)\n";
-  print "   Avery-5160 / Avery-6245 / Maco-LL5805  (30 labels per page)\n";
-  print "   Avery-5167 / Maco-LL8100               (80 labels per page)\n";
+  print "\n";
+  print "   Avery-5263, 5663, 5963                 (10 labels per page)\n";
+  print "\n";
+  print "   Avery-5161, 5261, 5661, 5961           (20 labels per page)\n";
+  print "\n";
+  print "   Maco-LL5805                            (30 labels per page)\n";
+  print "   Avery-5160, 5260, 5660, 5960, 5970,\n";
+  print "         5971, 5972, 5979, 5980, 6241,\n";
+  print "         6460, 6245\n";
+  print "\n";
+  print "   Maco-LL8100                            (80 labels per page)\n";
+  print "   Avery-5167, 5667, 6467\n";
+  print "\n";
   print "   Avery-5371 / Maco-LL8550               (10 bcards per page)\n";
+  print "\n";
   print "   Avery-7160                             (21 labels per A4 page)\n";
+  print "\n";
+  print "(Remember to always include the brand when specifying a label type\n"
+      . " to LabelNation; for example, say \"avery-5979\" not \"5979\".)\n";
 }
 
 

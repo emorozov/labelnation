@@ -16,7 +16,8 @@ dist:
                  --exclude examples/.cvsignore
 
 www: dist
-	./labelnation.pl --list-types | grep -v Predefined > types.tmp
+	./labelnation.pl --list-types \
+        | grep -v Predefined | grep -v Remember | grep -v example > types.tmp
 	cat index.html-top types.tmp index.html-bottom > index.html
 	rm types.tmp
 
