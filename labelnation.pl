@@ -498,15 +498,9 @@ sub print_labels ()
       {
         my $num_lines = scalar (@label_lines);
    
-        # For now, we just handle 1 thru 5 lines the same, and punt the rest
-        if ($num_lines > 5)
-        {
-          die "Oops, I cannot handle more than 5 lines of label yet.  Sorry!";
-        }
-
-        # Else, proceed
-
         my $text_margin = $Inner_Margin + 2;
+        # kff todo: need to be more sophisticated about divining the
+        # font sizes and acting accordingly, here.
         my $upmost_line_start = (($Label_Height / 5) * $num_lines);
         my $distance_down = ($Label_Height / 6);
         
