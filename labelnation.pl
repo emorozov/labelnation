@@ -29,9 +29,10 @@ use strict;
 ################ Globals ###################
 
 my $Type              = "";      # A predefined label type
-my $Line_File         = "";      # Text lines for plain label(s)
-my $Code_File         = "";      # PostScript code to draw label(s)
-my $Param_File        = "";      # Holds new label dimensions
+my $Infile            = "";      # Holds PostScript code or text lines
+my $Line_Input        = 0;       # One kind of input $Infile can hold.
+my $Code_Input        = 0;       # Another kind of input $Infile can hold.
+my $Param_File        = "";      # Holds label dimensions
 my $Delimiter         = "";      # Separates labels in multi-label files
 my $Show_Bounding_Box = 0;       # Set iff --show-bounding-box option
 
@@ -47,22 +48,6 @@ my $Font_Name         = "";      # Defaults to Times-Roman
 my $Font_Size         = "";      # Defaults to 12
 my $Outfile           = "";      # Defaults to labelnation.ps
 
-# User-specified PostScript code, one string of code for each label.
-# Each element of the array is a string of PostScript code, and each
-# will be drawn once to a label, then it will cycle again from the
-# beginning of the array.  If the sheet holds 30 labels and there are
-# 4 different labels defined in this array, then each label will be
-# repeated 7 times, with 2 extra labels on the end.  Thus, if all the
-# labels on the sheet are to have the same content, then only the
-# first element in this array would be set.
-my @Label_Codes = ();
-
-# User-specified label text, an array of lines for each label.
-# Each element is a reference to an array of text lines -- the lines
-# that go on that label.  Behaves otherwise the same as @Label_Codes,
-# see above.
-my @Label_Lines = ();
-
 # The version number is automatically updated by CVS.
 my $Version = '$Revision$';
 $Version =~ s/\S+\s+(\S+)\s+\S+/$1/;
@@ -76,58 +61,12 @@ my $Inner_Margin = 1;
 ### Code.
 
 &parse_options ();
-&maybe_make_label_codes ();
+# &maybe_make_label_codes ();
 &print_labels ();
 
 
 
 ### Subroutines.
-
-sub maybe_make_label_codes ()
-{
-  if ((scalar (@Label_Codes)) > 0) {
-    # We have at least one label-drawing function
-    return;
-  }
-  
-  if (! (scalar (@Label_Lines))) {
-    # Default to a label showing the empty string
-    $Label_Lines[0][0] = "";
-  }
-
-  # Else we need to generate PostScript code
-  for (my $i = 0; $i < scalar (@Label_Lines); $i++)
-  {
-    my $reffy = $Label_Lines[$i];
-    my @these_lines = @$reffy;
-    my $num_lines = scalar (@these_lines);
-  
-    # For now, we just handle 1 thru 4 lines the same, and punt the rest
-    if ($num_lines > 5) {
-      die "Oops, I can't handle more than 5 lines of label yet.  Sorry!";
-    }
-    else
-    {
-      my $text_margin = $Inner_Margin + 2;
-      my $upmost_line_start = (($Label_Height / 5) * $num_lines);
-      my $distance_down = ($Label_Height / 6);
-      my $this_code = "";
-      
-      $this_code .= "newpath\n";
-      for (my $line = 0; $line < $num_lines; $line++)
-      {
-        my $this_line = ($upmost_line_start - ($line * $distance_down));
-        $this_code .= "$text_margin $this_line\n";
-        $this_code .= "moveto\n";
-        $this_code .= "(" . $these_lines[$line] . ")\n";
-        $this_code .= "show\n";
-      }
-      $this_code .= "stroke\n";
-      $Label_Codes[$i] = $this_code;
-    }
-  }
-}
-
 
 sub dedelimit_string ()
 {
@@ -309,50 +248,6 @@ sub parse_param_file ()
 }
 
 
-sub parse_code_file ()
-{
-  my $file = shift;
-  my $i = 0;
-
-  open (F, "<$file");
-  while (<F>) {
-    chomp;
-    if ($_ eq $Delimiter) {
-      $i++;
-    } else {
-      $Label_Codes[$i] .= "$_\n";
-    }
-  }
-  close (F);
-}
-
-
-sub parse_line_file ()
-{
-  my $file = shift;
-  my $accum = [];
-  my $i = 0;
-  my $j = 0;
-
-  open (F, "<$file");
-  while (<F>) {
-    chomp;
-    if ($_ eq $Delimiter) {
-      $Label_Lines[$i] = $accum;
-      $accum = [];
-      $j = 0;
-      $i++;
-    }
-    else {
-      $$accum[$j++] = $_;
-    }
-  }
-  close (F);
-
-  $Label_Lines[$i] = $accum if ($j > 0);
-}
-
-
 sub usage ()
 {
   &version ();
@@ -373,8 +268,9 @@ sub usage ()
   print "  --list-types                Show all predefined label types\n";
   print "  -t, --type TYPE             Generate labels of type TYPE\n";
   print "  -p, --parameter-file FILE   Read label parameters from FILE\n";
-  print "  -c, --code-file FILE        Get PostScript code from FILE\n";
-  print "  -l, --label-line-file FILE  Get label text lines from FILE\n";
+  print "  -i, --infile                Take input from FILE\n";
+  print "  -l, --line-input            Infile contains label text lines\n";
+  print "  -c, --code-input            Infile contains PostScript code\n";
   print "  -d, --delimiter DELIM       Labels separated by DELIM\n";
   print "  --show-bounding-box         Print rectangle around each label\n";
   print "                                (recommended for testing only)\n";
@@ -426,14 +322,16 @@ sub parse_options ()
       $Type = &grab_next_argument ($arg);
     }
     elsif ($arg =~ /^-p$|^--parameter-file$/) {
-      # kff todo: what if both param file and type given?
       $Param_File = &grab_next_argument ($arg);
     }
-    elsif ($arg =~ /^-c$|^--code-file$/) {
-      $Code_File = &grab_next_argument ($arg);
+    elsif ($arg =~ /^-i$|^--infile$/) {
+      $Infile = &grab_next_argument ($arg);
     }
-    elsif ($arg =~ /^-l$|^--label-line-file$/) {
-      $Line_File = &grab_next_argument ($arg);
+    elsif ($arg =~ /^-l$|^--line-input$/) {
+      $Line_Input = 1;
+    }
+    elsif ($arg =~ /^-c$|^--code-input$/) {
+      $Code_Input = 1;
     }
     elsif ($arg =~ /^-d$|^--delimiter$/) {
       $Delimiter = &grab_next_argument ($arg);
@@ -473,12 +371,15 @@ sub parse_options ()
   if ($Param_File) {
     &parse_param_file ($Param_File);
   }
-  if ($Code_File) {
-    &parse_code_file ($Code_File);
+  if ($Code_Input && $Line_Input)
+  {
+    print "Cannot use both -l and -c\n";
+    $exit_with_admonishment = 1;
   }
-  if ($Line_File) {
-    # kff todo: what if have both line and code file??
-    &parse_line_file ($Line_File);
+  if ((! $Code_Input) && (! $Line_Input))
+  {
+    print "Must use one of -l or -c\n";
+    $exit_with_admonishment = 1;
   }
 
   if ($show_parameters) {
@@ -560,7 +461,8 @@ sub make_clipping_func ()
 
 sub print_labels ()
 {
-  open (OUT, ">$Outfile") or die ("Unable to open $Outfile ($!)");
+  open (IN, "<$Infile") or die ("trouble opening $Infile for reading ($!)");
+  open (OUT, ">$Outfile") or die ("trouble opening $Outfile for writing ($!)");
 
   # Start off with standard Postscript header
   print OUT "%!PS-Adobe-1.0\n";
@@ -571,42 +473,136 @@ sub print_labels ()
   print OUT "setfont\n";
 
   # Set up subroutines
-  my $clipper = &make_clipping_func ();
-  print OUT "/labelclip {\n${clipper}\n} def\n";
+  my $clipfunc = &make_clipping_func ();
+  print OUT "/labelclip {\n${clipfunc}\n} def\n";
 
   print OUT "\n";
 
-  print OUT "$Left_Margin\n";
-  print OUT "$Bottom_Margin\n";
-  print OUT "translate\n";
-  print OUT "\n";
+  # Set up some loop vars.
+  my @label_lines;            # Used only for $Line_Input;
+  my $line_idx = 0;           # Used only for $Line_Input;
+  my $code_accum;             # Used for both $Line_Input and $Code_Input;
+  my $x = 0;                  # Horiz position (by label)
+  my $y = 0;                  # Vertical position (by label)
+  my $page_number = 1;        # Do you really need a comment?
+  my $been_there = 0;         # For handling single-label-text input
 
-  # Index into array of PostScript drawing chunks
-  my $code_idx = 0;
-
-  # Outer loop is X coordinate, inner is Y
-  for (my $x = 0; $x < $Horiz_Num_Labels; $x++)
+  while (<IN>)
   {
-    my $this_x_step = ($x * ($Label_Width  + $Horiz_Space));
-    
-    for (my $y = 0; $y < $Vert_Num_Labels; $y++)
+    chomp;
+
+    if ($_ eq $Delimiter)
     {
-      my $this_y_step = ($y * ($Label_Height + $Vert_Space));
-      my $this_code = $Label_Codes[$code_idx];
+    print_what_have_so_far:
+      if ($Line_Input)
+      {
+        my $num_lines = scalar (@label_lines);
+   
+        # For now, we just handle 1 thru 5 lines the same, and punt the rest
+        if ($num_lines > 5)
+        {
+          die "Oops, I cannot handle more than 5 lines of label yet.  Sorry!";
+        }
+
+        # Else, proceed
+
+        my $text_margin = $Inner_Margin + 2;
+        my $upmost_line_start = (($Label_Height / 5) * $num_lines);
+        my $distance_down = ($Label_Height / 6);
+        
+        $code_accum .= "newpath\n";
+        for (my $line = 0; $line < $num_lines; $line++)
+        {
+          my $this_line = ($upmost_line_start - ($line * $distance_down));
+          $code_accum .= "$text_margin $this_line\n";
+          $code_accum .= "moveto\n";
+          $code_accum .= "(" . $label_lines[$line] . ")\n";
+          $code_accum .= "show\n";
+        }
+        $code_accum .= "stroke\n";
+      }
+
+      if (($x == 0) && ($y == 0))
+      {
+        print OUT "%%Page: labels $page_number\n\n";
+        print OUT "%%BeginPageSetup\n";
+        print OUT "$Left_Margin ";
+        print OUT "$Bottom_Margin ";
+        print OUT "translate\n";
+        print OUT "%%EndPageSetup\n";
+      }
       
+      # Print the label, clipped and translated appropriately.
+      my $this_x_step = ($x * ($Label_Width  + $Horiz_Space));
+      my $this_y_step = ($y * ($Label_Height + $Vert_Space));
       print OUT "gsave\n";
       print OUT "$this_x_step $this_y_step\n";
       print OUT "translate\n";
       print OUT "labelclip\n";
-      print OUT "$this_code\n";
+      print OUT "$code_accum";
       print OUT "grestore\n";
       print OUT "\n";
 
-      $code_idx = ($code_idx + 1) % (scalar (@Label_Codes));
+      # Increment, and maybe cross a column or page boundary.
+      $y++;
+      if ($y >= $Vert_Num_Labels)
+      {
+        $y = 0;
+        $x++;
+      }
+      if ($x >= $Horiz_Num_Labels) 
+      {
+        $x = 0;
+        $page_number++;
+        print OUT "showpage\n";
+      }
+
+      # Reset everyone.
+      if ($Delimiter) {
+        undef @label_lines;
+        $line_idx = 0;
+        $code_accum = "";
+      }
+    }
+    elsif ($Line_Input)
+    {
+      $label_lines[$line_idx++] = $_;
+    }
+    elsif ($Code_Input)
+    {
+      $code_accum .= "$_";
+      $code_accum .= "\n";
     }
   }
   
-  print OUT "showpage\n";
+  # You are not going to believe this... let me explain:
+  # 
+  # We want to handle input files containing only a single label, that
+  # is, input files with no delimiter, so every line that appears in
+  # the input is part of the one label text.  Then this label is
+  # mapped across the whole page, so we get a single page with the
+  # same label on it.  That way it's as convenient to produce return
+  # address labels as to generate outgoing mailing list sheets.
+  #
+  # Since there's no delimiter, we just jump straight to the printing
+  # part in the `while' loop above, and let it increment x and y as it
+  # normally does.  So the conditional below behaves like the guard of
+  # a `for' loop, except it's after the fact, and it shares its code
+  # body with the file-reading loop.  We use $been_there to stop after
+  # one page, otherwise it would go on forever.
+  #
+  if ((! $Delimiter)
+      && (! ($y >= $Vert_Num_Labels))
+      && (! ($x >= $Horiz_Num_Labels))
+      && (! ($been_there && ($x == 0) && ($y == 0))))
+  {
+    $been_there = 1;
+    goto print_what_have_so_far;
+  }
+
+  unless (($x == 0) && ($y == 0)) {
+    print OUT "showpage\n";
+  }
   
   close (OUT);
 }
@@ -657,16 +653,17 @@ labels look like before you print.
 How To Use It:
 ==============
 
-Let's start with an example.  If you wanted to print a sheet of return
-address labels using the Avery 5167 standard (80 small labels per
+Let's start with return address labels.  If you wanted to print a
+sheet of them using the Avery 5167 standard (80 small labels per
 page), you might invoke LabelNation like this:
 
-   prompt\$ labelnation.pl -t avery5167 -l myaddress.txt -o myaddress.ps
+   prompt\$ labelnation.pl -t avery5167 -i myaddress.txt -l -o myaddress.ps
 
 The "-t" stands for "type", followed by one of the standard predefined
-label types.  The "-l" stands for "label lines", followed by the name
-of a file containing the lines of text you want written on the label.
-The "-o" specifies the output file, which is what you'll print to get
+label types.  The "-i" means "input file", that is, where to take the
+label data from.  The "-l" stands for "lines input", meaning that the
+format of the incoming data is lines of text (as opposed to PostScript
+code).  The "-o" specifies the output file, which you'll print to get
 the labels.
 
 Here is a sample label lines file:
@@ -679,9 +676,42 @@ Here is a sample label lines file:
 Note that the indentation is significant -- the farther you indent a
 line, the more whitespace will be between it and the left edge of the
 label.  Three spaces is a typical indentation.  Also note that blank
-lines are ignored -- they will be printed just like regular text.
+lines are significant -- they are printed like any other text.
 
 You can have anywhere from 1 to 5 lines on a label.
+
+
+How To Print A Variety Of Addresses:
+====================================
+
+An input file can also define many different labels (this is useful if
+you're running a mailing list, for example).  In that case, instead of
+iterating one label over an entire sheet, LabelNation will print each
+label once, using as many sheets as necessary, leaving the unused
+remainder blank.
+
+To print many labels at once, you must pass a delimiter with the "-d"
+flag.  The delimiter separates each labels from the next.  For
+example, if you use a delimiter of "XXX", then you might invoke
+LabelNation like so
+
+   prompt\$ labelnation.pl -d "XXX" -t avery5167 -l addrs.txt -o addrs.ps
+
+where addrs.txt contains this
+
+        J. Random User
+        1423 W. Rootbeer Ave
+        Chicago, IL 60622
+        USA
+   XXX
+        William Lyon Phelps III
+        27 Rue d'Agonie
+        Paris, France
+   XXX
+
+(remember that all my examples are indented three spaces in this help
+message, so the content above is actually indented only three spaces
+in the file, while the XXX delimiters are not indented at all). 
 
 
 How To Discover The Predefined Label Types:
@@ -752,7 +782,7 @@ parameter file consists of lines of the form
    PARAMETER   VALUE
    ...
 
-you can see valid parameter names by running
+You can see valid parameter names by running
 
    prompt\$ labelnation.pl -t avery5167 --show-parameters
 
@@ -765,45 +795,19 @@ specifying the dimensions and arrangement of the labels on the sheet,
 How To Use Arbitrary Postscript Code To Draw Labels:
 ====================================================
 
-Do you know how to write PostScript?  Do you want to be a Power User
-of LabelNation?  Then this section is for you:
+If your input file contains PostScript code to draw the label(s),
+instead of lines of label text, then pass the "-c" (code) option
+instead of "-l".
 
-Instead of passing a file of label lines with the "-l" options, pass a
-file containing PostScript code using the "-c" option.
+The PostScript code will be run in a translated coordinate space, so
+0,0 is at the bottom left corner of each label in turn.  Also,
+clipping will be in effect, so you can't draw past the edges of a
+label.  Normally, you will have to experiment a lot to get things just
+right.
 
-The code will be run in a translated coordinate space, so 0,0 is at
-the bottom left corner of each label in turn.  Also, clipping will be
-in effect, so you can't draw past the edges of a label.  Obviously,
-you will have to experiment a lot using your favorite PostScript
-viewing software before you're ready to print.
-
-
-How To Print A Variety Of Addresses On A Sheet:
-===============================================
-
-In a label lines file (or a PostScript code file), you can define
-multiple label contents.  Each label's content must be separated from
-the previous label by a delimiter of your choice.  For example, if the
-delimiter is "XXX", then you might invoke LabelNation like
-so
-
-   prompt\$ labelnation.pl -d "XXX" -t avery5167 -l 2addrs.txt -o 2addrs.ps
-
-where 2addrs.txt contains this
-
-        J. Random User
-        1423 W. Rootbeer Ave
-        Chicago, IL 60622
-        USA
-   XXX
-        William Lyon Phelps III
-        27 Rue d'Agonie
-        Paris, France
-   XXX
-
-(remember that all my examples are indented three spaces in this help
-message, so the content above is indented only three spaces in the
-file, while the XXX delimiters are not really indented at all). 
+You can still print multiple, different labels at
+once -- delimiters work just as well in code files as in linetext
+files.
 
 
 How To Report A Bug:

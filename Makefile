@@ -27,12 +27,24 @@ www: dist
 	cvs2cl.pl -r -R labelnation
 
 test:
-	echo "Generating PostScript in examples/ directory..."
-	./labelnation.pl -d -------------        \
-                         -t avery-5160           \
-                         --show-bounding-box     \
-                         -l examples/lines-2.txt \
-                         -o examples/lines-2.ps
+	@echo "Generating PostScript in examples/ directory..."
+	@./labelnation.pl -t avery-5160           \
+                          --show-bounding-box     \
+                          -i examples/lines-1.txt \
+                          -l                      \
+                          -o examples/lines-1.ps
+	@./labelnation.pl -d -------------        \
+                          -t avery-5160           \
+                          --show-bounding-box     \
+                          -i examples/lines-2.txt \
+                          -l                      \
+                          -o examples/lines-2.ps
+	@./labelnation.pl -d -------------          \
+                          -t avery-5160             \
+                          --show-bounding-box       \
+                          -i examples/multipage.txt \
+                          -l                        \
+                          -o examples/multipage.ps
 
 
 clean: 
