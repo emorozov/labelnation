@@ -25,26 +25,27 @@ use it to make a calendar (that took some work, though).
 <p>
 
 Here's the basic concept: you tell LabelNation what text you want on
-each label (i.e., each rectangle).  You can specify plain lines of
-text, or even arbitrary PostScript code.  You also tell it what kind
-of labels it should print for.  LabelNation takes all this information
-and produces a PostScript file, which you then send to your printer.
+each label.  You can specify plain lines of text, or even arbitrary
+PostScript code.  You also tell it what kind of labels it should print
+for.  LabelNation takes all this information and produces a PostScript
+file, which you then send to your printer.
 
 <p>
 
-Of course, you'll need a PostScript printer (or a PostScript filter,
-such as GNU GhostScript), and a sheet of special peel-off label paper
-in the tray.  Such paper is widely available at office supply stores.
-Two companies that offer it are <a href="http://www.averydennison.com">
-Avery Dennison</a> and <a href="http://www.maco.com">Maco</a>.  This is
-not a recommendation nor an endorsement -- Avery and Maco are simply
+Of course, you'll need a PostScript printer -- or a PostScript filter,
+such as <a href="http://www.gnu.org/software/ghostscript/">GNU
+GhostScript</a> -- and a sheet of special peel-off label paper in the
+tray.  Such paper is widely available at office supply stores.  Two
+companies that offer it are <a href="http://www.averydennison.com">
+Avery Dennison</a> and <a href="http://www.maco.com">Maco</a>.  This
+is not a recommendation nor an endorsement; Avery and Maco are simply
 the names I've seen.
 
 <p>
 
-Label Nation requires Perl, a PostScript printer, and a user who's
-comfortable dealing with text- and option-based configuration (as
-opposed to a graphical user interface).
+Label Nation also requires Perl, and a user who's comfortable dealing
+with text- and option-based configuration (as opposed to a graphical
+user interface).
 
 <p>
 
@@ -66,6 +67,23 @@ If you have a bug to report, or would like to submit parameters for a
 new label type, please email 
 <a href="mailto:bug-labelnation@red-bean.com">
 bug-labelnation@red-bean.com</a>.
+
+<p>
+
+Another program that does something similar to Label Nation is the
+Perl <b>PostScript::MailLabel</b> module, available from 
+
+<p>
+
+<ul>
+<a href="http://www.perl.com/CPAN-local/modules/by-module/PostScript/">
+http://www.perl.com/CPAN-local/modules/by-module/PostScript/</a>
+</ul>
+
+<p>
+
+I've never used it, but it looks like it does basically the same
+thing.  I think it can handle bar-codes too.
 
 <p>
 

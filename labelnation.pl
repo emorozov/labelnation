@@ -152,7 +152,21 @@ sub set_parameters_for_type ()
   my $otype = shift;
   my $ntype = &normalize_string ($otype);
 
-  if (($ntype eq "avery5160") or ($ntype eq "macoll5805"))
+  if ($ntype eq "avery5261")  # don't know Maco's number for these yet
+  {
+    # Large and wide address labels, 20 per page
+    $Left_Margin           = 11.25;
+    $Bottom_Margin         = 16;
+    $Label_Width           = 270;
+    $Label_Height          = 72;
+    $Horiz_Space           = 20;
+    $Vert_Space            = 0;
+    $Horiz_Num_Labels      = 2;
+    $Vert_Num_Labels       = 10;
+    $Font_Name             = "Times-Roman";
+    $Font_Size             = 12;
+  }
+  elsif (($ntype eq "avery5160") or ($ntype eq "macoll5805"))
   {
     # Large address labels, 30 per page
     $Left_Margin           = 11.25;
@@ -248,35 +262,31 @@ sub parse_param_file ()
       $val = &dedelimit_string ($val);
     }
 
-    # Even though there isn't any other way to set some of these
-    # parameters, we still check that each one is unset before
-    # assigning it a value, so that if they are given command-line
-    # options or whatever, this code won't override those sources.
-
-    if (($key eq "leftmargin") && ($Left_Margin < 0)) {
+    if ($key eq "leftmargin") {
       $Left_Margin = &normalize_string ($val);
     }
-    elsif (($key eq "bottommargin") && ($Bottom_Margin < 0)) {
+    elsif ($key eq "bottommargin") {
       $Bottom_Margin = &normalize_string ($val);
     }
-    elsif (($key eq "labelwidth") && ($Label_Width < 0)) {
+    elsif ($key eq "labelwidth") {
       $Label_Width = &normalize_string ($val);
     }
-    elsif (($key eq "labelheight") && ($Label_Height < 0)) {
+    elsif ($key eq "labelheight") {
       $Label_Height = &normalize_string ($val);
     }
-    elsif (($key eq "horizspace") && ($Horiz_Space < 0)) {
+    elsif ($key eq "horizspace") {
       $Horiz_Space = &normalize_string ($val);
     }
-    elsif (($key eq "vertspace") && ($Vert_Space < 0)) {
+    elsif ($key eq "vertspace") {
       $Vert_Space = &normalize_string ($val);
     }
-    elsif (($key eq "horiznumlabels") && ($Horiz_Num_Labels < 0)) {
+    elsif ($key eq "horiznumlabels") {
       $Horiz_Num_Labels = &normalize_string ($val);
     }
-    elsif (($key eq "vertnumlabels") && ($Vert_Num_Labels < 0)) {
+    elsif ($key eq "vertnumlabels") {
       $Vert_Num_Labels = &normalize_string ($val);
     }
+    # Remaining ones should never override command-line
     elsif (($key eq "fontname") && (! $Font_Name)) {
       $Font_Name = $val;
     }
