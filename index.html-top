@@ -20,10 +20,13 @@ interpreter, and the name of the program has been simplied from
 <p>LabelNation is a program for making labels.  By "label", I mean
 address labels, business cards, or anything else involving
 regularly-arranged rectangles on a printer-ready sheet.  You can even
-use it to make a calendar (that took some work, though).</p>
+use it to make a calendar (that took some work, though).  LabelNation
+is open source software, licenced under the <a
+href="http://www.fsf.org/licenses/gpl.html">GNU General Public Licence
+(GPL)</a>.</p>
 
-<p>Here's the basic concept: you tell LabelNation what text you want
-on each label.  You can specify plain lines of text, or even arbitrary
+<p>Here's how it works: you tell LabelNation what text you want on
+each label.  You can specify plain lines of text, or even arbitrary
 PostScript code.  You also tell it what kind of labels it should print
 for.  LabelNation takes all this information and produces a PostScript
 file, which you then send to your PostScript printer (or through a
