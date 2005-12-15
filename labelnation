@@ -1,0 +1,1200 @@
+#!/usr/bin/env python
+# (Be in -*- python -*- mode.)
+
+## LabelNation: command-line label printing
+## 
+## For printing address labels, business cards, or any other kind
+## of regularly-arranged rectangles on a printer-ready sheet.
+## Run it with the "--help" flag to see usage and options.
+##
+## Copyright (C) 2000-2005 Karl Fogel <kfogel@red-bean.com>
+## 
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+## 
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+## 
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, write to the Free Software
+## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+### TODO: This was originally written in Perl.  I translated it to
+### Python, but the style is still very much that of the original
+### Perl, which wasn't even terribly good Perl at that.  Much
+### improvement remains to be made.
+
+import re
+import os
+import sys
+import string
+import getopt
+
+# Make sure this Python is recent enough.
+if sys.hexversion < 0x2000000:
+  sys.stderr.write("ERROR: Python 2.0 or higher required, "
+                   "see www.python.org.\n")
+  sys.exit(1)
+
+# Pretend we have true booleans on older python versions
+try:
+  True
+except:
+  True = 1
+  False = 0
+
+################ Globals ###################
+
+Type              = ""      # A predefined label type
+Infile            = ""      # Holds PostScript code or text lines
+Line_Input        = False   # One kind of input Infile can hold.
+Code_Input        = False   # Another kind of input Infile can hold.
+Param_File        = ""      # Holds label dimensions
+Delimiter         = ""      # Separates labels in multi-label files
+Show_Bounding_Box = False   # Set iff --show-bounding-box option
+
+Left_Margin       = -1.0    # First label from left starts here.
+Bottom_Margin     = -1.0    # First label from bottom starts here.
+Label_Width       = -1.0    # Does not include unused inter-label space.
+Label_Height      = -1.0    # Does not include unused inter-label space.
+Horiz_Space       = -1.0    # Unused inter-label horizontal space.
+Vert_Space        = -1.0    # Unused inter-label vertical space.
+Horiz_Num_Labels  = -1.0    # How many labels across?
+Vert_Num_Labels   = -1.0    # How many labels up and down?
+First_Label       = 1.0     # Start printing here.
+Font_Name         = ''      # Defaults to Times-Roman
+Font_Size         = ''      # Defaults to 12.0
+Outfile           = ''      # Defaults to labelnation.ps
+
+# The major version number is hardcoded and increments only rarely.
+Major_Version = "1"
+# The minor version number is automatically updated by Subversion.
+Minor_Version = "$Revision$"
+Minor_Version = re.match('\S+\s+(\S+)\s+\S+', Minor_Version).group(1)
+Version = Major_Version + "." + Minor_Version
+
+Inner_Margin = 1
+
+############## End Globals #################
+
+
+
+### Subroutines.
+
+def dedelimit_string(str):
+  ### TODO: str.translate() could do this
+  str = str.replace('\n', '')
+  str = str.replace('"', '')
+  str = str.replace("'", '')
+  str = str.replace('\t', '')
+  str = str.replace(' ', '')
+  return str
+
+
+def normalize_string(str):
+  str = dedelimit_string(str)
+  str = str.lower()
+  ### TODO: str.translate() could do this
+  str = str.replace('-', '')
+  str = str.replace('_', '')
+  str = str.replace('.', '')
+  return str
+
+
+def set_parameters_for_type(otype):
+  ntype = normalize_string(otype)
+  params = { }
+
+  ### TODO: Okay, it's ridiculous to be maintaining these label
+  ### equivalences in two places.  Make a data structure to hold all
+  ### this, use it both here and in types().
+
+  # Don't know Maco's number for Avery 5x61 series yet...
+  if (   ntype == "avery5161"
+      or ntype == "avery5261"
+      or ntype == "avery5661"
+      or ntype == "avery5961"):
+    # Large and wide address labels, 20 per page
+    params['Left_Margin']      = 11.25
+    params['Bottom_Margin']    = 16.0
+    params['Label_Width']      = 270.0
+    params['Label_Height']     = 72.0
+    params['Horiz_Space']      = 20.0
+    params['Vert_Space']       = 0.0
+    params['Horiz_Num_Labels'] = 2.0
+    params['Vert_Num_Labels']  = 10.0
+    params['Font_Name']        = "Times-Roman"
+    params['Font_Size']        = 12.0
+
+  elif (   ntype == "avery5162"
+        or ntype == "avery5262"
+        or ntype == "avery5662"
+        or ntype == "avery5962"
+        or ntype == "avery15162"
+        or ntype == "avery8162"
+        or ntype == "avery8252"
+        or ntype == "avery8462"
+        or ntype == "avery18162"
+        or ntype == "avery18662"):
+    # 14 per page
+    params['Left_Margin']      = 11.52
+    params['Bottom_Margin']    = 62.0
+    params['Label_Width']      = 300.0
+    params['Label_Height']     = 96.0
+    params['Horiz_Space']      = 0.0
+    params['Vert_Space']       = 0.0
+    params['Horiz_Num_Labels'] = 2.0
+    params['Vert_Num_Labels']  = 7.0
+    params['Font_Name']        = "Times-Roman"
+    params['Font_Size']        = 12.0
+
+  elif ntype == "avery5168":
+    # Big shipping labels, 4 per page
+    params['Left_Margin']      = 31.0
+    params['Bottom_Margin']    = 33.0
+    params['Label_Width']      = 254.0
+    params['Label_Height']     = 363.0
+    params['Horiz_Space']      = 37.0
+    params['Vert_Space']       = 0.0
+    params['Horiz_Num_Labels'] = 2.0
+    params['Vert_Num_Labels']  = 2.0
+    params['Font_Name']        = "Arial"
+    params['Font_Size']        = 33.0
+
+  elif ntype == "avery5264":
+    # Moderately big shipping labels, 6 per page
+    params['Left_Margin']      = 20.0
+    params['Bottom_Margin']    = 25.0
+    params['Label_Width']      = 270.0
+    params['Label_Height']     = 245.0
+    params['Horiz_Space']      = 37.0
+    params['Vert_Space']       = 0.0
+    params['Horiz_Num_Labels'] = 2.0
+    params['Vert_Num_Labels']  = 3.0
+    params['Font_Name']        = "Arial"
+    params['Font_Size']        = 24.0
+
+  elif (   ntype == "avery5160"
+        or ntype == "avery5260"
+        or ntype == "avery5560"
+        or ntype == "avery5660"
+        or ntype == "avery5960"
+        or ntype == "avery5970"
+        or ntype == "avery5971"
+        or ntype == "avery5972"
+        or ntype == "avery5979"
+        or ntype == "avery5980"
+        or ntype == "avery6241"
+        or ntype == "avery6460"
+        or ntype == "avery8660" # But offset differently from 5160 etc?
+        or ntype == "avery6245" # Not listed on Avery's equivalence sheet.
+        or ntype == "macoll5805"):
+    # Large address labels, 30 per page
+    params['Left_Margin']      = 11.25
+    params['Bottom_Margin']    = 16.0
+    params['Label_Width']      = 180.0
+    params['Label_Height']     = 72.0
+    params['Horiz_Space']      = 20.0
+    params['Vert_Space']       = 0.0
+    params['Horiz_Num_Labels'] = 3.0
+    params['Vert_Num_Labels']  = 10.0
+    params['Font_Name']        = "Times-Roman"
+    params['Font_Size']        = 12.0
+
+  elif ntype == "avery7162":
+    # Large and wide address labels, 16 per page
+    # Added by nathanh@manu.com.au 20031125
+    params['Left_Margin']      = 18.0
+    params['Bottom_Margin']    = 28.0
+    params['Label_Width']      = 281.0
+    params['Label_Height']     = 96.0
+    params['Horiz_Space']      = 20.0
+    params['Vert_Space']       = 0.0
+    params['Horiz_Num_Labels'] = 2.0
+    params['Vert_Num_Labels']  = 8.0
+    params['Font_Name']        = "Times-Roman"
+    params['Font_Size']        = 12.0
+
+  elif ntype == "avery7160":
+    # Large address labels, 21 per A4 page
+    k = 72.0/25.4             # Convert mm to points
+    params['Left_Margin']      = k * 10.25
+    params['Bottom_Margin']    = k * 19.0
+    params['Label_Width']      = k * 56
+    params['Label_Height']     = k * 33.5
+    params['Horiz_Space']      = k * 10.75
+    params['Vert_Space']       = k * 4.5
+    params['Horiz_Num_Labels'] = 3.0
+    params['Vert_Num_Labels']  = 7.0
+    params['Font_Name']        = "Times-Roman"
+    params['Font_Size']        = 11.0
+
+  elif ntype == "avery6571":
+    # 32 labels per page; more than that I don't know.  Ask
+    # William R Thomas <corvar@theonering.net>, who sent it in.
+    params['Left_Margin']      = 60.0
+    params['Bottom_Margin']    = 38.0
+    params['Label_Width']      = 216.0
+    params['Label_Height']     = 45.0
+    params['Horiz_Space']      = 58.0
+    params['Vert_Space']       = 0.0
+    params['Horiz_Num_Labels'] = 2.0
+    params['Vert_Num_Labels']  = 16.0
+    params['Font_Name']        = "Times-Roman"
+    params['Font_Size']        = 7.0
+
+  elif ntype == "avery2651":
+    # 65 labels per A4 page
+    k = 72.0/25.4             # Convert mm to points
+    params['Left_Margin']      = k * 4.7
+    params['Bottom_Margin']    = k * 10.9
+    params['Label_Width']      = k * 38.1
+    params['Label_Height']     = k * 21.2
+    params['Horiz_Space']      = k * 2.5
+    params['Vert_Space']       = k * 0.0
+    params['Horiz_Num_Labels'] = 5.0
+    params['Vert_Num_Labels']  = 13.0
+    params['Font_Name']        = "Times-Roman"
+    params['Font_Size']        = 11.0
+
+  elif (   ntype == "avery5167"
+        or ntype == "avery5267"
+        or ntype == "avery5667"
+        or ntype == "avery6467"
+        or ntype == "macoll8100"):
+    # Small address labels, 80 per page
+    params['Left_Margin']      = 14.0
+    params['Bottom_Margin']    = 17.0
+    params['Label_Width']      = 126.0
+    params['Label_Height']     = 36.0
+    params['Horiz_Space']      = 22.5
+    params['Vert_Space']       = 0.0
+    params['Horiz_Num_Labels'] = 4.0
+    params['Vert_Num_Labels']  = 20.0
+    params['Font_Name']        = "Times-Roman"
+    params['Font_Size']        = 7.0
+
+  elif ntype == "avery5371" or ntype == "macoll8550":
+    # Business cards
+    params['Left_Margin']      = 48.0
+    params['Bottom_Margin']    = 16.0
+    params['Label_Width']      = 253.5
+    params['Label_Height']     = 145.3
+    params['Horiz_Space']      = 0.0
+    params['Vert_Space']       = 0.0
+    params['Horiz_Num_Labels'] = 2.0
+    params['Vert_Num_Labels']  = 5.0
+    params['Font_Name']        = "Times-Roman"
+    params['Font_Size']        = 0.0
+
+  elif (   ntype == "avery5263"
+        or ntype == "avery5663"
+        or ntype == "avery5963"
+        or ntype == "avery8163"):
+    # Big mailing labels, 10 per page.  Usually the TO address goes
+    # on these.
+    params['Left_Margin']      = 48.0
+    params['Bottom_Margin']    = 31.0
+    params['Label_Width']      = 253.5
+    params['Label_Height']     = 145.3
+    params['Horiz_Space']      = 0.0
+    params['Vert_Space']       = 0.0
+    params['Horiz_Num_Labels'] = 2.0
+    params['Vert_Num_Labels']  = 5.0
+    params['Font_Name']        = "Times-Roman"
+    params['Font_Size']        = 20.0
+
+  elif ntype == "?avery6464?" or ntype == "?maco????":
+    # TODO: got some labels from CollabNet HQ today, don't know the
+    # brand numbers yet.
+    params['Left_Margin']      = 11.0
+    params['Bottom_Margin']    = 38.0
+    params['Label_Width']      = 288.5
+    params['Label_Height']     = 238.2
+    params['Horiz_Space']      = 11.3
+    params['Vert_Space']       = 0.0
+    params['Horiz_Num_Labels'] = 2.0
+    params['Vert_Num_Labels']  = 3.0
+    params['Font_Name']        = "Times-Roman"
+    params['Font_Size']        = 0.0
+
+  elif ntype == "avery7159":
+    # Large address labels, 24 per A4 page
+    # Avery-7159 3x8 A4 labels
+    # Tested against a Kyocera bulk-laser printer.
+    # Contributed by: Bruce Smith <Bruce.Smith {_AT_} nmmu.ac.za>
+    k = 72.0/25.4             # Convert mm to points
+    params['Left_Margin']      = k * 0.0
+    params['Bottom_Margin']    = k * 0.0
+    params['Label_Width']      = k * 57.25
+    params['Label_Height']     = k * 32.5
+    params['Horiz_Space']      = k * 11.75
+    params['Vert_Space']       = k * 4.5
+    params['Horiz_Num_Labels'] = 3.0
+    params['Vert_Num_Labels']  = 8.0
+    params['Font_Name']        = "Times-Roman"
+    params['Font_Size']        = 10.0
+
+  elif ntype == "kffweekly":
+    # My own private labels for a weekly calendar, to fit on pages 252x486.
+    # ### TODO: This is silly, get these out of the mainline code and
+    # ### into a private label parameter file.
+    params['Left_Margin']      = 47.0
+    params['Bottom_Margin']    = 11.0
+    params['Label_Width']      = 240.0
+    params['Label_Height']     = 60.0
+    params['Horiz_Space']      = 0.0
+    params['Vert_Space']       = 5.0
+    params['Horiz_Num_Labels'] = 1.0
+    params['Vert_Num_Labels']  = 7.0
+    params['Font_Name']        = "Times-Roman"
+    params['Font_Size']        = 12.0
+
+  elif ntype == "avery2160" or ntype == "maverickST340817":
+    # Mini sheets address labels 8 labels/sheet, single column 
+    # Provided by Gyepi Sam <gyepi@praxis-sw.com> 
+    params['Left_Margin']      = 58.5
+    params['Bottom_Margin']    = 90.0
+    params['Label_Width']      = 189.0
+    params['Label_Height']     = 72.0
+    params['Horiz_Space']      = 0.0
+    params['Vert_Space']       = 0.0
+    params['Horiz_Num_Labels'] = 1.0
+    params['Vert_Num_Labels']  = 9.0
+    params['Font_Name']        = "Times-Roman"
+    params['Font_Size']        = 12.0
+
+  else:
+    sys.stderr.write("ERROR: Unknown label type '%s'\n" % otype)
+    sys.exit(1)
+
+  # Set up standard params, but preserving manual overrides:
+  global Left_Margin
+  global Bottom_Margin
+  global Label_Width
+  global Label_Height
+  global Horiz_Space
+  global Vert_Space
+  global Horiz_Num_Labels
+  global Vert_Num_Labels
+  global Font_Name
+  global Font_Size
+  if (Left_Margin < 0.0):      Left_Margin = params['Left_Margin']
+  if (Bottom_Margin < 0.0):    Bottom_Margin = params['Bottom_Margin']
+  if (Label_Width < 0.0):      Label_Width = params['Label_Width']
+  if (Label_Height < 0.0):     Label_Height = params['Label_Height']
+  if (Horiz_Space < 0.0):      Horiz_Space = params['Horiz_Space']
+  if (Vert_Space < 0.0):       Vert_Space = params['Vert_Space']
+  if (Horiz_Num_Labels < 0.0): Horiz_Num_Labels = params['Horiz_Num_Labels']
+  if (Vert_Num_Labels < 0.0):  Vert_Num_Labels = params['Vert_Num_Labels']
+  if (Font_Name == ''):      Font_Name = params['Font_Name']
+  if (Font_Size == ''):      Font_Size = params['Font_Size']
+
+
+def show_parameters():
+  global Left_Margin
+  global Bottom_Margin
+  global Label_Width
+  global Label_Height
+  global Horiz_Space
+  global Vert_Space
+  global Horiz_Num_Labels
+  global Vert_Num_Labels
+  global Font_Name
+  global Font_Size
+  print "LeftMargin:      ", Left_Margin
+  print "BottomMargin:    ", Bottom_Margin
+  print "LabelWidth:      ", Label_Width
+  print "LabelHeight:     ", Label_Height
+  print "HorizSpace:      ", Horiz_Space
+  print "VertSpace:       ", Vert_Space
+  print "HorizNumLabels:  ", Horiz_Num_Labels
+  print "VertNumLabels:   ", Vert_Num_Labels
+  print "FontName:        ", Font_Name
+  print "FontSize:        ", Font_Size
+
+
+def parse_param_file(cfile):
+  ctl = cfile.open("r")
+  line = ctl.readline()
+  while (line):
+    ### TODO: Why is it apparently optional to escape the backslash here?
+    if re.match('\s*#', line):
+      continue
+    key, val = line.split()
+    key = normalize_string(key)
+    if val:
+      val = dedelimit_string(val)
+
+    if key == "leftmargin":
+      Left_Margin = dedelimit_string(val)
+    elif key == "bottommargin":
+      Bottom_Margin = dedelimit_string(val)
+    elif key == "labelwidth":
+      Label_Width = dedelimit_string(val)
+    elif key == "labelheight":
+      Label_Height = dedelimit_string(val)
+    elif key == "horizspace":
+      Horiz_Space = dedelimit_string(val)
+    elif key == "vertspace":
+      Vert_Space = dedelimit_string(val)
+    elif key == "horiznumlabels":
+      Horiz_Num_Labels = dedelimit_string(val)
+    elif key == "vertnumlabels":
+      Vert_Num_Labels = dedelimit_string(val)
+    # Remaining ones should never override command-line
+    elif key == "fontname" and not Font_Name:
+      Font_Name = val
+    elif key == "fontsize" and not Font_Size:
+      Font_Size = val
+    elif key == "outfile" and not Outfile:
+      Outfile = val
+    else:
+      print "Unknown parameter line '%s'" % line
+    line = ctl.readline()
+
+  ctl.close()
+
+
+# Print version number.
+def version():
+  print "LabelNation, version %s" % Version
+
+
+# Print all predefined label types
+def types():
+  ### TODO: Okay, it's ridiculous to be maintaining these label
+  ### equivalences in two places.  Make a data structure to hold all
+  ### this, use it both here and in set_parameters_for_type().
+  print '''Predefined label types:
+
+            Avery-5168                             (4 labels per page)
+            Avery-5264                             (6 labels per page)
+            Avery-5263, 5663, 5963, 8163           (10 labels per page)
+            Avery-5161, 5261, 5661, 5961           (20 labels per page)
+            Avery-5162, 5262, 5662, 5962,          (14 labels per page)
+                  8162, 8252, 8462,
+                  15162, 18162, 18662
+            Maco-LL5805                            (30 labels per page)
+            Avery-5160, 5260, 5660, 5960, 5970,
+                  5971, 5972, 5979, 5980, 6241,
+                  6460, 6245, 8660
+            Maco-LL8100                            (80 labels per page)
+            Avery-5167, 5667, 6467
+            Avery-5371 / Maco-LL8550               (10 bcards per page)
+            Avery-7162                             (16 labels per page)
+            Avery-6571                             (32 labels per page)
+            Avery-7160                             (21 labels per A4 page)
+            Avery-7159                             (24 labels per A4 page)
+            Avery-2651                             (65 labels per A4 page)
+            Avery-2160 / Maverick ST340817         (8 labels per 10" page)
+
+         (Remember to always include the brand when specifying a label type
+          to LabelNation; for example, say "avery-5979" not "5979".)'''
+
+
+# Print a general explanation of how this program works.
+def explain():
+  print '''LabelNation is a program for making labels.  By "label", I mean
+address labels, business cards, or anything else involving
+regularly-arranged rectangles on a printer-ready sheet.  You can even
+use it to make a calendar (that took some work, though).
+
+Here's the basic concept: you tell LabelNation what text you want on
+each label (i.e., each rectangle).  You can specify plain lines of
+text, or even arbitrary PostScript code.  You also tell it what kind
+of labels it should print for.  LabelNation takes all this information
+and produces a PostScript file, which you then send to your printer.
+
+Of course, you'll need a PostScript printer (or a PostScript filter,
+such as GNU GhostScript), and a sheet of special peel-off label paper
+in the tray.  Such paper is widely available at office supply stores.
+Two companies that offer it are Avery Dennison (www.averydennison.com)
+and Maco (www.maco.com).  This is not a recommendation or an
+endorsement -- Avery and Maco are simply the names I've seen.
+
+PostScript viewing software also helps, so you can see what your
+labels look like before you print.
+
+How To Use It:
+==============
+
+Let's start with return address labels.  If you wanted to print a
+sheet of them using the Avery 5167 standard (80 small labels per
+page), you might invoke LabelNation like this:
+
+   prompt\$ labelnation -t avery5167 -i myaddress.txt -l -o myaddress.ps
+
+The "-t" stands for "type", followed by one of the standard predefined
+label types.  The "-i" means "input file", that is, where to take the
+label data from.  The "-l" stands for "lines input", meaning that the
+format of the incoming data is lines of text (as opposed to PostScript
+code).  The "-o" specifies the output file, which you'll print to get
+the labels.
+
+Here is a sample label lines file:
+
+        J. Random User
+        1423 W. Rootbeer Ave
+        Chicago, IL 60622
+        USA
+
+Note that the indentation is significant -- the farther you indent a
+line, the more whitespace will be between it and the left edge of the
+label.  Three spaces is a typical indentation.  Also note that blank
+lines are significant -- they are printed like any other text.
+
+You can have as many lines as you want on a label; fonts will be
+automatically scaled down if there are too many lines to fit using the
+default font size.
+
+
+How To Print A Variety Of Addresses:
+====================================
+
+An input file can also define many different labels (this is useful if
+you're running a mailing list, for example).  In that case, instead of
+iterating one label over an entire sheet, LabelNation will print each
+label once, using as many sheets as necessary, leaving the unused
+remainder blank.
+
+To print many labels at once, you must pass a delimiter with the "-d"
+flag.  The delimiter separates each label from the next.  For
+example, if you use a delimiter of "XXX", then you might invoke
+LabelNation like so
+
+   prompt\$ labelnation -d "XXX" -t avery5167 -l -i addrs.txt -o addrs.ps
+
+where addrs.txt contains this
+
+        J. Random User
+        1423 W. Rootbeer Ave
+        Chicago, IL 60622
+        USA
+   XXX
+        William Lyon Phelps III
+        27 Rue d'Agonie
+        Paris, France
+   XXX
+
+(remember that all my examples are indented three spaces in this help
+message, so the content above is actually indented only three spaces
+in the file, while the XXX delimiters are not indented at all). 
+
+
+How To Discover The Predefined Label Types:
+===========================================
+
+To see a list of all known label types, run
+
+   prompt\$ labelnation --list-types
+   Predefined label types:
+      Avery-5160 / Avery-6245 / Maco-LL5805  (30 labels per page)
+      Avery-5167 / Maco-LL8100               (80 labels per page)
+      [etc...]
+
+Note that when you're specifying a label type, you can omit the
+capitalization and the hyphen (or you can leave them on -- LabelNation
+will recognize the type either way).
+
+A bit farther on, you'll learn how to define your own label types, in
+case none of the built-in ones are suitable.
+
+
+What To Do If The Text Is A Little Bit Off From The Labels:
+===========================================================
+
+Printers vary -- the label parameters that work for me might not be
+quite right for your hardware.  Correcting the problem may merely be a
+matter of adjusting the bottom and/or left margin (that is, the
+distance from the bottom or left edge of the page to the first row or
+column, respectively).
+
+The two options to do this are
+
+   prompt\$ labelnation --bottom-margin N --left-margin N ...
+
+where N is a number of PostScript points, each being 1/72 of an inch.
+(Of course, you don't have to use the two options together, that's
+just how it is in this example.)  The N you specify does not add to
+the predefined quantity, but rather replaces it.
+
+In order to know where you're starting from, you can ask LabelNation
+to show you the parameters for a given label type:
+
+   prompt\$ labelnation -t avery5167 --show-parameters
+   LeftMargin      14
+   BottomMargin    17
+   LabelWidth      126
+   LabelHeight     36
+   HorizSpace      22.5
+   VertSpace       0
+   HorizNumLabels  4
+   VertNumLabels   20
+   FontName        Times-Roman
+   FontSize        7
+
+The first two parameters are usually the only ones you need to look
+at, although the others may come in handy when you're defining your
+own parameter files.  Which brings me to the next subject...
+
+
+How To Print Labels That Aren't One Of The Predefined Standards:
+================================================================
+
+Use the -p option to tell LabelNation to use a parameter file.  A
+parameter file consists of lines of the form
+
+   PARAMETER   VALUE
+   PARAMETER   VALUE
+   PARAMETER   VALUE
+   ...
+
+You can see valid parameter names by running
+
+   prompt\$ labelnation -t avery5167 --show-parameters
+
+as mentioned earlier (it doesn't have to be avery5167, it can be any
+built-in type).  Keep in mind that a "parameter file" is for
+specifying the dimensions and arrangement of the labels on the sheet,
+*not* for specifying the content you want printed on those labels.
+
+
+How To Use Arbitrary Postscript Code To Draw Labels:
+====================================================
+
+If your input file contains PostScript code to draw the label(s),
+instead of lines of label text, then pass the "-c" (code) option
+instead of "-l".
+
+The PostScript code will be run in a translated coordinate space, so
+0,0 is at the bottom left corner of each label in turn.  Also,
+clipping will be in effect, so you can't draw past the edges of a
+label.  Normally, you will have to experiment a lot to get things just
+right.
+
+You can still print multiple, different labels at
+once -- delimiters work just as well in code files as in linetext
+files.
+
+One user reported that he had to do some trickery to get encapsulated
+PostScript to work right:
+
+   From: Simon Wood <Simon.Wood@pace.co.uk>
+   Subject: RE: Graphical Labels with labelnation.
+   To: "'kfogel@red-bean.com'" <kfogel@red-bean.com>
+   Date: Mon, 20 May 2002 08:54:57 +0100
+   
+   I managed to get some really simple graphics in last year (for a crop 
+   of plum chutney). I'll send you the files from home. The image was 
+   created in Dia and then exported to '.eps'.
+   
+   The trick was to remove the header from the '.ps', run labelnation to 
+   size and position the images and then manually re-insert the header into
+   the start of 'labelnation.ps'. 
+
+
+How To Report A Bug:
+====================
+
+Check http://www.red-bean.com/labelnation/ to make sure you have the
+latest version (perhaps your bug has been fixed).  Else, email
+<bug-labelnation@red-bean.com>.
+
+Copyright:
+==========
+
+    LabelNation: command-line label printing
+    Copyright (C) 2000  Karl Fogel <kfogel@red-bean.com>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+'''
+
+def usage():
+  version()
+  print ''
+  explain()
+  print ''
+  types()
+  print ''
+  print '''Options:
+
+   -h, --help, --usage, -?     Show this usage
+   --version                   Show version number
+   --explain                   Show instructions (lots of output!)
+   --list-types                Show all predefined label types
+   -t, --type TYPE             Generate labels of type TYPE
+   -p, --parameter-file FILE   Read label parameters from FILE
+   -i, --infile                Take input from FILE
+   -l, --line-input            Infile contains label text lines
+   -c, --code-input            Infile contains PostScript code
+   -d, --delimiter DELIM       Labels separated by DELIM
+   --show-bounding-box         Print rectangle around each label
+                               (recommended for testing only)
+   --first-label N             Start printing at label number N
+                               (bottom left is 1, count up each
+                               column in turn, top right is last)
+   --font-name NAME            Use PostScript font FONT
+   --font-size SIZE            Scale font to SIZE
+   -o, --outfile FILE          Output to FILE ("-" means stdout)'''
+
+# The single quote in this comment resets Python Mode's highlighting.
+
+def make_clipping_func():
+  clipper = ''
+
+  upper_bound = Label_Height - Inner_Margin
+  right_bound = Label_Width  - Inner_Margin
+
+  clipper += '\tnewpath\n'
+  clipper += '\t%f %f moveto\n' % (Inner_Margin, Inner_Margin)
+  clipper += '\t%f %f lineto\n' % (right_bound, Inner_Margin)
+  clipper += '\t%f %f lineto\n' % (right_bound, upper_bound)
+  clipper += '\t%f %f lineto\n' % (Inner_Margin, upper_bound)
+  clipper += '\tclosepath\n'
+  clipper += '\tclip\n'
+
+  if Show_Bounding_Box:
+    clipper += '\tstroke\n'
+
+  return clipper
+
+
+def set_up_iso8859(output):
+  output.write('''/deffont {
+  findfont exch scalefont def
+} bind def
+
+/reencode_font {
+  findfont reencode 2 copy definefont pop def
+} bind def
+
+% reencode the font
+% <encoding-vector> <fontdict> -> <newfontdict>
+/reencode { %def
+  dup length 5 add dict begin
+    { %forall
+      1 index /FID ne
+      { def }{ pop pop } ifelse
+    } forall
+    /Encoding exch def
+
+    % Use the font's bounding box to determine the ascent, descent,
+    % and overall height; don't forget that these values have to be
+    % transformed using the font's matrix.
+    % We use 'load' because sometimes BBox is executable, sometimes not.
+    % Since we need 4 numbers an not an array avoid BBox from being executed
+    /FontBBox load aload pop
+    FontMatrix transform /Ascent exch def pop
+    FontMatrix transform /Descent exch def pop
+    /FontHeight Ascent Descent sub def
+
+    % Define these in case they're not in the FontInfo (also, here
+    % they're easier to get to.
+    /UnderlinePosition 1 def
+    /UnderlineThickness 1 def
+
+    % Get the underline position and thickness if they're defined.
+    currentdict /FontInfo known {
+      FontInfo
+
+      dup /UnderlinePosition known {
+        dup /UnderlinePosition get
+        0 exch FontMatrix transform exch pop
+        /UnderlinePosition exch def
+      } if
+
+      dup /UnderlineThickness known {
+        /UnderlineThickness get
+        0 exch FontMatrix transform exch pop
+        /UnderlineThickness exch def
+      } if
+
+    } if
+    currentdict
+  end
+} bind def
+
+/ISO-8859-1Encoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright
+/parenleft /parenright /asterisk /plus /comma /minus /period /slash
+/zero /one /two /three /four /five /six /seven
+/eight /nine /colon /semicolon /less /equal /greater /question
+/at /A /B /C /D /E /F /G
+/H /I /J /K /L /M /N /O
+/P /Q /R /S /T /U /V /W
+/X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore
+/quoteleft /a /b /c /d /e /f /g
+/h /i /j /k /l /m /n /o
+/p /q /r /s /t /u /v /w
+/x /y /z /braceleft /bar /braceright /asciitilde /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/space /exclamdown /cent /sterling /currency /yen /brokenbar /section
+/dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen /registered /macron
+/degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph /bullet
+/cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown
+/Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla
+/Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis
+/Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply
+/Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls
+/agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla
+/egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis
+/eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide
+/oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis
+] def
+''')
+
+# This comment resets Emacs Python Mode's indentation.  Sigh.
+
+def make_labels():
+  input = open(Infile, "r")
+  output = open(Outfile, "w")
+
+  # Start off with standard Postscript header
+  output.write("%!PS-Adobe-3.0\n")
+  output.write("\n")
+    
+  # Re-encode the requested font, so we can handle ISO-8859 chars.
+  set_up_iso8859(output)
+  output.write("/ISO%s ISO-8859-1Encoding /%s reencode_font\n"
+               % (Font_Name, Font_Name))
+
+  # Set up subroutines
+  clipfunc = make_clipping_func()
+  output.write("/labelclip {\n%s\n} def\n" % clipfunc)
+  output.write("\n")
+  output.write("% end prologue\n")
+  output.write("\n")
+  output.write("% set font type and size\n")
+  output.write("ISO%s %d scalefont setfont\n"
+               % (Font_Name, Font_Size))
+
+  # Set up some loop vars.
+  label_lines = [ ]     # Used only for Line_Input
+  line_idx = 0          # Used only for Line_Input
+  code_accum = ''       # Used for both Line_Input and Code_Input
+  page_number = 1       # Do you really need a comment?
+
+  # See the end of the while loop below for an explanation of this flag.
+  iterate_over_single_page = False
+
+  # Horiz position (by label)
+  x = int((First_Label - 1) / Vert_Num_Labels)
+
+  # Vertical position (by label)
+  y = int((First_Label - 1) % Vert_Num_Labels)
+
+  first_time = False
+  line = input.readline()
+  while line or iterate_over_single_page:
+    if not iterate_over_single_page:
+      line = line.rstrip()
+
+    if ((Delimiter and line == Delimiter)
+        or iterate_over_single_page):
+      if Line_Input:
+        num_lines = len(label_lines)
+   
+        text_margin = Inner_Margin + 2.0
+        ### TODO: need to be more sophisticated about divining the
+        # font sizes and acting accordingly, here.
+        upmost_line_start = Label_Height / (num_lines + 1.0) * float(num_lines)
+        distance_down = Label_Height / (num_lines + 2.0)
+        fontsize = Font_Size / (1.0 + ((num_lines - 4.0) / 10.0))
+        
+        code_accum += "newpath\n"
+        code_accum += "ISO%s %d scalefont setfont\n" % (Font_Name, fontsize)
+        for label_line in range(0, num_lines):
+          this_line = upmost_line_start - (label_line * distance_down)
+          code_accum += "%f %f moveto\n" % (text_margin, this_line)
+          # code_accum += "moveto\n"
+          code_accum += "(" + label_lines[label_line] + ") show\n"
+          # code_accum += "show\n"
+        code_accum += "stroke\n"
+
+      if not first_time:
+        output.write("%%%%Page: labels %d\n\n" % page_number)
+        output.write("%%BeginPageSetup\n")
+        output.write("%f " % Left_Margin)
+        output.write("%f " % Bottom_Margin)
+        output.write("translate\n")
+        output.write("%%EndPageSetup\n\n")
+        first_time = True
+      
+      # Print the label, clipped and translated appropriately.
+      this_x_step = x * (Label_Width  + Horiz_Space)
+      this_y_step = y * (Label_Height + Vert_Space)
+      output.write("gsave\n")
+      output.write("%d %d\n" % (this_x_step, this_y_step))
+      output.write("translate\n")
+      output.write("labelclip\n")
+      output.write(code_accum)
+      output.write("grestore\n")
+      output.write("\n")
+
+      # Increment, and maybe cross a column or page boundary.
+      y += 1
+      if y >= Vert_Num_Labels:
+        y = 0
+        x += 1
+      if x >= Horiz_Num_Labels:
+        x = 0
+        page_number += 1
+        output.write("showpage\n")
+
+      # Reset everyone.
+      if Delimiter:
+        label_lines = [ ]
+      code_accum = ''
+
+    elif Line_Input:
+      # PostScript needs (, ), and \ escaped.
+      # ### TODO: Why not "%" too?
+      line = line.replace('\\','\\\\')
+      line = line.replace('(','\\(')
+      line = line.replace(')','\\)')
+      label_lines.append(line)
+
+    elif Code_Input:
+      code_accum += line
+      code_accum += "\n"
+
+    line = input.readline()
+
+    # You are not going to believe this... let me explain:
+    # 
+    # When this code was in Perl, it was written with a goto.
+    # 
+    # We need to handle input files containing only a single label, that
+    # is, input files with no delimiter, so every line that appears in
+    # the input is part of the one label text.  Then this label is
+    # mapped across the whole page, so we get a single page with the
+    # same label on it.  That way it's as convenient to produce return
+    # address labels as to generate outgoing mailing list sheets.
+    #
+    # Since there's no delimiter, we just jump straight to the printing
+    # part in the 'while' loop above, and let it increment x and y as it
+    # normally does.  So the conditional below behaves like the guard of
+    # a 'for' loop, except it's after the fact, and it shares its body
+    # with the file-reading loop.  We use iterate_over_single_page to
+    # stop after one page, otherwise it would go on forever.  It starts
+    # out false, but is set to True within the first iteration of the
+    # loop if it is going to be set at all.
+    if (line == ""
+        and not Delimiter
+        and not (y >= Vert_Num_Labels)
+        and not (x >= Horiz_Num_Labels)
+        and not (iterate_over_single_page and x == 0 and y == 0)):
+      iterate_over_single_page = True
+    else:
+      iterate_over_single_page = False
+  
+  if not (x == 0 and y == 0):
+    output.write("\nshowpage\n")
+  
+  output.close()
+
+
+def main():
+  exit_cleanly = False
+  show_parameters = False
+
+  # If this gets set, we encountered unknown options and will exit at
+  # the end of this subroutine.
+  exit_with_admonishment = False
+
+  global Type
+  global Param_File
+  global Infile
+  global Line_Input
+  global Code_Input
+  global First_Label
+  global Delimiter
+  global Font_Name
+  global Font_Size
+  global Show_Bounding_Box
+  global Left_Margin
+  global Bottom_Margin
+  global Outfile
+
+  try:
+    opts, args = getopt.getopt(sys.argv[1:],
+                               '?ht:p:i:lcd:o:',
+                               ['help', 'usage',
+                                'version',
+                                'list-types',
+                                'explain',
+                                'show-parameters',
+                                'type=',
+                                'parameter-file=',
+                                'infile=',
+                                'line-input',
+                                'code-input',
+                                'first-label=',
+                                'delimiter=',
+                                'font-name=',
+                                'font-size=',
+                                'show-bounding-box',
+                                'left-margin=',
+                                'bottom-margin=',
+                                'outfile=',
+                                ])
+  except getopt.GetoptError, e:
+    sys.stderr.write(error_prefix + ': ' + str(e) + '\n\n')
+    usage()
+    sys.exit(1)
+
+  for opt, value in opts:
+    if opt == '--version':
+      version()
+      exit_cleanly = True
+    elif opt == '--help' or opt == '-h' or opt == '-?' or opt == 'usage':
+      usage()
+      exit_cleanly = True
+    elif opt == '--list-types':
+      types()
+      exit_cleanly = True
+    elif opt == '--explain':
+      explain()
+      exit_cleanly = True
+    elif opt == '--show-parameters':
+      show_parameters = True
+    elif opt == '-t' or opt == '--type':
+      Type = value
+    elif opt == '-p' or opt == '--parameter-file':
+      Param_File = value
+    elif opt == '-i' or opt == '--infile':
+      Infile = value
+    elif opt == '-l' or opt == '--line-input':
+      Line_Input = True
+    elif opt == '-c' or opt == '--code-input':
+      Code_Input = True
+    elif opt == '--first-label':
+      First_Label = value
+    elif opt == '-d' or opt == '--delimiter':
+      Delimiter = value
+    elif opt == '--font-name':
+      Font_Name = value
+    elif opt == '--font-size':
+      Font_Size = value
+    elif opt == '--show-bounding-box':
+      Show_Bounding_Box = True
+    elif opt == '--left-margin':
+      Left_Margin = value
+    elif opt == '--bottom-margin':
+      Bottom_Margin = value
+    elif opt == '-o' or opt == '--outfile':
+      Outfile = value
+    else:
+      print "Unrecognized option '%s'" % opt
+      exit_with_admonishment = True
+
+  if exit_cleanly:
+    sys.exit(0)
+
+  # Do file parsing _after_ command line options have been processed
+  if Type:
+    set_parameters_for_type(Type)
+
+  if Param_File:
+    parse_param_file(Param_File)
+
+  if Code_Input and Line_Input:
+    print "Cannot use both -l and -c"
+    exit_with_admonishment = True
+
+  if not Code_Input and not Line_Input:
+    print "Must use one of -l or -c"
+    exit_with_admonishment = True
+
+  if show_parameters:
+    show_parameters()
+    sys.exit(0)
+
+  # Check that required parameters have been found and are sane.
+  if Left_Margin < 0:
+    print "missing required left-margin parameter"
+    exit_with_admonishment = True
+
+  if Bottom_Margin < 0:
+    print "missing required bottom-margin parameter"
+    exit_with_admonishment = True
+
+  if Label_Width < 0:
+    print "missing required label-width parameter"
+    exit_with_admonishment = True
+
+  if Label_Height < 0:
+    print "missing required label-height parameter"
+    exit_with_admonishment = True
+
+  if Horiz_Space < 0:
+    print "missing required horiz-space parameter"
+    exit_with_admonishment = True
+
+  if Vert_Space < 0:
+    print "missing required vert-space parameter"
+    exit_with_admonishment = True
+
+  if Horiz_Num_Labels < 0:
+    print "missing required horiz-num-labels parameter"
+    exit_with_admonishment = True
+
+  if Vert_Num_Labels < 0:
+    print "missing required vert-num-labels parameter"
+    exit_with_admonishment = True
+
+  if First_Label < 1:
+    print "First label %d too low; must be at least 1." % First_Label
+    exit_with_admonishment = True
+  elif First_Label > Horiz_Num_Labels * Vert_Num_Labels:
+    print "First label %d is too high; there are only " \
+          + "%d * %d == %d labels available."           \
+          % (First_Label, Horiz_Num_Labels, Vert_Num_Labels,
+             Horiz_Num_Labels * Vert_Num_Labels)
+    exit_with_admonishment = True
+
+  # Set up defaults for things that could reasonably be omitted.
+  if not Font_Name:
+    Font_Name = 'Times-Roman'
+
+  if not Font_Size:
+    Font_Size = '12'
+
+  if not Outfile:
+    Outfile = 'labelnation.ps'
+
+  if exit_with_admonishment:
+    print 'Run "labelnation --help" to see usage.'
+    sys.exit(1)
+
+  make_labels()
+
+
+
+
+if __name__ == '__main__':
+  main()

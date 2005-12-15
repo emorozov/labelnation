@@ -1,0 +1,3 @@
+#!/bin/sh
+
+../../labelnation --delimiter "------------" -t avery-5160 -l -i in -o out

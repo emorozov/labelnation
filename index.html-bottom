@@ -1,6 +1,6 @@
 </pre>
 
-<!-- above is an automatically generated list of label types. -->
+<!-- above is an automatically generated list of label types -->
 
 <p>
 
@@ -12,7 +12,7 @@ future releases.)
 
 <p>
 
-LabelNation requires Perl, and a user who's comfortable dealing with
+LabelNation requires Python, and a user who's comfortable dealing with
 text- and option-based configuration, as opposed to a graphical user
 interface.
 
@@ -25,9 +25,8 @@ Still interested?  Then
 <br>
 <li> <a href="help.txt">Read the complete documentation</a>
 <br>
-<li> <a href="cvs.html">Check it out via CVS</a>
-<br>
-<li> <a href="ChangeLog">View the ChangeLog</a>
+<li> <a href="svn.html">Check out or browse the latest sources using
+     Subversion</a>
 </ul>
 
 <p>

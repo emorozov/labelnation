@@ -20,19 +20,13 @@ whoo-whee!).
 If you read this far, you probably want to know how to use it.  Under
 Unix, do this to find out:
 
-   prompt$ labelnation.pl --help | more
+   prompt$ labelnation --help | more
 
 
-How To Get This Code Via CVS:
------------------------------
+How To Get The Latest Code Via Subversion:
+------------------------------------------
 
-(If you don't know what CVS is, just ignore this section.)
-
-   cvs -d :pserver:anonymous@cvs.red-bean.com:/usr/local/cvs login
-      (if prompted for a password, just hit return)
-
-   cvs -d :pserver:anonymous@cvs.red-bean.com:/usr/local/cvs co labelnation
-   
+See http://www.red-bean.com/labelnation/svn.html.
 
 
 How To Report A Bug:
