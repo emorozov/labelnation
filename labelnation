@@ -23,10 +23,12 @@
 ## along with this program; if not, write to the Free Software
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-### TODO: This was originally written in Perl.  I translated it to
-### Python, but the style is still very much that of the original
-### Perl, which wasn't even terribly good Perl at that.  Much
-### improvement remains to be made.
+###                             NOTICE
+###                             ======
+###
+### This was originally written in Perl.  I translated it to Python,
+### but the style is still very much that of the original Perl, which
+### wasn't even very good Perl.  Many improvements could still be made.
 
 import re
 import os
