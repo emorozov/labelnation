@@ -4,28 +4,20 @@
 <body bgcolor="FFFFFF" fgcolor="000000">
 
 <center>
-<h1>
-Label Nation -- a command-line label-printing program
-</h1>
+<h1>Label Nation -- a command-line label-printing program</h1>
 </center>
-
-<p>
 
 <center>
 <i>Latest version: 1.34</i>
 </center>
 
-<p>
-
-LabelNation is a program for making labels.  By "label", I mean
+<p>LabelNation is a program for making labels.  By "label", I mean
 address labels, business cards, or anything else involving
 regularly-arranged rectangles on a printer-ready sheet.  You can even
-use it to make a calendar (that took some work, though).
+use it to make a calendar (that took some work, though).</p>
 
-<p>
-
-Here's the basic concept: you tell LabelNation what text you want on
-each label.  You can specify plain lines of text, or even arbitrary
+<p>Here's the basic concept: you tell LabelNation what text you want
+on each label.  You can specify plain lines of text, or even arbitrary
 PostScript code.  You also tell it what kind of labels it should print
 for.  LabelNation takes all this information and produces a PostScript
 file, which you then send to your PostScript printer (or through a
@@ -34,16 +26,13 @@ GhostScript</a>).  Of course, there must be a sheet of peel-off labels
 in the paper tray.  Such sheets are widely available at office supply
 stores.  Two companies that offer it are Avery Dennison and Maco.
 This is not a recommendation nor an endorsement; Avery and Maco are
-simply the names I've seen.
+simply the names I've seen.</p>
 
-<p>
-
-LabelNation does automatic font resizing to fit all the lines of text
-on the label, supports the usual accented characters (<b>&aacute;</b>,
-<b>&agrave;</b>, <b>&oacute;</b>, etc, from ISO 8859-1), and has
-built-in knowledge of the following standard label types:
-
-<p>
+<p>LabelNation does automatic font resizing to fit all the lines of
+text on the label, supports the usual accented characters
+(<b>&aacute;</b>, <b>&agrave;</b>, <b>&oacute;</b>, etc, from ISO
+8859-1), and has built-in knowledge of the following standard label
+types:</p>
 
 <!-- below is an automatically generated list of label types -->
 
