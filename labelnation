@@ -72,13 +72,6 @@ Font_Name         = ''      # Defaults to Times-Roman
 Font_Size         = ''      # Defaults to 12.0
 Outfile           = ''      # Defaults to labelnation.ps
 
-# The major version number is hardcoded and increments only rarely.
-Major_Version = "1"
-# The minor version number is automatically updated by Subversion.
-Minor_Version = "$Revision$"
-Minor_Version = re.match('\S+\s+(\S+)\s+\S+', Minor_Version).group(1)
-Version = Major_Version + "." + Minor_Version
-
 ############## End Globals #################
 
 
@@ -462,7 +455,11 @@ def parse_param_file(cfile):
 
 # Print version number.
 def version():
-  print "LabelNation, version %s" % Version
+  major = "1"
+  minor = "$Revision$"
+  minor = re.match('\S+\s+(\S+)\s+\S+', minor).group(1)
+  version = major + "." + minor
+  print "LabelNation, version %s" % version
 
 
 # Print all predefined label types
