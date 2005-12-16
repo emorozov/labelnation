@@ -79,8 +79,6 @@ Minor_Version = "$Revision$"
 Minor_Version = re.match('\S+\s+(\S+)\s+\S+', Minor_Version).group(1)
 Version = Major_Version + "." + Minor_Version
 
-Inner_Margin = 1
-
 ############## End Globals #################
 
 
@@ -758,17 +756,17 @@ def usage():
 
 # The single quote in this comment resets Python Mode's highlighting.
 
-def make_clipping_func():
+def make_clipping_func(inner_margin):
   clipper = ''
 
-  upper_bound = Label_Height - Inner_Margin
-  right_bound = Label_Width  - Inner_Margin
+  upper_bound = Label_Height - inner_margin
+  right_bound = Label_Width  - inner_margin
 
   clipper += '\tnewpath\n'
-  clipper += '\t%f %f moveto\n' % (Inner_Margin, Inner_Margin)
-  clipper += '\t%f %f lineto\n' % (right_bound, Inner_Margin)
+  clipper += '\t%f %f moveto\n' % (inner_margin, inner_margin)
+  clipper += '\t%f %f lineto\n' % (right_bound, inner_margin)
   clipper += '\t%f %f lineto\n' % (right_bound, upper_bound)
-  clipper += '\t%f %f lineto\n' % (Inner_Margin, upper_bound)
+  clipper += '\t%f %f lineto\n' % (inner_margin, upper_bound)
   clipper += '\tclosepath\n'
   clipper += '\tclip\n'
 
@@ -872,6 +870,8 @@ def set_up_iso8859(output):
 # This comment resets Emacs Python Mode's indentation.  Sigh.
 
 def make_labels():
+  inner_margin = 1
+
   input = open(Infile, "r")
   output = open(Outfile, "w")
 
@@ -885,7 +885,7 @@ def make_labels():
                % (Font_Name, Font_Name))
 
   # Set up subroutines
-  clipfunc = make_clipping_func()
+  clipfunc = make_clipping_func(inner_margin)
   output.write("/labelclip {\n%s\n} def\n" % clipfunc)
   output.write("\n")
   output.write("% end prologue\n")
@@ -920,7 +920,7 @@ def make_labels():
       if Line_Input:
         num_lines = len(label_lines)
    
-        text_margin = Inner_Margin + 2.0
+        text_margin = inner_margin + 2.0
         ### TODO: need to be more sophisticated about divining the
         # font sizes and acting accordingly, here.
         upmost_line_start = Label_Height / (num_lines + 1.0) * float(num_lines)
