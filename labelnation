@@ -23,13 +23,6 @@
 ## along with this program; if not, write to the Free Software
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-###                             NOTICE
-###                             ======
-###
-### This was originally written in Perl.  I translated it to Python,
-### but the style is still very much that of the original Perl, which
-### wasn't even very good Perl.  Many improvements could still be made.
-
 import re
 import os
 import sys
@@ -49,30 +42,74 @@ except:
   True = 1
   False = 0
 
-################ Globals ###################
+################ Classes ###################
 
-Type              = ""      # A predefined label type
-Infile            = ""      # Holds PostScript code or text lines
-Line_Input        = False   # One kind of input Infile can hold.
-Code_Input        = False   # Another kind of input Infile can hold.
-Param_File        = ""      # Holds label dimensions
-Delimiter         = ""      # Separates labels in multi-label files
-Show_Bounding_Box = False   # Set iff --show-bounding-box option
+class LabelSpec:
+  def __init__(self,
+               left_margin=None,      # first label from left starts here
+               bottom_margin=None,    # first label from bottom starts here
+               label_width=None,      # not including unused inter-label space
+               label_height=None,     # not including unused inter-label space
+               horiz_space=None,      # unused inter-label horizontal space
+               vert_space=None,       # unused inter-label vertical space
+               horiz_num_labels=None, # how many labels across?
+               vert_num_labels=None,  # how many labels up and down?
+               first_label=1.0,       # start printing here
+               font_name=None,
+               font_size=None,
+               ):
+    self.left_margin = left_margin
+    self.bottom_margin = bottom_margin
+    self.label_width = label_width
+    self.label_height = label_height
+    self.horiz_space = horiz_space
+    self.vert_space = vert_space
+    self.horiz_num_labels = horiz_num_labels
+    self.vert_num_labels = vert_num_labels
+    self.first_label = first_label
+    self.font_name = font_name
+    self.font_size = font_size
 
-Left_Margin       = -1.0    # First label from left starts here.
-Bottom_Margin     = -1.0    # First label from bottom starts here.
-Label_Width       = -1.0    # Does not include unused inter-label space.
-Label_Height      = -1.0    # Does not include unused inter-label space.
-Horiz_Space       = -1.0    # Unused inter-label horizontal space.
-Vert_Space        = -1.0    # Unused inter-label vertical space.
-Horiz_Num_Labels  = -1.0    # How many labels across?
-Vert_Num_Labels   = -1.0    # How many labels up and down?
-First_Label       = 1.0     # Start printing here.
-Font_Name         = ''      # Defaults to Times-Roman
-Font_Size         = ''      # Defaults to 12.0
-Outfile           = ''      # Defaults to labelnation.ps
+  # Set up standard params, but preserving manual overrides:
+  def absorb(self, lspec):
+    """Merge LSPEC into self, taking LSPEC's values for any of self's
+    values that are still at their defaults, but keeping own values
+    where they are different from the default."""
+    if self.left_margin is None:
+      self.left_margin = lspec.left_margin
+    if self.bottom_margin is None:
+      self.bottom_margin = lspec.bottom_margin
+    if self.label_width is None:
+      self.label_width = lspec.label_width
+    if self.label_height is None:
+      self.label_height = lspec.label_height
+    if self.horiz_space is None:
+      self.horiz_space = lspec.horiz_space
+    if self.vert_space is None:
+      self.vert_space = lspec.vert_space
+    if self.horiz_num_labels is None:
+      self.horiz_num_labels = lspec.horiz_num_labels
+    if self.vert_num_labels is None:
+      self.vert_num_labels = lspec.vert_num_labels
+    if self.font_name is None:
+      self.font_name = lspec.font_name
+    if self.font_size is None:
+      self.font_size = lspec.font_size
+    ### TODO: should this one be unconditional?
+    self.first_label = lspec.first_label
 
-############## End Globals #################
+  def __str__(self):
+    s  = "LeftMargin:      %d\n" % self.left_margin
+    s += "BottomMargin:    %d\n" % self.bottom_margin
+    s += "LabelWidth:      %d\n" % self.label_width
+    s += "LabelHeight:     %d\n" % self.label_height
+    s += "HorizSpace:      %d\n" % self.horiz_space
+    s += "VertSpace:       %d\n" % self.vert_space
+    s += "HorizNumLabels:  %d\n" % self.horiz_num_labels
+    s += "VertNumLabels:   %d\n" % self.vert_num_labels
+    s += "FontName:        %s\n" % self.font_name
+    s += "FontSize:        %d\n" % self.font_size
+    return s
 
 
 
@@ -98,321 +135,279 @@ def normalize_string(str):
   return str
 
 
-def set_parameters_for_type(otype):
-  ntype = normalize_string(otype)
-  params = { }
+def labelspec_for_type(type):
+  """Return a LabelSpec object that matches TYPE."""
+  type = normalize_string(type)
 
   ### TODO: Okay, it's ridiculous to be maintaining these label
   ### equivalences in two places.  Make a data structure to hold all
   ### this, use it both here and in types().
 
   # Don't know Maco's number for Avery 5x61 series yet...
-  if (   ntype == "avery5161"
-      or ntype == "avery5261"
-      or ntype == "avery5661"
-      or ntype == "avery5961"):
+  if (   type == "avery5161"
+      or type == "avery5261"
+      or type == "avery5661"
+      or type == "avery5961"):
     # Large and wide address labels, 20 per page
-    params['Left_Margin']      = 11.25
-    params['Bottom_Margin']    = 16.0
-    params['Label_Width']      = 270.0
-    params['Label_Height']     = 72.0
-    params['Horiz_Space']      = 20.0
-    params['Vert_Space']       = 0.0
-    params['Horiz_Num_Labels'] = 2.0
-    params['Vert_Num_Labels']  = 10.0
-    params['Font_Name']        = "Times-Roman"
-    params['Font_Size']        = 12.0
+    return LabelSpec(left_margin=11.25,
+                     bottom_margin=16.0,
+                     label_width=270.0,
+                     label_height=72.0,
+                     horiz_space=20.0,
+                     vert_space=0.0,
+                     horiz_num_labels=2.0,
+                     vert_num_labels=10.0,
+                     font_name="Times-Roman",
+                     font_size=12.0)
 
-  elif (   ntype == "avery5162"
-        or ntype == "avery5262"
-        or ntype == "avery5662"
-        or ntype == "avery5962"
-        or ntype == "avery15162"
-        or ntype == "avery8162"
-        or ntype == "avery8252"
-        or ntype == "avery8462"
-        or ntype == "avery18162"
-        or ntype == "avery18662"):
+  elif (   type == "avery5162"
+        or type == "avery5262"
+        or type == "avery5662"
+        or type == "avery5962"
+        or type == "avery15162"
+        or type == "avery8162"
+        or type == "avery8252"
+        or type == "avery8462"
+        or type == "avery18162"
+        or type == "avery18662"):
     # 14 per page
-    params['Left_Margin']      = 11.52
-    params['Bottom_Margin']    = 62.0
-    params['Label_Width']      = 300.0
-    params['Label_Height']     = 96.0
-    params['Horiz_Space']      = 0.0
-    params['Vert_Space']       = 0.0
-    params['Horiz_Num_Labels'] = 2.0
-    params['Vert_Num_Labels']  = 7.0
-    params['Font_Name']        = "Times-Roman"
-    params['Font_Size']        = 12.0
+    return LabelSpec(left_margin=11.52,
+                     bottom_margin=62.0,
+                     label_width=300.0,
+                     label_height=96.0,
+                     horiz_space=0.0,
+                     vert_space=0.0,
+                     horiz_num_labels=2.0,
+                     vert_num_labels=7.0,
+                     font_name="Times-Roman",
+                     font_size=12.0)
 
-  elif ntype == "avery5168":
+  elif type == "avery5168":
     # Big shipping labels, 4 per page
-    params['Left_Margin']      = 31.0
-    params['Bottom_Margin']    = 33.0
-    params['Label_Width']      = 254.0
-    params['Label_Height']     = 363.0
-    params['Horiz_Space']      = 37.0
-    params['Vert_Space']       = 0.0
-    params['Horiz_Num_Labels'] = 2.0
-    params['Vert_Num_Labels']  = 2.0
-    params['Font_Name']        = "Arial"
-    params['Font_Size']        = 33.0
+    return LabelSpec(left_margin=31.0,
+                     bottom_margin=33.0,
+                     label_width=254.0,
+                     label_height=363.0,
+                     horiz_space=37.0,
+                     vert_space=0.0,
+                     horiz_num_labels=2.0,
+                     vert_num_labels=2.0,
+                     font_name="Arial",
+                     font_size=33.0)
 
-  elif ntype == "avery5264":
+  elif type == "avery5264":
     # Moderately big shipping labels, 6 per page
-    params['Left_Margin']      = 20.0
-    params['Bottom_Margin']    = 25.0
-    params['Label_Width']      = 270.0
-    params['Label_Height']     = 245.0
-    params['Horiz_Space']      = 37.0
-    params['Vert_Space']       = 0.0
-    params['Horiz_Num_Labels'] = 2.0
-    params['Vert_Num_Labels']  = 3.0
-    params['Font_Name']        = "Arial"
-    params['Font_Size']        = 24.0
+    return LabelSpec(left_margin=20.0,
+                     bottom_margin=25.0,
+                     label_width=270.0,
+                     label_height=245.0,
+                     horiz_space=37.0,
+                     vert_space=0.0,
+                     horiz_num_labels=2.0,
+                     vert_num_labels=3.0,
+                     font_name="Arial",
+                     font_size=24.0)
 
-  elif (   ntype == "avery5160"
-        or ntype == "avery5260"
-        or ntype == "avery5560"
-        or ntype == "avery5660"
-        or ntype == "avery5960"
-        or ntype == "avery5970"
-        or ntype == "avery5971"
-        or ntype == "avery5972"
-        or ntype == "avery5979"
-        or ntype == "avery5980"
-        or ntype == "avery6241"
-        or ntype == "avery6460"
-        or ntype == "avery8660" # But offset differently from 5160 etc?
-        or ntype == "avery6245" # Not listed on Avery's equivalence sheet.
-        or ntype == "macoll5805"):
+  elif (   type == "avery5160"
+        or type == "avery5260"
+        or type == "avery5560"
+        or type == "avery5660"
+        or type == "avery5960"
+        or type == "avery5970"
+        or type == "avery5971"
+        or type == "avery5972"
+        or type == "avery5979"
+        or type == "avery5980"
+        or type == "avery6241"
+        or type == "avery6460"
+        or type == "avery8660" # But offset differently from 5160 etc?
+        or type == "avery6245" # Not listed on Avery's equivalence sheet.
+        or type == "macoll5805"):
     # Large address labels, 30 per page
-    params['Left_Margin']      = 11.25
-    params['Bottom_Margin']    = 16.0
-    params['Label_Width']      = 180.0
-    params['Label_Height']     = 72.0
-    params['Horiz_Space']      = 20.0
-    params['Vert_Space']       = 0.0
-    params['Horiz_Num_Labels'] = 3.0
-    params['Vert_Num_Labels']  = 10.0
-    params['Font_Name']        = "Times-Roman"
-    params['Font_Size']        = 12.0
+    return LabelSpec(left_margin=11.25,
+                     bottom_margin=16.0,
+                     label_width=180.0,
+                     label_height=72.0,
+                     horiz_space=20.0,
+                     vert_space=0.0,
+                     horiz_num_labels=3.0,
+                     vert_num_labels=10.0,
+                     font_name="Times-Roman",
+                     font_size=12.0)
 
-  elif ntype == "avery7162":
+  elif type == "avery7162":
     # Large and wide address labels, 16 per page
     # Added by nathanh@manu.com.au 20031125
-    params['Left_Margin']      = 18.0
-    params['Bottom_Margin']    = 28.0
-    params['Label_Width']      = 281.0
-    params['Label_Height']     = 96.0
-    params['Horiz_Space']      = 20.0
-    params['Vert_Space']       = 0.0
-    params['Horiz_Num_Labels'] = 2.0
-    params['Vert_Num_Labels']  = 8.0
-    params['Font_Name']        = "Times-Roman"
-    params['Font_Size']        = 12.0
+    return LabelSpec(left_margin=18.0,
+                     bottom_margin=28.0,
+                     label_width=281.0,
+                     label_height=96.0,
+                     horiz_space=20.0,
+                     vert_space=0.0,
+                     horiz_num_labels=2.0,
+                     vert_num_labels=8.0,
+                     font_name="Times-Roman",
+                     font_size=12.0)
 
-  elif ntype == "avery7160":
+  elif type == "avery7160":
     # Large address labels, 21 per A4 page
     k = 72.0/25.4             # Convert mm to points
-    params['Left_Margin']      = k * 10.25
-    params['Bottom_Margin']    = k * 19.0
-    params['Label_Width']      = k * 56
-    params['Label_Height']     = k * 33.5
-    params['Horiz_Space']      = k * 10.75
-    params['Vert_Space']       = k * 4.5
-    params['Horiz_Num_Labels'] = 3.0
-    params['Vert_Num_Labels']  = 7.0
-    params['Font_Name']        = "Times-Roman"
-    params['Font_Size']        = 11.0
+    return LabelSpec(left_margin=(k * 10.25),
+                     bottom_margin=(k * 19.0),
+                     label_width=(k * 56),
+                     label_height=(k * 33.5),
+                     horiz_space=(k * 10.75),
+                     vert_space=(k * 4.5),
+                     horiz_num_labels=3.0,
+                     vert_num_labels=7.0,
+                     font_name="Times-Roman",
+                     font_size=11.0)
 
-  elif ntype == "avery6571":
+  elif type == "avery6571":
     # 32 labels per page; more than that I don't know.  Ask
     # William R Thomas <corvar@theonering.net>, who sent it in.
-    params['Left_Margin']      = 60.0
-    params['Bottom_Margin']    = 38.0
-    params['Label_Width']      = 216.0
-    params['Label_Height']     = 45.0
-    params['Horiz_Space']      = 58.0
-    params['Vert_Space']       = 0.0
-    params['Horiz_Num_Labels'] = 2.0
-    params['Vert_Num_Labels']  = 16.0
-    params['Font_Name']        = "Times-Roman"
-    params['Font_Size']        = 7.0
+    return LabelSpec(left_margin=60.0,
+                     bottom_margin=38.0,
+                     label_width=216.0,
+                     label_height=45.0,
+                     horiz_space=58.0,
+                     vert_space=0.0,
+                     horiz_num_labels=2.0,
+                     vert_num_labels=16.0,
+                     font_name="Times-Roman",
+                     font_size=7.0)
 
-  elif ntype == "avery2651":
+  elif type == "avery2651":
     # 65 labels per A4 page
     k = 72.0/25.4             # Convert mm to points
-    params['Left_Margin']      = k * 4.7
-    params['Bottom_Margin']    = k * 10.9
-    params['Label_Width']      = k * 38.1
-    params['Label_Height']     = k * 21.2
-    params['Horiz_Space']      = k * 2.5
-    params['Vert_Space']       = k * 0.0
-    params['Horiz_Num_Labels'] = 5.0
-    params['Vert_Num_Labels']  = 13.0
-    params['Font_Name']        = "Times-Roman"
-    params['Font_Size']        = 11.0
+    return LabelSpec(left_margin=(k * 4.7),
+                     bottom_margin=(k * 10.9),
+                     label_width=(k * 38.1),
+                     label_height=(k * 21.2),
+                     horiz_space=(k * 2.5),
+                     vert_space=(k * 0.0),
+                     horiz_num_labels=5.0,
+                     vert_num_labels=13.0,
+                     font_name="Times-Roman",
+                     font_size=11.0)
 
-  elif (   ntype == "avery5167"
-        or ntype == "avery5267"
-        or ntype == "avery5667"
-        or ntype == "avery6467"
-        or ntype == "macoll8100"):
+  elif (   type == "avery5167"
+        or type == "avery5267"
+        or type == "avery5667"
+        or type == "avery6467"
+        or type == "macoll8100"):
     # Small address labels, 80 per page
-    params['Left_Margin']      = 14.0
-    params['Bottom_Margin']    = 17.0
-    params['Label_Width']      = 126.0
-    params['Label_Height']     = 36.0
-    params['Horiz_Space']      = 22.5
-    params['Vert_Space']       = 0.0
-    params['Horiz_Num_Labels'] = 4.0
-    params['Vert_Num_Labels']  = 20.0
-    params['Font_Name']        = "Times-Roman"
-    params['Font_Size']        = 7.0
+    return LabelSpec(left_margin=14.0,
+                     bottom_margin=17.0,
+                     label_width=126.0,
+                     label_height=36.0,
+                     horiz_space=22.5,
+                     vert_space=0.0,
+                     horiz_num_labels=4.0,
+                     vert_num_labels=20.0,
+                     font_name="Times-Roman",
+                     font_size=7.0)
 
-  elif ntype == "avery5371" or ntype == "macoll8550":
+  elif type == "avery5371" or type == "macoll8550":
     # Business cards
-    params['Left_Margin']      = 48.0
-    params['Bottom_Margin']    = 16.0
-    params['Label_Width']      = 253.5
-    params['Label_Height']     = 145.3
-    params['Horiz_Space']      = 0.0
-    params['Vert_Space']       = 0.0
-    params['Horiz_Num_Labels'] = 2.0
-    params['Vert_Num_Labels']  = 5.0
-    params['Font_Name']        = "Times-Roman"
-    params['Font_Size']        = 0.0
+    return LabelSpec(left_margin=48.0,
+                     bottom_margin=16.0,
+                     label_width=253.5,
+                     label_height=145.3,
+                     horiz_space=0.0,
+                     vert_space=0.0,
+                     horiz_num_labels=2.0,
+                     vert_num_labels=5.0,
+                     font_name="Times-Roman",
+                     font_size=0.0)
 
-  elif (   ntype == "avery5263"
-        or ntype == "avery5663"
-        or ntype == "avery5963"
-        or ntype == "avery8163"):
+  elif (   type == "avery5263"
+        or type == "avery5663"
+        or type == "avery5963"
+        or type == "avery8163"):
     # Big mailing labels, 10 per page.  Usually the TO address goes
     # on these.
-    params['Left_Margin']      = 48.0
-    params['Bottom_Margin']    = 31.0
-    params['Label_Width']      = 253.5
-    params['Label_Height']     = 145.3
-    params['Horiz_Space']      = 0.0
-    params['Vert_Space']       = 0.0
-    params['Horiz_Num_Labels'] = 2.0
-    params['Vert_Num_Labels']  = 5.0
-    params['Font_Name']        = "Times-Roman"
-    params['Font_Size']        = 20.0
+    return LabelSpec(left_margin=48.0,
+                     bottom_margin=31.0,
+                     label_width=253.5,
+                     label_height=145.3,
+                     horiz_space=0.0,
+                     vert_space=0.0,
+                     horiz_num_labels=2.0,
+                     vert_num_labels=5.0,
+                     font_name="Times-Roman",
+                     font_size=20.0)
 
-  elif ntype == "?avery6464?" or ntype == "?maco????":
+  elif type == "?avery6464?" or type == "?maco????":
     # TODO: got some labels from CollabNet HQ today, don't know the
     # brand numbers yet.
-    params['Left_Margin']      = 11.0
-    params['Bottom_Margin']    = 38.0
-    params['Label_Width']      = 288.5
-    params['Label_Height']     = 238.2
-    params['Horiz_Space']      = 11.3
-    params['Vert_Space']       = 0.0
-    params['Horiz_Num_Labels'] = 2.0
-    params['Vert_Num_Labels']  = 3.0
-    params['Font_Name']        = "Times-Roman"
-    params['Font_Size']        = 0.0
+    return LabelSpec(left_margin=11.0,
+                     bottom_margin=38.0,
+                     label_width=288.5,
+                     label_height=238.2,
+                     horiz_space=11.3,
+                     vert_space=0.0,
+                     horiz_num_labels=2.0,
+                     vert_num_labels=3.0,
+                     font_name="Times-Roman",
+                     font_size=0.0)
 
-  elif ntype == "avery7159":
+  elif type == "avery7159":
     # Large address labels, 24 per A4 page
     # Avery-7159 3x8 A4 labels
     # Tested against a Kyocera bulk-laser printer.
     # Contributed by: Bruce Smith <Bruce.Smith {_AT_} nmmu.ac.za>
     k = 72.0/25.4             # Convert mm to points
-    params['Left_Margin']      = k * 0.0
-    params['Bottom_Margin']    = k * 0.0
-    params['Label_Width']      = k * 57.25
-    params['Label_Height']     = k * 32.5
-    params['Horiz_Space']      = k * 11.75
-    params['Vert_Space']       = k * 4.5
-    params['Horiz_Num_Labels'] = 3.0
-    params['Vert_Num_Labels']  = 8.0
-    params['Font_Name']        = "Times-Roman"
-    params['Font_Size']        = 10.0
+    return LabelSpec(left_margin=(k * 0.0),
+                     bottom_margin=(k * 0.0),
+                     label_width=(k * 57.25),
+                     label_height=(k * 32.5),
+                     horiz_space=(k * 11.75),
+                     vert_space=(k * 4.5),
+                     horiz_num_labels=3.0,
+                     vert_num_labels=8.0,
+                     font_name="Times-Roman",
+                     font_size=10.0)
 
-  elif ntype == "kffweekly":
+  elif type == "kffweekly":
     # My own private labels for a weekly calendar, to fit on pages 252x486.
     # ### TODO: This is silly, get these out of the mainline code and
     # ### into a private label parameter file.
-    params['Left_Margin']      = 47.0
-    params['Bottom_Margin']    = 11.0
-    params['Label_Width']      = 240.0
-    params['Label_Height']     = 60.0
-    params['Horiz_Space']      = 0.0
-    params['Vert_Space']       = 5.0
-    params['Horiz_Num_Labels'] = 1.0
-    params['Vert_Num_Labels']  = 7.0
-    params['Font_Name']        = "Times-Roman"
-    params['Font_Size']        = 12.0
+    return LabelSpec(left_margin=47.0,
+                     bottom_margin=11.0,
+                     label_width=240.0,
+                     label_height=60.0,
+                     horiz_space=0.0,
+                     vert_space=5.0,
+                     horiz_num_labels=1.0,
+                     vert_num_labels=7.0,
+                     font_name="Times-Roman",
+                     font_size=12.0)
 
-  elif ntype == "avery2160" or ntype == "maverickST340817":
+  elif type == "avery2160" or type == "maverickST340817":
     # Mini sheets address labels 8 labels/sheet, single column 
     # Provided by Gyepi Sam <gyepi@praxis-sw.com> 
-    params['Left_Margin']      = 58.5
-    params['Bottom_Margin']    = 90.0
-    params['Label_Width']      = 189.0
-    params['Label_Height']     = 72.0
-    params['Horiz_Space']      = 0.0
-    params['Vert_Space']       = 0.0
-    params['Horiz_Num_Labels'] = 1.0
-    params['Vert_Num_Labels']  = 9.0
-    params['Font_Name']        = "Times-Roman"
-    params['Font_Size']        = 12.0
+    return LabelSpec(left_margin=58.5,
+                     bottom_margin=90.0,
+                     label_width=189.0,
+                     label_height=72.0,
+                     horiz_space=0.0,
+                     vert_space=0.0,
+                     horiz_num_labels=1.0,
+                     vert_num_labels=9.0,
+                     font_name="Times-Roman",
+                     font_size=12.0)
 
   else:
+    ### TODO: Raise something instead?
     sys.stderr.write("ERROR: Unknown label type '%s'\n" % otype)
     sys.exit(1)
 
-  # Set up standard params, but preserving manual overrides:
-  global Left_Margin
-  global Bottom_Margin
-  global Label_Width
-  global Label_Height
-  global Horiz_Space
-  global Vert_Space
-  global Horiz_Num_Labels
-  global Vert_Num_Labels
-  global Font_Name
-  global Font_Size
-  if (Left_Margin < 0.0):      Left_Margin = params['Left_Margin']
-  if (Bottom_Margin < 0.0):    Bottom_Margin = params['Bottom_Margin']
-  if (Label_Width < 0.0):      Label_Width = params['Label_Width']
-  if (Label_Height < 0.0):     Label_Height = params['Label_Height']
-  if (Horiz_Space < 0.0):      Horiz_Space = params['Horiz_Space']
-  if (Vert_Space < 0.0):       Vert_Space = params['Vert_Space']
-  if (Horiz_Num_Labels < 0.0): Horiz_Num_Labels = params['Horiz_Num_Labels']
-  if (Vert_Num_Labels < 0.0):  Vert_Num_Labels = params['Vert_Num_Labels']
-  if (Font_Name == ''):      Font_Name = params['Font_Name']
-  if (Font_Size == ''):      Font_Size = params['Font_Size']
 
-
-def show_parameters():
-  global Left_Margin
-  global Bottom_Margin
-  global Label_Width
-  global Label_Height
-  global Horiz_Space
-  global Vert_Space
-  global Horiz_Num_Labels
-  global Vert_Num_Labels
-  global Font_Name
-  global Font_Size
-  print "LeftMargin:      ", Left_Margin
-  print "BottomMargin:    ", Bottom_Margin
-  print "LabelWidth:      ", Label_Width
-  print "LabelHeight:     ", Label_Height
-  print "HorizSpace:      ", Horiz_Space
-  print "VertSpace:       ", Vert_Space
-  print "HorizNumLabels:  ", Horiz_Num_Labels
-  print "VertNumLabels:   ", Vert_Num_Labels
-  print "FontName:        ", Font_Name
-  print "FontSize:        ", Font_Size
-
-
-def parse_param_file(cfile):
-  ctl = cfile.open("r")
+def parse_param_file(pfile):
+  """Return a LabelSpec based on the contents of parameter file PFILE."""
+  ctl = pfile.open("r")
+  lspec = LabelSpec()
   line = ctl.readline()
   while (line):
     ### TODO: Why is it apparently optional to escape the backslash here?
@@ -424,33 +419,37 @@ def parse_param_file(cfile):
       val = dedelimit_string(val)
 
     if key == "leftmargin":
-      Left_Margin = dedelimit_string(val)
+      lspec.left_margin = dedelimit_string(val)
     elif key == "bottommargin":
-      Bottom_Margin = dedelimit_string(val)
+      lspec.bottom_margin = dedelimit_string(val)
     elif key == "labelwidth":
-      Label_Width = dedelimit_string(val)
+      lspec.label_width = dedelimit_string(val)
     elif key == "labelheight":
-      Label_Height = dedelimit_string(val)
+      lspec.label_height = dedelimit_string(val)
     elif key == "horizspace":
-      Horiz_Space = dedelimit_string(val)
+      lspec.horiz_space = dedelimit_string(val)
     elif key == "vertspace":
-      Vert_Space = dedelimit_string(val)
+      lspec.vert_space = dedelimit_string(val)
     elif key == "horiznumlabels":
-      Horiz_Num_Labels = dedelimit_string(val)
+      lspec.horiz_num_labels = dedelimit_string(val)
     elif key == "vertnumlabels":
-      Vert_Num_Labels = dedelimit_string(val)
+      lspec.vert_num_labels = dedelimit_string(val)
     # Remaining ones should never override command-line
-    elif key == "fontname" and not Font_Name:
-      Font_Name = val
-    elif key == "fontsize" and not Font_Size:
-      Font_Size = val
-    elif key == "outfile" and not Outfile:
-      Outfile = val
+    elif key == "fontname" and not font_name:
+      lspec.font_name = val
+    elif key == "fontsize" and not font_size:
+      lspec.font_size = val
+    ### TODO: This is totally bogus and shouldn't even be supported
+    ### here.  Leaving it in for now only so its excision can be a
+    ### discrete event later.
+    elif key == "outfile" and not outfile:
+      outfile = val
     else:
       print "Unknown parameter line '%s'" % line
     line = ctl.readline()
 
   ctl.close()
+  return lspec
 
 
 # Print version number.
@@ -466,7 +465,7 @@ def version():
 def types():
   ### TODO: Okay, it's ridiculous to be maintaining these label
   ### equivalences in two places.  Make a data structure to hold all
-  ### this, use it both here and in set_parameters_for_type().
+  ### this, use it both here and in labelspec_for_type().
   print '''Predefined label types:
 
             Avery-5168                             (4 labels per page)
@@ -753,11 +752,14 @@ def usage():
 
 # The single quote in this comment resets Python Mode's highlighting.
 
-def make_clipping_func(inner_margin):
+def make_clipping_func(label_height, label_width, inner_margin,
+                       show_bounding_box):
+  """Return the code for a PostScript clipping function for the labels
+  being generated, given the necessary parameters."""
   clipper = ''
 
-  upper_bound = Label_Height - inner_margin
-  right_bound = Label_Width  - inner_margin
+  upper_bound = label_height - inner_margin
+  right_bound = label_width  - inner_margin
 
   clipper += '\tnewpath\n'
   clipper += '\t%f %f moveto\n' % (inner_margin, inner_margin)
@@ -767,7 +769,7 @@ def make_clipping_func(inner_margin):
   clipper += '\tclosepath\n'
   clipper += '\tclip\n'
 
-  if Show_Bounding_Box:
+  if show_bounding_box:
     clipper += '\tstroke\n'
 
   return clipper
@@ -866,11 +868,19 @@ def set_up_iso8859(output):
 
 # This comment resets Emacs Python Mode's indentation.  Sigh.
 
-def make_labels():
+def make_labels(lspec, infile, input_type, delimiter, outfile,
+                show_bounding_box):
+  '''Using LabelSpec LSPEC, read INPUT_TYPE data from INFILE
+  (separated by DELIMITER if there are multiple different labels in
+  INFILE, else DELIMITER is None), and write PostScript to OUTFILE.
+
+  INPUT_TYPE is either "line" or "code".
+
+  If SHOW_BOUNDING_BOX is true, then draw a rectangle around each label.'''
   inner_margin = 1
 
-  input = open(Infile, "r")
-  output = open(Outfile, "w")
+  input = open(infile, "r")
+  output = open(outfile, "w")
 
   # Start off with standard Postscript header
   output.write("%!PS-Adobe-3.0\n")
@@ -879,32 +889,33 @@ def make_labels():
   # Re-encode the requested font, so we can handle ISO-8859 chars.
   set_up_iso8859(output)
   output.write("/ISO%s ISO-8859-1Encoding /%s reencode_font\n"
-               % (Font_Name, Font_Name))
+               % (lspec.font_name, lspec.font_name))
 
   # Set up subroutines
-  clipfunc = make_clipping_func(inner_margin)
+  clipfunc = make_clipping_func(lspec.label_height, lspec.label_width,
+                                inner_margin, show_bounding_box)
   output.write("/labelclip {\n%s\n} def\n" % clipfunc)
   output.write("\n")
   output.write("% end prologue\n")
   output.write("\n")
   output.write("% set font type and size\n")
   output.write("ISO%s %d scalefont setfont\n"
-               % (Font_Name, Font_Size))
+               % (lspec.font_name, lspec.font_size))
 
   # Set up some loop vars.
-  label_lines = [ ]     # Used only for Line_Input
-  line_idx = 0          # Used only for Line_Input
-  code_accum = ''       # Used for both Line_Input and Code_Input
+  label_lines = [ ]     # Used only for line input
+  line_idx = 0          # Used only for line input
+  code_accum = ''       # Used for both line input and code input
   page_number = 1       # Do you really need a comment?
 
   # See the end of the while loop below for an explanation of this flag.
   iterate_over_single_page = False
 
   # Horiz position (by label)
-  x = int((First_Label - 1) / Vert_Num_Labels)
+  x = int((lspec.first_label - 1) / lspec.vert_num_labels)
 
   # Vertical position (by label)
-  y = int((First_Label - 1) % Vert_Num_Labels)
+  y = int((lspec.first_label - 1) % lspec.vert_num_labels)
 
   first_time = False
   line = input.readline()
@@ -912,20 +923,22 @@ def make_labels():
     if not iterate_over_single_page:
       line = line.rstrip()
 
-    if ((Delimiter and line == Delimiter)
+    if ((delimiter is not None and line == delimiter)
         or iterate_over_single_page):
-      if Line_Input:
+      if input_type == "line":
         num_lines = len(label_lines)
    
         text_margin = inner_margin + 2.0
         ### TODO: need to be more sophisticated about divining the
         # font sizes and acting accordingly, here.
-        upmost_line_start = Label_Height / (num_lines + 1.0) * float(num_lines)
-        distance_down = Label_Height / (num_lines + 2.0)
-        fontsize = Font_Size / (1.0 + ((num_lines - 4.0) / 10.0))
+        upmost_line_start = lspec.label_height / (num_lines + 1.0) \
+                            * float(num_lines)
+        distance_down = lspec.label_height / (num_lines + 2.0)
+        fontsize = lspec.font_size / (1.0 + ((num_lines - 4.0) / 10.0))
         
         code_accum += "newpath\n"
-        code_accum += "ISO%s %d scalefont setfont\n" % (Font_Name, fontsize)
+        code_accum += "ISO%s %d scalefont setfont\n" % (lspec.font_name,
+                                                        fontsize)
         for label_line in range(0, num_lines):
           this_line = upmost_line_start - (label_line * distance_down)
           code_accum += "%f %f moveto\n" % (text_margin, this_line)
@@ -937,15 +950,15 @@ def make_labels():
       if not first_time:
         output.write("%%%%Page: labels %d\n\n" % page_number)
         output.write("%%BeginPageSetup\n")
-        output.write("%f " % Left_Margin)
-        output.write("%f " % Bottom_Margin)
+        output.write("%f " % lspec.left_margin)
+        output.write("%f " % lspec.bottom_margin)
         output.write("translate\n")
         output.write("%%EndPageSetup\n\n")
         first_time = True
       
       # Print the label, clipped and translated appropriately.
-      this_x_step = x * (Label_Width  + Horiz_Space)
-      this_y_step = y * (Label_Height + Vert_Space)
+      this_x_step = x * (lspec.label_width + lspec.horiz_space)
+      this_y_step = y * (lspec.label_height + lspec.vert_space)
       output.write("gsave\n")
       output.write("%d %d\n" % (this_x_step, this_y_step))
       output.write("translate\n")
@@ -956,20 +969,20 @@ def make_labels():
 
       # Increment, and maybe cross a column or page boundary.
       y += 1
-      if y >= Vert_Num_Labels:
+      if y >= lspec.vert_num_labels:
         y = 0
         x += 1
-      if x >= Horiz_Num_Labels:
+      if x >= lspec.horiz_num_labels:
         x = 0
         page_number += 1
         output.write("showpage\n")
 
       # Reset everyone.
-      if Delimiter:
+      if delimiter is not None:
         label_lines = [ ]
       code_accum = ''
 
-    elif Line_Input:
+    elif input_type == "line":
       # PostScript needs (, ), and \ escaped.
       # ### TODO: Why not "%" too?
       line = line.replace('\\','\\\\')
@@ -977,7 +990,7 @@ def make_labels():
       line = line.replace(')','\\)')
       label_lines.append(line)
 
-    elif Code_Input:
+    elif input_type == "code":
       code_accum += line
       code_accum += "\n"
 
@@ -1003,9 +1016,9 @@ def make_labels():
     # out false, but is set to True within the first iteration of the
     # loop if it is going to be set at all.
     if (line == ""
-        and not Delimiter
-        and not (y >= Vert_Num_Labels)
-        and not (x >= Horiz_Num_Labels)
+        and delimiter is None
+        and not (y >= lspec.vert_num_labels)
+        and not (x >= lspec.horiz_num_labels)
         and not (iterate_over_single_page and x == 0 and y == 0)):
       iterate_over_single_page = True
     else:
@@ -1020,24 +1033,24 @@ def make_labels():
 def main():
   exit_cleanly = False
   show_parameters = False
+  lspec = LabelSpec()
+
+  type = None                 # A predefined label type (e.g., avery5160).
+  infile = None               # Holds PostScript code or text lines.
+  line_input = False          # One kind of input infile can hold.
+  code_input = False          # The other kind of input infile can hold.
+  outfile = None              # Defaults to 'labelnation.ps'.
+  param_file = None           # File containing label dimensions.
+  delimiter = None            # Separates labels in multi-label files.
+  show_bounding_box = False   # Draw boxes around the labels.
+
+  # After option parsing is complete, set this to "line" or "code"
+  # based on the values of line_input versus code_input.
+  input_type = None
 
   # If this gets set, we encountered unknown options and will exit at
   # the end of this subroutine.
   exit_with_admonishment = False
-
-  global Type
-  global Param_File
-  global Infile
-  global Line_Input
-  global Code_Input
-  global First_Label
-  global Delimiter
-  global Font_Name
-  global Font_Size
-  global Show_Bounding_Box
-  global Left_Margin
-  global Bottom_Margin
-  global Outfile
 
   try:
     opts, args = getopt.getopt(sys.argv[1:],
@@ -1082,31 +1095,31 @@ def main():
     elif opt == '--show-parameters':
       show_parameters = True
     elif opt == '-t' or opt == '--type':
-      Type = value
+      type = value
     elif opt == '-p' or opt == '--parameter-file':
-      Param_File = value
+      param_file = value
     elif opt == '-i' or opt == '--infile':
-      Infile = value
+      infile = value
     elif opt == '-l' or opt == '--line-input':
-      Line_Input = True
+      line_input = True
     elif opt == '-c' or opt == '--code-input':
-      Code_Input = True
+      code_input = True
     elif opt == '--first-label':
-      First_Label = value
+      lspec.first_label = value
     elif opt == '-d' or opt == '--delimiter':
-      Delimiter = value
+      delimiter = value
     elif opt == '--font-name':
-      Font_Name = value
+      lspec.font_name = value
     elif opt == '--font-size':
-      Font_Size = value
+      lspec.font_size = value
     elif opt == '--show-bounding-box':
-      Show_Bounding_Box = True
+      show_bounding_box = True
     elif opt == '--left-margin':
-      Left_Margin = value
+      lspec.left_margin = value
     elif opt == '--bottom-margin':
-      Bottom_Margin = value
+      lspec.bottom_margin = value
     elif opt == '-o' or opt == '--outfile':
-      Outfile = value
+      outfile = value
     else:
       print "Unrecognized option '%s'" % opt
       exit_with_admonishment = True
@@ -1115,82 +1128,87 @@ def main():
     sys.exit(0)
 
   # Do file parsing _after_ command line options have been processed
-  if Type:
-    set_parameters_for_type(Type)
+  if type is not None:
+    lspec.absorb(labelspec_for_type(type))
 
-  if Param_File:
-    parse_param_file(Param_File)
+  if param_file is not None:
+    lspec.absorb(parse_param_file(param_file))
 
-  if Code_Input and Line_Input:
+  if code_input and line_input:
     print "Cannot use both -l and -c"
     exit_with_admonishment = True
 
-  if not Code_Input and not Line_Input:
+  if not code_input and not line_input:
     print "Must use one of -l or -c"
     exit_with_admonishment = True
 
+  if line_input:
+    input_type = "line"
+  else:
+    input_type = "code"
+
   if show_parameters:
-    show_parameters()
+    print lspec
     sys.exit(0)
 
   # Check that required parameters have been found and are sane.
-  if Left_Margin < 0:
+  if lspec.left_margin is None:
     print "missing required left-margin parameter"
     exit_with_admonishment = True
 
-  if Bottom_Margin < 0:
+  if lspec.bottom_margin is None:
     print "missing required bottom-margin parameter"
     exit_with_admonishment = True
 
-  if Label_Width < 0:
+  if lspec.label_width is None:
     print "missing required label-width parameter"
     exit_with_admonishment = True
 
-  if Label_Height < 0:
+  if lspec.label_height is None:
     print "missing required label-height parameter"
     exit_with_admonishment = True
 
-  if Horiz_Space < 0:
+  if lspec.horiz_space is None:
     print "missing required horiz-space parameter"
     exit_with_admonishment = True
 
-  if Vert_Space < 0:
+  if lspec.vert_space is None:
     print "missing required vert-space parameter"
     exit_with_admonishment = True
 
-  if Horiz_Num_Labels < 0:
+  if lspec.horiz_num_labels is None:
     print "missing required horiz-num-labels parameter"
     exit_with_admonishment = True
 
-  if Vert_Num_Labels < 0:
+  if lspec.vert_num_labels is None:
     print "missing required vert-num-labels parameter"
     exit_with_admonishment = True
 
-  if First_Label < 1:
-    print "First label %d too low; must be at least 1." % First_Label
+  if lspec.first_label < 1:
+    print "First label %d too low; must be at least 1." % lspec.first_label
     exit_with_admonishment = True
-  elif First_Label > Horiz_Num_Labels * Vert_Num_Labels:
+  elif lspec.first_label > lspec.horiz_num_labels * lspec.vert_num_labels:
     print "First label %d is too high; there are only " \
           + "%d * %d == %d labels available."           \
-          % (First_Label, Horiz_Num_Labels, Vert_Num_Labels,
-             Horiz_Num_Labels * Vert_Num_Labels)
+          % (lspec.first_label, lspec.horiz_num_labels, lspec.vert_num_labels,
+             lspec.horiz_num_labels * lspec.vert_num_labels)
     exit_with_admonishment = True
 
   # Set up defaults for things that could reasonably be omitted.
-  if not Font_Name:
-    Font_Name = 'Times-Roman'
+  if not lspec.font_name:
+    lspec.font_name = 'Times-Roman'
 
-  if not Font_Size:
-    Font_Size = '12'
+  if not lspec.font_size:
+    lspec.font_size = '12'
 
-  if not Outfile:
-    Outfile = 'labelnation.ps'
+  if not outfile:
+    outfile = 'labelnation.ps'
 
   if exit_with_admonishment:
     print 'Run "labelnation --help" to see usage.'
     sys.exit(1)
 
-  make_labels()
+  make_labels(lspec, infile, input_type, delimiter, outfile, show_bounding_box)
 
 
 
