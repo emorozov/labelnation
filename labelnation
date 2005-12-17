@@ -406,7 +406,7 @@ def labelspec_for_type(type):
 
 def parse_param_file(pfile):
   """Return a LabelSpec based on the contents of parameter file PFILE."""
-  ctl = pfile.open("r")
+  ctl = open(pfile, "r")
   lspec = LabelSpec()
   line = ctl.readline()
   while (line):
@@ -419,26 +419,25 @@ def parse_param_file(pfile):
       val = dedelimit_string(val)
 
     if key == "leftmargin":
-      lspec.left_margin = dedelimit_string(val)
+      lspec.left_margin = float(dedelimit_string(val))
     elif key == "bottommargin":
-      lspec.bottom_margin = dedelimit_string(val)
+      lspec.bottom_margin = float(dedelimit_string(val))
     elif key == "labelwidth":
-      lspec.label_width = dedelimit_string(val)
+      lspec.label_width = float(dedelimit_string(val))
     elif key == "labelheight":
-      lspec.label_height = dedelimit_string(val)
+      lspec.label_height = float(dedelimit_string(val))
     elif key == "horizspace":
-      lspec.horiz_space = dedelimit_string(val)
+      lspec.horiz_space = float(dedelimit_string(val))
     elif key == "vertspace":
-      lspec.vert_space = dedelimit_string(val)
+      lspec.vert_space = float(dedelimit_string(val))
     elif key == "horiznumlabels":
-      lspec.horiz_num_labels = dedelimit_string(val)
+      lspec.horiz_num_labels = float(dedelimit_string(val))
     elif key == "vertnumlabels":
-      lspec.vert_num_labels = dedelimit_string(val)
-    # Remaining ones should never override command-line
-    elif key == "fontname" and not font_name:
+      lspec.vert_num_labels = float(dedelimit_string(val))
+    elif key == "fontname":
       lspec.font_name = val
-    elif key == "fontsize" and not font_size:
-      lspec.font_size = val
+    elif key == "fontsize":
+      lspec.font_size = float(val)
     ### TODO: This is totally bogus and shouldn't even be supported
     ### here.  Leaving it in for now only so its excision can be a
     ### discrete event later.
@@ -1105,19 +1104,19 @@ def main():
     elif opt == '-c' or opt == '--code-input':
       code_input = True
     elif opt == '--first-label':
-      lspec.first_label = value
+      lspec.first_label = float(value)
     elif opt == '-d' or opt == '--delimiter':
       delimiter = value
     elif opt == '--font-name':
       lspec.font_name = value
     elif opt == '--font-size':
-      lspec.font_size = value
+      lspec.font_size = float(value)
     elif opt == '--show-bounding-box':
       show_bounding_box = True
     elif opt == '--left-margin':
-      lspec.left_margin = value
+      lspec.left_margin = float(value)
     elif opt == '--bottom-margin':
-      lspec.bottom_margin = value
+      lspec.bottom_margin = float(value)
     elif opt == '-o' or opt == '--outfile':
       outfile = value
     else:

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Duplicate the avery-5160 parameters of cmd-1 manually, then make
+# sure we still get the same output.
+../../labelnation -p params-2 -l -i in -o out-2

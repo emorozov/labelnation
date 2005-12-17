@@ -1,0 +1,3 @@
+#!/bin/sh
+
+../../labelnation -t avery-5160 -l -i in -o out-1

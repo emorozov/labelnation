@@ -63,22 +63,26 @@ samples:
 
 check:
 	@echo "Running tests..."
-	@for t in tests/*-*; do                                        \
-           (cd $${t}; ./cmd);                                          \
-           if cmp --silent $${t}/out $${t}/expect; then                \
-             if [ -f $${t}/xfail ]; then                               \
-               echo "XPASS: $${t}";                                    \
-             else                                                      \
-               echo "PASS:  $${t}";                                    \
-             fi                                                        \
-           else                                                        \
-             if [ -f $${t}/xfail ]; then                               \
-               echo "XFAIL: $${t}";                                    \
-             else                                                      \
-               echo "FAIL:  $${t}";                                    \
-             fi                                                        \
-           fi                                                          \
-        done
+	@for t in tests/*-*; do                                          \
+          for i in "" "-1" "-2" "-3" "-4" "-5" "-6" "-7" "-8" "-9"; do   \
+            if [ -f $${t}/cmd$${i} ]; then                               \
+              (cd $${t}; ./cmd$${i});                                    \
+              if cmp --silent $${t}/out$${i} $${t}/expect$${i}; then     \
+                if [ -f $${t}/xfail ]; then                              \
+                  echo "XPASS: $${t}/cmd$${i}";                          \
+                else                                                     \
+                  echo "PASS:  $${t}/cmd$${i}";                          \
+                fi                                                       \
+              else                                                       \
+                if [ -f $${t}/xfail ]; then                              \
+                  echo "XFAIL: $${t}/cmd$${i}";                          \
+                else                                                     \
+                  echo "FAIL:  $${t}/cmd$${i}";                          \
+                fi                                                       \
+              fi                                                         \
+            fi                                                           \
+         done                                                            \
+      done
 
 clean: 
 	rm -f *~ *.tmp labelnation*.tar.gz help.txt index.html
