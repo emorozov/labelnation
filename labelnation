@@ -522,7 +522,7 @@ Let's start with return address labels.  If you wanted to print a
 sheet of them using the Avery 5167 standard (80 small labels per
 page), you might invoke LabelNation like this:
 
-   prompt\$ labelnation -t avery5167 -i myaddress.txt -l -o myaddress.ps
+   prompt$ labelnation -t avery5167 -i myaddress.txt -l -o myaddress.ps
 
 The "-t" stands for "type", followed by one of the standard predefined
 label types.  The "-i" means "input file", that is, where to take the
@@ -562,7 +562,7 @@ flag.  The delimiter separates each label from the next.  For
 example, if you use a delimiter of "XXX", then you might invoke
 LabelNation like so
 
-   prompt\$ labelnation -d "XXX" -t avery5167 -l -i addrs.txt -o addrs.ps
+   prompt$ labelnation -d "XXX" -t avery5167 -l -i addrs.txt -o addrs.ps
 
 where addrs.txt contains this
 
@@ -586,7 +586,7 @@ How To Discover The Predefined Label Types:
 
 To see a list of all known label types, run
 
-   prompt\$ labelnation --list-types
+   prompt$ labelnation --list-types
    Predefined label types:
       Avery-5160 / Avery-6245 / Maco-LL5805  (30 labels per page)
       Avery-5167 / Maco-LL8100               (80 labels per page)
@@ -611,7 +611,7 @@ column, respectively).
 
 The two options to do this are
 
-   prompt\$ labelnation --bottom-margin N --left-margin N ...
+   prompt$ labelnation --bottom-margin N --left-margin N ...
 
 where N is a number of PostScript points, each being 1/72 of an inch.
 (Of course, you don't have to use the two options together, that's
@@ -621,7 +621,7 @@ the predefined quantity, but rather replaces it.
 In order to know where you're starting from, you can ask LabelNation
 to show you the parameters for a given label type:
 
-   prompt\$ labelnation -t avery5167 --show-parameters
+   prompt$ labelnation -t avery5167 --show-parameters
    LeftMargin      14
    BottomMargin    17
    LabelWidth      126
@@ -651,7 +651,7 @@ parameter file consists of lines of the form
 
 You can see valid parameter names by running
 
-   prompt\$ labelnation -t avery5167 --show-parameters
+   prompt$ labelnation -t avery5167 --show-parameters
 
 as mentioned earlier (it doesn't have to be avery5167, it can be any
 built-in type).  Keep in mind that a "parameter file" is for
