@@ -142,10 +142,6 @@ def sheetspec_for_type(type):
   """Return a SheetSpec object that matches TYPE."""
   type = normalize_string(type)
 
-  ### TODO: Okay, it's ridiculous to be maintaining these label
-  ### equivalences in two places.  Make a data structure to hold all
-  ### this, use it both here and in types().
-
   # Don't know Maco's number for Avery 5x61 series yet...
   if (   type == "avery5161"
       or type == "avery5261"
@@ -372,21 +368,6 @@ def sheetspec_for_type(type):
                      font_name="Times-Roman",
                      font_size=10.0)
 
-  elif type == "kffweekly":
-    # My own private labels for a weekly calendar, to fit on pages 252x486.
-    # ### TODO: This is silly, get these out of the mainline code and
-    # ### into a private label parameter file.
-    return SheetSpec(left_margin=47.0,
-                     bottom_margin=11.0,
-                     label_width=240.0,
-                     label_height=60.0,
-                     horiz_space=0.0,
-                     vert_space=5.0,
-                     horiz_num_labels=1.0,
-                     vert_num_labels=7.0,
-                     font_name="Times-Roman",
-                     font_size=12.0)
-
   elif type == "avery2160" or type == "maverickST340817":
     # Mini sheets address labels 8 labels/sheet, single column 
     # Provided by Gyepi Sam <gyepi@praxis-sw.com> 
@@ -402,9 +383,7 @@ def sheetspec_for_type(type):
                      font_size=12.0)
 
   else:
-    ### TODO: Raise something instead?
-    sys.stderr.write("ERROR: Unknown label type '%s'.\n" % otype)
-    sys.exit(1)
+    raise Exception("ERROR: Unknown label type '%s'.\n" % otype)
 
 
 def parse_param_file(pfile):
@@ -441,11 +420,6 @@ def parse_param_file(pfile):
       spec.font_name = val
     elif key == "fontsize":
       spec.font_size = float(val)
-    ### TODO: This is totally bogus and shouldn't even be supported
-    ### here.  Leaving it in for now only so its excision can be a
-    ### discrete event later.
-    elif key == "outfile" and not outfile:
-      outfile = val
     else:
       sys.stderr.write("ERROR: Unknown parameter line '%s'.\n" % line)
     line = ctl.readline()
@@ -465,9 +439,6 @@ def version():
 
 # Print all predefined label types
 def types():
-  ### TODO: Okay, it's ridiculous to be maintaining these label
-  ### equivalences in two places.  Make a data structure to hold all
-  ### this, use it both here and in sheetspec_for_type().
   print '''Predefined label types:
 
             Avery-5168                             (4 labels per page)
@@ -986,7 +957,6 @@ def make_labels(spec, infile, input_type, delimiter, outfile,
 
     elif input_type == "line":
       # PostScript needs (, ), and \ escaped.
-      # ### TODO: Why not "%" too?
       line = line.replace('\\','\\\\')
       line = line.replace('(','\\(')
       line = line.replace(')','\\)')
@@ -1041,7 +1011,7 @@ def main():
   infile = None               # Holds PostScript code or text lines.
   line_input = False          # One kind of input infile can hold.
   code_input = False          # The other kind of input infile can hold.
-  outfile = None              # Defaults to 'labelnation.ps'.
+  outfile = 'labelnation.ps'  # Poor default, but kept for compatibility.
   param_file = None           # File containing label dimensions.
   delimiter = None            # Separates labels in multi-label files.
   show_bounding_box = False   # Draw boxes around the labels.
@@ -1201,11 +1171,6 @@ def main():
                         spec.horiz_num_labels, spec.vert_num_labels,
                         spec.horiz_num_labels * spec.vert_num_labels))
     exit_with_admonishment = True
-
-  # ### TODO: This is a poor default.  It should have been
-  # ### `basename infile`.ps or something.
-  if not outfile:
-    outfile = 'labelnation.ps'
 
   if exit_with_admonishment:
     sys.stderr.write('Run "labelnation --help" to see usage.\n')
