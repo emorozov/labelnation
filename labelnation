@@ -403,7 +403,7 @@ def sheetspec_for_type(type):
 
   else:
     ### TODO: Raise something instead?
-    sys.stderr.write("ERROR: Unknown label type '%s'\n" % otype)
+    sys.stderr.write("ERROR: Unknown label type '%s'.\n" % otype)
     sys.exit(1)
 
 
@@ -447,7 +447,7 @@ def parse_param_file(pfile):
     elif key == "outfile" and not outfile:
       outfile = val
     else:
-      print "Unknown parameter line '%s'" % line
+      sys.stderr.write("ERROR: Unknown parameter line '%s'.\n" % line)
     line = ctl.readline()
 
   ctl.close()
@@ -1077,7 +1077,7 @@ def main():
                                 'outfile=',
                                 ])
   except getopt.GetoptError, e:
-    sys.stderr.write(error_prefix + ': ' + str(e) + '\n\n')
+    sys.stderr.write("ERROR: " + str(e) + '\n\n')
     usage()
     sys.exit(1)
 
@@ -1123,7 +1123,7 @@ def main():
     elif opt == '-o' or opt == '--outfile':
       outfile = value
     else:
-      print "Unrecognized option '%s'" % opt
+      sys.stderr.write("ERROR: Unrecognized option '%s'.\n" % opt)
       exit_with_admonishment = True
 
   if exit_cleanly:
@@ -1137,11 +1137,11 @@ def main():
     spec.absorb(parse_param_file(param_file))
 
   if code_input and line_input:
-    print "Cannot use both -l and -c"
+    sys.stderr.write("ERROR: Cannot use both -l and -c.\n")
     exit_with_admonishment = True
 
   if not code_input and not line_input:
-    print "Must use one of -l or -c"
+    sys.stderr.write("ERROR: Must use one of -l or -c.\n")
     exit_with_admonishment = True
 
   if line_input:
@@ -1155,48 +1155,51 @@ def main():
 
   # Check that required parameters have been found and are sane.
   if spec.left_margin is None:
-    print "missing required left-margin parameter"
+    sys.stderr.write("ERROR: Missing required left-margin parameter.\n")
     exit_with_admonishment = True
 
   if spec.bottom_margin is None:
-    print "missing required bottom-margin parameter"
+    sys.stderr.write("ERROR: Missing required bottom-margin parameter.\n")
     exit_with_admonishment = True
 
   if spec.label_width is None:
-    print "missing required label-width parameter"
+    sys.stderr.write("ERROR: Missing required label-width parameter.\n")
     exit_with_admonishment = True
 
   if spec.label_height is None:
-    print "missing required label-height parameter"
+    sys.stderr.write("ERROR: Missing required label-height parameter.\n")
     exit_with_admonishment = True
 
   if spec.horiz_space is None:
-    print "missing required horiz-space parameter"
+    sys.stderr.write("ERROR: Missing required horiz-space parameter.\n")
     exit_with_admonishment = True
 
   if spec.vert_space is None:
-    print "missing required vert-space parameter"
+    sys.stderr.write("ERROR: Missing required vert-space parameter.\n")
     exit_with_admonishment = True
 
   if spec.horiz_num_labels is None:
-    print "missing required horiz-num-labels parameter"
+    sys.stderr.write("ERROR: Missing required horiz-num-labels parameter.\n")
     exit_with_admonishment = True
 
   if spec.vert_num_labels is None:
-    print "missing required vert-num-labels parameter"
+    sys.stderr.write("ERROR: Missing required vert-num-labels parameter.\n")
     exit_with_admonishment = True
 
   if int(spec.first_label) != spec.first_label:
-    print "First label %f is not an integer." % spec.first_label
+    sys.stderr.write("ERROR: First label %f is not an integer.\n"
+                     % spec.first_label)
     exit_with_admonishment = True
   if spec.first_label < 1:
-    print "First label %d too low; must be at least 1." % spec.first_label
+    sys.stderr.write("ERROR: First label %d too low; "
+                     "must be at least 1.\n" % spec.first_label)
     exit_with_admonishment = True
   elif spec.first_label > spec.horiz_num_labels * spec.vert_num_labels:
-    print "First label %d is too high; there are only " \
-          + "%d * %d == %d labels available."           \
-          % (spec.first_label, spec.horiz_num_labels, spec.vert_num_labels,
-             spec.horiz_num_labels * spec.vert_num_labels)
+    sys.stderr.write("ERROR: First label %d is too high; there are only "
+                     "%d * %d == %d labels available.\n" \
+                     % (spec.first_label,
+                        spec.horiz_num_labels, spec.vert_num_labels,
+                        spec.horiz_num_labels * spec.vert_num_labels))
     exit_with_admonishment = True
 
   # ### TODO: This is a poor default.  It should have been
@@ -1205,7 +1208,7 @@ def main():
     outfile = 'labelnation.ps'
 
   if exit_with_admonishment:
-    print 'Run "labelnation --help" to see usage.'
+    sys.stderr.write('Run "labelnation --help" to see usage.\n')
     sys.exit(1)
 
   make_labels(spec, infile, input_type, delimiter, outfile, show_bounding_box)
