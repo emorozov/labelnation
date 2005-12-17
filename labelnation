@@ -54,9 +54,10 @@ class SheetSpec:
                vert_space=None,       # unused inter-label vertical space
                horiz_num_labels=None, # how many labels across?
                vert_num_labels=None,  # how many labels up and down?
-               first_label=1.0,       # start printing here
-               font_name=None,
-               font_size=None,
+               # These are different, because they're not placeholders:
+               first_label=1,            # start printing here
+               font_name="Times-Roman",  # uncontroversial fallback font
+               font_size=12,             # a normal font size for labels
                ):
     self.left_margin = left_margin
     self.bottom_margin = bottom_margin
@@ -91,12 +92,14 @@ class SheetSpec:
       self.horiz_num_labels = spec.horiz_num_labels
     if self.vert_num_labels is None:
       self.vert_num_labels = spec.vert_num_labels
-    if self.font_name is None:
-      self.font_name = spec.font_name
-    if self.font_size is None:
-      self.font_size = spec.font_size
-    ### TODO: should this one be unconditional?
+    # Again, these three are different, because their default values
+    # are actually useful, rather than just being placeholders.  No
+    # conditional is needed, because if spec's value differs from
+    # self's, then we naturally want spec's, and if it doesn't differ,
+    # then the assignment is a no-op.
     self.first_label = spec.first_label
+    self.font_name   = spec.font_name
+    self.font_size   = spec.font_size
 
   def __str__(self):
     s  = "LeftMargin:      %d\n" % self.left_margin
@@ -1104,7 +1107,7 @@ def main():
     elif opt == '-c' or opt == '--code-input':
       code_input = True
     elif opt == '--first-label':
-      spec.first_label = float(value)
+      spec.first_label = int(value)
     elif opt == '-d' or opt == '--delimiter':
       delimiter = value
     elif opt == '--font-name':
@@ -1183,6 +1186,9 @@ def main():
     print "missing required vert-num-labels parameter"
     exit_with_admonishment = True
 
+  if int(spec.first_label) != spec.first_label:
+    print "First label %f is not an integer." % spec.first_label
+    exit_with_admonishment = True
   if spec.first_label < 1:
     print "First label %d too low; must be at least 1." % spec.first_label
     exit_with_admonishment = True
@@ -1193,13 +1199,8 @@ def main():
              spec.horiz_num_labels * spec.vert_num_labels)
     exit_with_admonishment = True
 
-  # Set up defaults for things that could reasonably be omitted.
-  if not spec.font_name:
-    spec.font_name = 'Times-Roman'
-
-  if not spec.font_size:
-    spec.font_size = '12'
-
+  # ### TODO: This is a poor default.  It should have been
+  # ### `basename infile`.ps or something.
   if not outfile:
     outfile = 'labelnation.ps'
 
