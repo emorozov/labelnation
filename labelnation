@@ -119,7 +119,6 @@ class SheetSpec:
 ### Subroutines.
 
 def dedelimit_string(str):
-  ### TODO: str.translate() could do this
   str = str.replace('\n', '')
   str = str.replace('"', '')
   str = str.replace("'", '')
@@ -131,7 +130,6 @@ def dedelimit_string(str):
 def normalize_string(str):
   str = dedelimit_string(str)
   str = str.lower()
-  ### TODO: str.translate() could do this
   str = str.replace('-', '')
   str = str.replace('_', '')
   str = str.replace('.', '')
