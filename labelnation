@@ -35,7 +35,7 @@ if sys.hexversion < 0x2000000:
                    "see www.python.org.\n")
   sys.exit(1)
 
-# Pretend we have true booleans on older python versions
+# Pretend we have booleans on older python versions
 try:
   True
 except:
