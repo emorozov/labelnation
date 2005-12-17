@@ -44,7 +44,7 @@ except:
 
 ################ Classes ###################
 
-class LabelSpec:
+class SheetSpec:
   def __init__(self,
                left_margin=None,      # first label from left starts here
                bottom_margin=None,    # first label from bottom starts here
@@ -71,32 +71,32 @@ class LabelSpec:
     self.font_size = font_size
 
   # Set up standard params, but preserving manual overrides:
-  def absorb(self, lspec):
-    """Merge LSPEC into self, taking LSPEC's values for any of self's
+  def absorb(self, spec):
+    """Merge SPEC into self, taking SPEC's values for any of self's
     values that are still at their defaults, but keeping own values
     where they are different from the default."""
     if self.left_margin is None:
-      self.left_margin = lspec.left_margin
+      self.left_margin = spec.left_margin
     if self.bottom_margin is None:
-      self.bottom_margin = lspec.bottom_margin
+      self.bottom_margin = spec.bottom_margin
     if self.label_width is None:
-      self.label_width = lspec.label_width
+      self.label_width = spec.label_width
     if self.label_height is None:
-      self.label_height = lspec.label_height
+      self.label_height = spec.label_height
     if self.horiz_space is None:
-      self.horiz_space = lspec.horiz_space
+      self.horiz_space = spec.horiz_space
     if self.vert_space is None:
-      self.vert_space = lspec.vert_space
+      self.vert_space = spec.vert_space
     if self.horiz_num_labels is None:
-      self.horiz_num_labels = lspec.horiz_num_labels
+      self.horiz_num_labels = spec.horiz_num_labels
     if self.vert_num_labels is None:
-      self.vert_num_labels = lspec.vert_num_labels
+      self.vert_num_labels = spec.vert_num_labels
     if self.font_name is None:
-      self.font_name = lspec.font_name
+      self.font_name = spec.font_name
     if self.font_size is None:
-      self.font_size = lspec.font_size
+      self.font_size = spec.font_size
     ### TODO: should this one be unconditional?
-    self.first_label = lspec.first_label
+    self.first_label = spec.first_label
 
   def __str__(self):
     s  = "LeftMargin:      %d\n" % self.left_margin
@@ -135,8 +135,8 @@ def normalize_string(str):
   return str
 
 
-def labelspec_for_type(type):
-  """Return a LabelSpec object that matches TYPE."""
+def sheetspec_for_type(type):
+  """Return a SheetSpec object that matches TYPE."""
   type = normalize_string(type)
 
   ### TODO: Okay, it's ridiculous to be maintaining these label
@@ -149,7 +149,7 @@ def labelspec_for_type(type):
       or type == "avery5661"
       or type == "avery5961"):
     # Large and wide address labels, 20 per page
-    return LabelSpec(left_margin=11.25,
+    return SheetSpec(left_margin=11.25,
                      bottom_margin=16.0,
                      label_width=270.0,
                      label_height=72.0,
@@ -171,7 +171,7 @@ def labelspec_for_type(type):
         or type == "avery18162"
         or type == "avery18662"):
     # 14 per page
-    return LabelSpec(left_margin=11.52,
+    return SheetSpec(left_margin=11.52,
                      bottom_margin=62.0,
                      label_width=300.0,
                      label_height=96.0,
@@ -184,7 +184,7 @@ def labelspec_for_type(type):
 
   elif type == "avery5168":
     # Big shipping labels, 4 per page
-    return LabelSpec(left_margin=31.0,
+    return SheetSpec(left_margin=31.0,
                      bottom_margin=33.0,
                      label_width=254.0,
                      label_height=363.0,
@@ -197,7 +197,7 @@ def labelspec_for_type(type):
 
   elif type == "avery5264":
     # Moderately big shipping labels, 6 per page
-    return LabelSpec(left_margin=20.0,
+    return SheetSpec(left_margin=20.0,
                      bottom_margin=25.0,
                      label_width=270.0,
                      label_height=245.0,
@@ -224,7 +224,7 @@ def labelspec_for_type(type):
         or type == "avery6245" # Not listed on Avery's equivalence sheet.
         or type == "macoll5805"):
     # Large address labels, 30 per page
-    return LabelSpec(left_margin=11.25,
+    return SheetSpec(left_margin=11.25,
                      bottom_margin=16.0,
                      label_width=180.0,
                      label_height=72.0,
@@ -238,7 +238,7 @@ def labelspec_for_type(type):
   elif type == "avery7162":
     # Large and wide address labels, 16 per page
     # Added by nathanh@manu.com.au 20031125
-    return LabelSpec(left_margin=18.0,
+    return SheetSpec(left_margin=18.0,
                      bottom_margin=28.0,
                      label_width=281.0,
                      label_height=96.0,
@@ -252,7 +252,7 @@ def labelspec_for_type(type):
   elif type == "avery7160":
     # Large address labels, 21 per A4 page
     k = 72.0/25.4             # Convert mm to points
-    return LabelSpec(left_margin=(k * 10.25),
+    return SheetSpec(left_margin=(k * 10.25),
                      bottom_margin=(k * 19.0),
                      label_width=(k * 56),
                      label_height=(k * 33.5),
@@ -266,7 +266,7 @@ def labelspec_for_type(type):
   elif type == "avery6571":
     # 32 labels per page; more than that I don't know.  Ask
     # William R Thomas <corvar@theonering.net>, who sent it in.
-    return LabelSpec(left_margin=60.0,
+    return SheetSpec(left_margin=60.0,
                      bottom_margin=38.0,
                      label_width=216.0,
                      label_height=45.0,
@@ -280,7 +280,7 @@ def labelspec_for_type(type):
   elif type == "avery2651":
     # 65 labels per A4 page
     k = 72.0/25.4             # Convert mm to points
-    return LabelSpec(left_margin=(k * 4.7),
+    return SheetSpec(left_margin=(k * 4.7),
                      bottom_margin=(k * 10.9),
                      label_width=(k * 38.1),
                      label_height=(k * 21.2),
@@ -297,7 +297,7 @@ def labelspec_for_type(type):
         or type == "avery6467"
         or type == "macoll8100"):
     # Small address labels, 80 per page
-    return LabelSpec(left_margin=14.0,
+    return SheetSpec(left_margin=14.0,
                      bottom_margin=17.0,
                      label_width=126.0,
                      label_height=36.0,
@@ -310,7 +310,7 @@ def labelspec_for_type(type):
 
   elif type == "avery5371" or type == "macoll8550":
     # Business cards
-    return LabelSpec(left_margin=48.0,
+    return SheetSpec(left_margin=48.0,
                      bottom_margin=16.0,
                      label_width=253.5,
                      label_height=145.3,
@@ -327,7 +327,7 @@ def labelspec_for_type(type):
         or type == "avery8163"):
     # Big mailing labels, 10 per page.  Usually the TO address goes
     # on these.
-    return LabelSpec(left_margin=48.0,
+    return SheetSpec(left_margin=48.0,
                      bottom_margin=31.0,
                      label_width=253.5,
                      label_height=145.3,
@@ -341,7 +341,7 @@ def labelspec_for_type(type):
   elif type == "?avery6464?" or type == "?maco????":
     # TODO: got some labels from CollabNet HQ today, don't know the
     # brand numbers yet.
-    return LabelSpec(left_margin=11.0,
+    return SheetSpec(left_margin=11.0,
                      bottom_margin=38.0,
                      label_width=288.5,
                      label_height=238.2,
@@ -358,7 +358,7 @@ def labelspec_for_type(type):
     # Tested against a Kyocera bulk-laser printer.
     # Contributed by: Bruce Smith <Bruce.Smith {_AT_} nmmu.ac.za>
     k = 72.0/25.4             # Convert mm to points
-    return LabelSpec(left_margin=(k * 0.0),
+    return SheetSpec(left_margin=(k * 0.0),
                      bottom_margin=(k * 0.0),
                      label_width=(k * 57.25),
                      label_height=(k * 32.5),
@@ -373,7 +373,7 @@ def labelspec_for_type(type):
     # My own private labels for a weekly calendar, to fit on pages 252x486.
     # ### TODO: This is silly, get these out of the mainline code and
     # ### into a private label parameter file.
-    return LabelSpec(left_margin=47.0,
+    return SheetSpec(left_margin=47.0,
                      bottom_margin=11.0,
                      label_width=240.0,
                      label_height=60.0,
@@ -387,7 +387,7 @@ def labelspec_for_type(type):
   elif type == "avery2160" or type == "maverickST340817":
     # Mini sheets address labels 8 labels/sheet, single column 
     # Provided by Gyepi Sam <gyepi@praxis-sw.com> 
-    return LabelSpec(left_margin=58.5,
+    return SheetSpec(left_margin=58.5,
                      bottom_margin=90.0,
                      label_width=189.0,
                      label_height=72.0,
@@ -405,9 +405,9 @@ def labelspec_for_type(type):
 
 
 def parse_param_file(pfile):
-  """Return a LabelSpec based on the contents of parameter file PFILE."""
+  """Return a SheetSpec based on the contents of parameter file PFILE."""
   ctl = open(pfile, "r")
-  lspec = LabelSpec()
+  spec = SheetSpec()
   line = ctl.readline()
   while (line):
     ### TODO: Why is it apparently optional to escape the backslash here?
@@ -419,25 +419,25 @@ def parse_param_file(pfile):
       val = dedelimit_string(val)
 
     if key == "leftmargin":
-      lspec.left_margin = float(dedelimit_string(val))
+      spec.left_margin = float(dedelimit_string(val))
     elif key == "bottommargin":
-      lspec.bottom_margin = float(dedelimit_string(val))
+      spec.bottom_margin = float(dedelimit_string(val))
     elif key == "labelwidth":
-      lspec.label_width = float(dedelimit_string(val))
+      spec.label_width = float(dedelimit_string(val))
     elif key == "labelheight":
-      lspec.label_height = float(dedelimit_string(val))
+      spec.label_height = float(dedelimit_string(val))
     elif key == "horizspace":
-      lspec.horiz_space = float(dedelimit_string(val))
+      spec.horiz_space = float(dedelimit_string(val))
     elif key == "vertspace":
-      lspec.vert_space = float(dedelimit_string(val))
+      spec.vert_space = float(dedelimit_string(val))
     elif key == "horiznumlabels":
-      lspec.horiz_num_labels = float(dedelimit_string(val))
+      spec.horiz_num_labels = float(dedelimit_string(val))
     elif key == "vertnumlabels":
-      lspec.vert_num_labels = float(dedelimit_string(val))
+      spec.vert_num_labels = float(dedelimit_string(val))
     elif key == "fontname":
-      lspec.font_name = val
+      spec.font_name = val
     elif key == "fontsize":
-      lspec.font_size = float(val)
+      spec.font_size = float(val)
     ### TODO: This is totally bogus and shouldn't even be supported
     ### here.  Leaving it in for now only so its excision can be a
     ### discrete event later.
@@ -448,7 +448,7 @@ def parse_param_file(pfile):
     line = ctl.readline()
 
   ctl.close()
-  return lspec
+  return spec
 
 
 # Print version number.
@@ -464,7 +464,7 @@ def version():
 def types():
   ### TODO: Okay, it's ridiculous to be maintaining these label
   ### equivalences in two places.  Make a data structure to hold all
-  ### this, use it both here and in labelspec_for_type().
+  ### this, use it both here and in sheetspec_for_type().
   print '''Predefined label types:
 
             Avery-5168                             (4 labels per page)
@@ -867,9 +867,9 @@ def set_up_iso8859(output):
 
 # This comment resets Emacs Python Mode's indentation.  Sigh.
 
-def make_labels(lspec, infile, input_type, delimiter, outfile,
+def make_labels(spec, infile, input_type, delimiter, outfile,
                 show_bounding_box):
-  '''Using LabelSpec LSPEC, read INPUT_TYPE data from INFILE
+  '''Using SheetSpec SPEC, read INPUT_TYPE data from INFILE
   (separated by DELIMITER if there are multiple different labels in
   INFILE, else DELIMITER is None), and write PostScript to OUTFILE.
 
@@ -888,10 +888,10 @@ def make_labels(lspec, infile, input_type, delimiter, outfile,
   # Re-encode the requested font, so we can handle ISO-8859 chars.
   set_up_iso8859(output)
   output.write("/ISO%s ISO-8859-1Encoding /%s reencode_font\n"
-               % (lspec.font_name, lspec.font_name))
+               % (spec.font_name, spec.font_name))
 
   # Set up subroutines
-  clipfunc = make_clipping_func(lspec.label_height, lspec.label_width,
+  clipfunc = make_clipping_func(spec.label_height, spec.label_width,
                                 inner_margin, show_bounding_box)
   output.write("/labelclip {\n%s\n} def\n" % clipfunc)
   output.write("\n")
@@ -899,7 +899,7 @@ def make_labels(lspec, infile, input_type, delimiter, outfile,
   output.write("\n")
   output.write("% set font type and size\n")
   output.write("ISO%s %d scalefont setfont\n"
-               % (lspec.font_name, lspec.font_size))
+               % (spec.font_name, spec.font_size))
 
   # Set up some loop vars.
   label_lines = [ ]     # Used only for line input
@@ -911,10 +911,10 @@ def make_labels(lspec, infile, input_type, delimiter, outfile,
   iterate_over_single_page = False
 
   # Horiz position (by label)
-  x = int((lspec.first_label - 1) / lspec.vert_num_labels)
+  x = int((spec.first_label - 1) / spec.vert_num_labels)
 
   # Vertical position (by label)
-  y = int((lspec.first_label - 1) % lspec.vert_num_labels)
+  y = int((spec.first_label - 1) % spec.vert_num_labels)
 
   first_time = False
   line = input.readline()
@@ -930,13 +930,13 @@ def make_labels(lspec, infile, input_type, delimiter, outfile,
         text_margin = inner_margin + 2.0
         ### TODO: need to be more sophisticated about divining the
         # font sizes and acting accordingly, here.
-        upmost_line_start = lspec.label_height / (num_lines + 1.0) \
+        upmost_line_start = spec.label_height / (num_lines + 1.0) \
                             * float(num_lines)
-        distance_down = lspec.label_height / (num_lines + 2.0)
-        fontsize = lspec.font_size / (1.0 + ((num_lines - 4.0) / 10.0))
+        distance_down = spec.label_height / (num_lines + 2.0)
+        fontsize = spec.font_size / (1.0 + ((num_lines - 4.0) / 10.0))
         
         code_accum += "newpath\n"
-        code_accum += "ISO%s %d scalefont setfont\n" % (lspec.font_name,
+        code_accum += "ISO%s %d scalefont setfont\n" % (spec.font_name,
                                                         fontsize)
         for label_line in range(0, num_lines):
           this_line = upmost_line_start - (label_line * distance_down)
@@ -949,15 +949,15 @@ def make_labels(lspec, infile, input_type, delimiter, outfile,
       if not first_time:
         output.write("%%%%Page: labels %d\n\n" % page_number)
         output.write("%%BeginPageSetup\n")
-        output.write("%f " % lspec.left_margin)
-        output.write("%f " % lspec.bottom_margin)
+        output.write("%f " % spec.left_margin)
+        output.write("%f " % spec.bottom_margin)
         output.write("translate\n")
         output.write("%%EndPageSetup\n\n")
         first_time = True
       
       # Print the label, clipped and translated appropriately.
-      this_x_step = x * (lspec.label_width + lspec.horiz_space)
-      this_y_step = y * (lspec.label_height + lspec.vert_space)
+      this_x_step = x * (spec.label_width + spec.horiz_space)
+      this_y_step = y * (spec.label_height + spec.vert_space)
       output.write("gsave\n")
       output.write("%d %d\n" % (this_x_step, this_y_step))
       output.write("translate\n")
@@ -968,10 +968,10 @@ def make_labels(lspec, infile, input_type, delimiter, outfile,
 
       # Increment, and maybe cross a column or page boundary.
       y += 1
-      if y >= lspec.vert_num_labels:
+      if y >= spec.vert_num_labels:
         y = 0
         x += 1
-      if x >= lspec.horiz_num_labels:
+      if x >= spec.horiz_num_labels:
         x = 0
         page_number += 1
         output.write("showpage\n")
@@ -1016,8 +1016,8 @@ def make_labels(lspec, infile, input_type, delimiter, outfile,
     # loop if it is going to be set at all.
     if (line == ""
         and delimiter is None
-        and not (y >= lspec.vert_num_labels)
-        and not (x >= lspec.horiz_num_labels)
+        and not (y >= spec.vert_num_labels)
+        and not (x >= spec.horiz_num_labels)
         and not (iterate_over_single_page and x == 0 and y == 0)):
       iterate_over_single_page = True
     else:
@@ -1032,7 +1032,7 @@ def make_labels(lspec, infile, input_type, delimiter, outfile,
 def main():
   exit_cleanly = False
   show_parameters = False
-  lspec = LabelSpec()
+  spec = SheetSpec()
 
   type = None                 # A predefined label type (e.g., avery5160).
   infile = None               # Holds PostScript code or text lines.
@@ -1104,19 +1104,19 @@ def main():
     elif opt == '-c' or opt == '--code-input':
       code_input = True
     elif opt == '--first-label':
-      lspec.first_label = float(value)
+      spec.first_label = float(value)
     elif opt == '-d' or opt == '--delimiter':
       delimiter = value
     elif opt == '--font-name':
-      lspec.font_name = value
+      spec.font_name = value
     elif opt == '--font-size':
-      lspec.font_size = float(value)
+      spec.font_size = float(value)
     elif opt == '--show-bounding-box':
       show_bounding_box = True
     elif opt == '--left-margin':
-      lspec.left_margin = float(value)
+      spec.left_margin = float(value)
     elif opt == '--bottom-margin':
-      lspec.bottom_margin = float(value)
+      spec.bottom_margin = float(value)
     elif opt == '-o' or opt == '--outfile':
       outfile = value
     else:
@@ -1128,10 +1128,10 @@ def main():
 
   # Do file parsing _after_ command line options have been processed
   if type is not None:
-    lspec.absorb(labelspec_for_type(type))
+    spec.absorb(sheetspec_for_type(type))
 
   if param_file is not None:
-    lspec.absorb(parse_param_file(param_file))
+    spec.absorb(parse_param_file(param_file))
 
   if code_input and line_input:
     print "Cannot use both -l and -c"
@@ -1147,58 +1147,58 @@ def main():
     input_type = "code"
 
   if show_parameters:
-    print lspec
+    print spec
     sys.exit(0)
 
   # Check that required parameters have been found and are sane.
-  if lspec.left_margin is None:
+  if spec.left_margin is None:
     print "missing required left-margin parameter"
     exit_with_admonishment = True
 
-  if lspec.bottom_margin is None:
+  if spec.bottom_margin is None:
     print "missing required bottom-margin parameter"
     exit_with_admonishment = True
 
-  if lspec.label_width is None:
+  if spec.label_width is None:
     print "missing required label-width parameter"
     exit_with_admonishment = True
 
-  if lspec.label_height is None:
+  if spec.label_height is None:
     print "missing required label-height parameter"
     exit_with_admonishment = True
 
-  if lspec.horiz_space is None:
+  if spec.horiz_space is None:
     print "missing required horiz-space parameter"
     exit_with_admonishment = True
 
-  if lspec.vert_space is None:
+  if spec.vert_space is None:
     print "missing required vert-space parameter"
     exit_with_admonishment = True
 
-  if lspec.horiz_num_labels is None:
+  if spec.horiz_num_labels is None:
     print "missing required horiz-num-labels parameter"
     exit_with_admonishment = True
 
-  if lspec.vert_num_labels is None:
+  if spec.vert_num_labels is None:
     print "missing required vert-num-labels parameter"
     exit_with_admonishment = True
 
-  if lspec.first_label < 1:
-    print "First label %d too low; must be at least 1." % lspec.first_label
+  if spec.first_label < 1:
+    print "First label %d too low; must be at least 1." % spec.first_label
     exit_with_admonishment = True
-  elif lspec.first_label > lspec.horiz_num_labels * lspec.vert_num_labels:
+  elif spec.first_label > spec.horiz_num_labels * spec.vert_num_labels:
     print "First label %d is too high; there are only " \
           + "%d * %d == %d labels available."           \
-          % (lspec.first_label, lspec.horiz_num_labels, lspec.vert_num_labels,
-             lspec.horiz_num_labels * lspec.vert_num_labels)
+          % (spec.first_label, spec.horiz_num_labels, spec.vert_num_labels,
+             spec.horiz_num_labels * spec.vert_num_labels)
     exit_with_admonishment = True
 
   # Set up defaults for things that could reasonably be omitted.
-  if not lspec.font_name:
-    lspec.font_name = 'Times-Roman'
+  if not spec.font_name:
+    spec.font_name = 'Times-Roman'
 
-  if not lspec.font_size:
-    lspec.font_size = '12'
+  if not spec.font_size:
+    spec.font_size = '12'
 
   if not outfile:
     outfile = 'labelnation.ps'
@@ -1207,7 +1207,7 @@ def main():
     print 'Run "labelnation --help" to see usage.'
     sys.exit(1)
 
-  make_labels(lspec, infile, input_type, delimiter, outfile, show_bounding_box)
+  make_labels(spec, infile, input_type, delimiter, outfile, show_bounding_box)
 
 
 
