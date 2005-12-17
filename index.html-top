@@ -4,11 +4,11 @@
 <body bgcolor="FFFFFF" fgcolor="000000">
 
 <center>
-<h1>Label Nation -- a command-line label-printing program</h1>
+<h1>LabelNation: a command-line label-printing program</h1>
 </center>
 
 <center>
-<i>Latest version: 1.34</i>
+<i>Latest version: __VN__</i>
 </center>
 
 <p style="background: lightblue; font-style: italic;"><b>NOTE</b>:

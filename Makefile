@@ -21,12 +21,12 @@ www: dist
 	rm types.tmp
 
 	(VN=`cat vn.tmp`; \
-  sed -e "s/labelnation-[0-9]*.[0-9]*.tar.gz/labelnation-$${VN}.tar.gz/g" \
+  sed -e "s/labelnation-__VN__.tar.gz/labelnation-$${VN}.tar.gz/g" \
       index.html > index.html.tmp)
 	mv index.html.tmp index.html
 
 	(VN=`cat vn.tmp`; \
-  sed -e "s/Latest version: [0-9]*.[0-9]*/Latest version: $${VN}/g" \
+  sed -e "s/Latest version: __VN__/Latest version: $${VN}/g" \
       index.html > index.html.tmp)
 	mv index.html.tmp index.html
 
