@@ -15,12 +15,13 @@ user interface.</p>
 <p>Still interested?  Then</p>
 
 <ul>
-<li> <a href="labelnation-__VN__.tar.gz">Download labelnation-__VN__.tar.gz</a>
-<br>
-<li> <a href="help.txt">Read the complete documentation</a>
-<br>
-<li> <a href="svn.html">Check out or browse the latest sources using
-     Subversion</a>
+<li><a href="labelnation-__VN__.tar.gz"
+    >Download labelnation-__VN__.tar.gz</a></li>
+<li><a href="labelnation"
+    >Download just the single 'labelnation' source file</a></li>
+<li><a href="help.txt">Read the complete documentation</a></li>
+<li><a href="svn.html"
+    >Check out or browse the latest sources using Subversion</a></li>
 </ul>
 
 <p>If you have a bug to report, or would like to send in parameters
