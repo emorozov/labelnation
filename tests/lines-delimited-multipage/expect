@@ -621,6 +621,12 @@ stroke
 grestore
 
 showpage
+%%Page: labels 2
+
+%%BeginPageSetup
+11.250000 16.000000 translate
+%%EndPageSetup
+
 gsave
 0 0
 translate
@@ -1132,6 +1138,12 @@ stroke
 grestore
 
 showpage
+%%Page: labels 3
+
+%%BeginPageSetup
+11.250000 16.000000 translate
+%%EndPageSetup
+
 gsave
 0 0
 translate
@@ -1643,6 +1655,12 @@ stroke
 grestore
 
 showpage
+%%Page: labels 4
+
+%%BeginPageSetup
+11.250000 16.000000 translate
+%%EndPageSetup
+
 gsave
 0 0
 translate
@@ -2154,6 +2172,12 @@ stroke
 grestore
 
 showpage
+%%Page: labels 5
+
+%%BeginPageSetup
+11.250000 16.000000 translate
+%%EndPageSetup
+
 gsave
 0 0
 translate
@@ -2665,6 +2689,12 @@ stroke
 grestore
 
 showpage
+%%Page: labels 6
+
+%%BeginPageSetup
+11.250000 16.000000 translate
+%%EndPageSetup
+
 gsave
 0 0
 translate
