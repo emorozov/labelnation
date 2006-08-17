@@ -29,23 +29,27 @@ for a new label type, please email <a
 href="mailto:bug-labelnation@red-bean.com">
 bug-labelnation@red-bean.com</a>.</p>
 
-<p>Another program that does something similar to Label Nation is the
-Perl <b>PostScript::MailLabel</b> module, available from</p>
+<p style="background: lightblue; font-style: italic; text-align: center;"
+><b>Other Programs That Do Similar Things</b></p>
 
-<ul>
-<a href="http://www.perl.com/CPAN/modules/by-module/PostScript/">
-http://www.perl.com/CPAN/modules/by-module/PostScript/</a>
-</ul>
+<p>You might also want to try the <a
+href="http://www.perl.com/CPAN/modules/by-module/PostScript/"
+>PostScript::MailLabel</a> Perl module.  I've never used it, but it
+looks like it does basically the same thing.  I think it can handle
+bar-codes too.</p>
 
-<p>I've never used it, but it looks like it does basically the same
-thing.  I think it can handle bar-codes too.</p>
-
-<font size=tiny>Back to
-<a href="http://www.red-bean.com/~kfogel">Karl Fogel</a>'s
-home page.
-</font>
+<p>Worldlabel.com offers <a
+href="http://www.worldlabel.com/Pages/openoffice-template.htm" >free
+templates</a> for making labels using <a
+href="http://www.openoffice.org/">OpenOffice.org</a>, the open source
+office suite.</a></p>
 
 <hr/>
+
+<p><font size=tiny>Back to
+<a href="http://www.red-bean.com/~kfogel">Karl Fogel</a>'s
+home page.
+</font></p>
 
 <center>
 <a href="http://www.red-bean.com/">
