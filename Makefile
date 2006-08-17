@@ -14,7 +14,10 @@ dist:
 	tar zcvf labelnation-`cat vn.tmp`.tar.gz labelnation-`cat vn.tmp`
 	rm -rf labelnation-`cat vn.tmp`
 
-www: dist
+www: dist index
+
+index: index.html-top index.html-bottom
+
 	./labelnation --list-types \
         | grep -v Predefined | grep -v Remember | grep -v example > types.tmp
 	cat index.html-top types.tmp index.html-bottom > index.html
