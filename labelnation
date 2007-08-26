@@ -1024,6 +1024,10 @@ def main():
   # the end of this subroutine.
   exit_with_admonishment = False
 
+  if len(sys.argv) < 2:
+    usage()
+    sys.exit(1)
+
   try:
     opts, args = getopt.getopt(sys.argv[1:],
                                '?ht:p:i:lcd:o:',
