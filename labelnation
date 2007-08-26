@@ -1120,6 +1120,9 @@ def main():
     input_type = "code"
 
   if show_parameters:
+    if type is None:
+        sys.stderr.write("ERROR: Must specify a label type with -t.\n")
+        sys.exit(1)
     print spec
     sys.exit(0)
 
