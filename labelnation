@@ -1110,7 +1110,7 @@ def main():
     sys.stderr.write("ERROR: Cannot use both -l and -c.\n")
     exit_with_admonishment = True
 
-  if not code_input and not line_input:
+  if not code_input and not line_input and not show_parameters:
     sys.stderr.write("ERROR: Must use one of -l or -c.\n")
     exit_with_admonishment = True
 
