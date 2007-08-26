@@ -12,7 +12,7 @@
 </center>
 
 <p style="background: lightblue; font-style: italic;"><b>NOTE</b>:
-LabelNation was recently rewritten in <a href="http://www.python.org"
+LabelNation is now written in <a href="http://www.python.org"
 >Python</a>.  You will now need a Python interpreter, not a Perl
 interpreter, and the name of the program has been simplied from
 'labelnation.pl' to just 'labelnation'.</p>
