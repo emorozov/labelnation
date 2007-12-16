@@ -293,6 +293,7 @@ def sheetspec_for_type(type):
         or type == "avery5267"
         or type == "avery5667"
         or type == "avery6467"
+        or type == "avery8167"
         or type == "macoll8100"):
     # Small address labels, 80 per page
     return SheetSpec(left_margin=14.0,
