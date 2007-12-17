@@ -19,7 +19,7 @@ www: dist index
 index: index.html-top index.html-bottom
 
 	./labelnation --list-types \
-        | grep -v Predefined | grep -v Remember | grep -v example > types.tmp
+        | grep -v Predefined | grep -v Remember | grep -v "^say " > types.tmp
 	cat index.html-top types.tmp index.html-bottom > index.html
 	rm types.tmp
 
