@@ -441,29 +441,27 @@ def version():
 def types():
   print '''Predefined label types:
 
-            Avery-5168                             (4 labels per page)
-            Avery-5264                             (6 labels per page)
-            Avery-5263, 5663, 5963, 8163           (10 labels per page)
-            Avery-5161, 5261, 5661, 5961           (20 labels per page)
-            Avery-5162, 5262, 5662, 5962,          (14 labels per page)
-                  8162, 8252, 8462,
-                  15162, 18162, 18662
-            Maco-LL5805                            (30 labels per page)
-            Avery-5160, 5260, 5660, 5960, 5970,
-                  5971, 5972, 5979, 5980, 6241,
-                  6460, 6245, 8660
-            Maco-LL8100                            (80 labels per page)
-            Avery-5167, 5667, 6467
-            Avery-5371 / Maco-LL8550               (10 bcards per page)
-            Avery-7162                             (16 labels per page)
-            Avery-6571                             (32 labels per page)
-            Avery-7160                             (21 labels per A4 page)
-            Avery-7159                             (24 labels per A4 page)
-            Avery-2651                             (65 labels per A4 page)
-            Avery-2160 / Maverick ST340817         (8 labels per 10" page)
+  4 labels per page:      Avery-5168
+  6 labels per page:      Avery-5264                             
+  10 labels per page:     Avery-5263, 5663, 5963, 8163
+  20 labels per page:     Avery-5161, 5261, 5661, 5961
+  14 labels per page:     Avery-5162, 5262, 5662, 5962, 8162, 8252, 8462,
+                                15162, 18162, 18662
+  30 labels per page:     Maco-LL5805
+  80 labels per page:     Avery-5160, 5260, 5660, 5960, 5970, 5971, 5972,
+                                5979, 5980, 6241, 6460, 6245, 8660
+                          Maco-LL8100                            
+  10 bcards per page:     Avery-5167, 5667, 6467, 8167, 5371,
+                          Maco-LL8550
+  16 labels per page:     Avery-7162
+  32 labels per page:     Avery-6571
+  21 labels per A4 page:  Avery-7160
+  24 labels per A4 page:  Avery-7159
+  65 labels per A4 page:  Avery-2651
+  8 labels per 10" page:  Avery-2160, Maverick ST340817
 
-         (Remember to always include the brand when specifying a label type
-          to LabelNation; for example, say "avery-5979" not "5979".)'''
+Remember to include the brand when specifying a label type; for example,
+say "avery-5979" not "5979".'''
 
 
 # Print a general explanation of how this program works.
