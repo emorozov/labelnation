@@ -8,15 +8,14 @@
 </center>
 
 <center>
-<i>Latest version: __VN__</i>
+<p style="background: lightblue; font-style: italic;" ><i>Latest version: __VN__</i></p>
 </center>
 
-<p style="background: lightblue; font-style: italic;" >LabelNation is
-a command-line program for making labels.  By "label", I mean address
-labels, business cards, or anything else involving regularly-arranged
-rectangles on a printer-ready sheet.  You can even use it to make a
-calendar (that took some work, though).  LabelNation is open source
-software, licenced under the <a
+<p>LabelNation is a command-line program for making labels.  By
+"label", I mean address labels, business cards, or anything else
+involving regularly-arranged rectangles on a printer-ready sheet.  You
+can even use it to make a calendar (that took some work, though).
+LabelNation is open source software, licenced under the <a
 href="http://www.fsf.org/licenses/gpl.html">GNU General Public Licence
 (GPL)</a>.</p>
 

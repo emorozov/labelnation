@@ -39,7 +39,7 @@ index: index.html-top index.html-bottom
 	./labelnation --help >> help.txt
 
 	(if [ -L labelnation.tar.gz ]; then rm labelnation.tar.gz; fi)
-	(VN=`cat vn.tmp`; ln -s labelnation-$${VN}.tar.gz labelnation.tar.gz)
+	(VN=`cat vn.tmp`; ln -sf labelnation-$${VN}.tar.gz labelnation.tar.gz)
 
 samples:
 	@echo "Generating PostScript in examples/ directory..."
