@@ -12,10 +12,8 @@
 </center>
 
 <p style="background: lightblue; font-style: italic;"><b>NOTE</b>:
-LabelNation is now written in <a href="http://www.python.org"
->Python</a>.  You will now need a Python interpreter, not a Perl
-interpreter, and the name of the program has been simplied from
-'labelnation.pl' to just 'labelnation'.</p>
+LabelNation is for people comfortable using command-line programs.  If
+you're not sure what that means, it's probably not for you.</p>
 
 <p>LabelNation is a program for making labels.  By "label", I mean
 address labels, business cards, or anything else involving
