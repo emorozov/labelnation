@@ -32,6 +32,11 @@ bug-labelnation@red-bean.com</a>.</p>
 <p style="background: lightblue; font-style: italic; text-align: center;"
 ><b>Other Programs That Do Similar Things</b></p>
 
+<p>There seem to be a number of <a
+href="http://docs.google.com/templates?category=20&sort=hottest&pli=1"
+>templates at Google Docs</a> that offer label formatting essentially
+as an online service.  I haven't tried this myself.</p>
+
 <p>You might also want to try the <a
 href="http://www.perl.com/CPAN/modules/by-module/PostScript/"
 >PostScript::MailLabel</a> Perl module.  I've never used it, but it
