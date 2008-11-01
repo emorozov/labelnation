@@ -1102,12 +1102,16 @@ def main():
   if exit_cleanly:
     sys.exit(0)
 
-  # Do file parsing _after_ command line options have been processed
-  if type is not None:
-    spec.absorb(sheetspec_for_type(type))
+  # Do file parsing _after_ command line options have been processed.
 
+  # Absorb any explicit parameters first, so they dominate built-in
+  # sheet spec values.
   if param_file is not None:
     spec.absorb(parse_param_file(param_file))
+
+  # Finally, take any values from the built-in sheet spec.
+  if type is not None:
+    spec.absorb(sheetspec_for_type(type))
 
   if code_input and line_input:
     sys.stderr.write("ERROR: Cannot use both -l and -c.\n")
