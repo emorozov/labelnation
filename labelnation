@@ -382,6 +382,24 @@ def sheetspec_for_type(type):
                      font_name="Times-Roman",
                      font_size=12.0)
 
+  elif type == "slidepro" or type == "slide-pro" or type == "slidescribe":
+    # 84 labels per sheet, for 35mm photographic slides.
+    # From http://www.slidescribe.com/llsr.shtml:
+    #    Label size: 1 7/8" x 7/16"
+    #    Sheet size: 8 1/2" x 11"
+    #    Labels per sheet: 84, arranged in 4 columns of 21 
+    # Provided by Brendt Wohlberg <bwohlberg{_AT_}gmail.com>
+    return SheetSpec(left_margin=21.0,
+                     bottom_margin=24.0,
+                     label_width=137.3,
+                     label_height=33.6,
+                     horiz_space=7.1,
+                     vert_space=2.3,
+                     horiz_num_labels=4,
+                     vert_num_labels=21,
+                     font_name="Times-Roman",
+                     font_size=7.0)
+
   else:
     raise Exception("ERROR: Unknown label type '%s'.\n" % otype)
 
@@ -441,24 +459,25 @@ def version():
 def types():
   print '''Predefined label types:
 
-  4 labels per page:      Avery-5168
-  6 labels per page:      Avery-5264                             
-  10 labels per page:     Avery-5263, 5663, 5963, 8163
-  20 labels per page:     Avery-5161, 5261, 5661, 5961
-  14 labels per page:     Avery-5162, 5262, 5662, 5962, 8162, 8252, 8462,
-                                15162, 18162, 18662
-  30 labels per page:     Avery-5160, 5260, 5660, 5960, 5970, 5971, 5972,
-                                5979, 5980, 6241, 6460, 6245, 8660
-                          Maco-LL5805
-  80 labels per page:     Avery-5167, 5267, 5667, 6467, 8167
-                          Maco-LL8100                            
-  10 bcards per page:     Avery-5371, Maco-LL8550
-  16 labels per page:     Avery-7162
-  32 labels per page:     Avery-6571
-  21 labels per A4 page:  Avery-7160
-  24 labels per A4 page:  Avery-7159
-  65 labels per A4 page:  Avery-2651
-  8 labels per 10" page:  Avery-2160, Maverick-ST340817
+  4 labels per page:        Avery-5168
+  6 labels per page:        Avery-5264                             
+  10 labels per page:       Avery-5263, 5663, 5963, 8163
+  20 labels per page:       Avery-5161, 5261, 5661, 5961
+  14 labels per page:       Avery-5162, 5262, 5662, 5962, 8162, 8252, 8462,
+                                  15162, 18162, 18662
+  30 labels per page:       Avery-5160, 5260, 5660, 5960, 5970, 5971, 5972,
+                                  5979, 5980, 6241, 6460, 6245, 8660
+                            Maco-LL5805
+  80 labels per page:       Avery-5167, 5267, 5667, 6467, 8167
+                            Maco-LL8100                            
+  10 bcards per page:       Avery-5371, Maco-LL8550
+  84 35mm slides per page:  SlidePro, SlideScribe
+  16 labels per page:       Avery-7162
+  32 labels per page:       Avery-6571
+  21 labels per A4 page:    Avery-7160
+  24 labels per A4 page:    Avery-7159
+  65 labels per A4 page:    Avery-2651
+  8 labels per 10" page:    Avery-2160, Maverick-ST340817
 
 Remember to include the brand when specifying a label type; for example,
 say "avery-5979" not "5979".'''
