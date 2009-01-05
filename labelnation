@@ -235,7 +235,7 @@ def sheetspec_for_type(type):
 
   elif type == "avery7162":
     # Large and wide address labels, 16 per page
-    # Added by nathanh@manu.com.au 20031125
+    # Added by nathanh{_AT_}manu.com.au 20031125
     return SheetSpec(left_margin=18.0,
                      bottom_margin=28.0,
                      label_width=281.0,
@@ -263,7 +263,7 @@ def sheetspec_for_type(type):
 
   elif type == "avery6571":
     # 32 labels per page; more than that I don't know.  Ask
-    # William R Thomas <corvar@theonering.net>, who sent it in.
+    # William R Thomas <corvar{_AT_}theonering.net>, who sent it in.
     return SheetSpec(left_margin=60.0,
                      bottom_margin=38.0,
                      label_width=216.0,
@@ -370,7 +370,7 @@ def sheetspec_for_type(type):
 
   elif type == "avery2160" or type == "maverickst340817":
     # Mini sheets address labels 8 labels/sheet, single column 
-    # Provided by Gyepi Sam <gyepi@praxis-sw.com> 
+    # Provided by Gyepi Sam <gyepi{_AT_}praxis-sw.com> 
     return SheetSpec(left_margin=58.5,
                      bottom_margin=90.0,
                      label_width=189.0,
@@ -651,7 +651,7 @@ files.
 One user reported that he had to do some trickery to get encapsulated
 PostScript to work right:
 
-   From: Simon Wood <Simon.Wood@pace.co.uk>
+   From: Simon Wood <Simon.Wood{_AT_}pace.co.uk>
    Subject: RE: Graphical Labels with labelnation.
    To: "'kfogel@red-bean.com'" <kfogel@red-bean.com>
    Date: Mon, 20 May 2002 08:54:57 +0100
