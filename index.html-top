@@ -31,6 +31,11 @@ stores.  Two companies that offer it are Avery Dennison and Maco.
 This is not a recommendation nor an endorsement; Avery and Maco are
 simply the names I've seen.</p>
 
+Here's a good <a
+href="http://blog.worldlabel.com/2009/labels-from-the-command-line-with-labelnation-linux.html">blog
+entry at Worldlabel.com</a>, explaining LabelNation usage in detail,
+with lots of examples and pictures.
+
 <p>LabelNation does automatic font resizing to fit all the lines of
 text on the label, supports the usual accented characters
 (<b>&aacute;</b>, <b>&agrave;</b>, <b>&oacute;</b>, etc, from ISO
