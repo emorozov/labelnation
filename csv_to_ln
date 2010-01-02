@@ -1,0 +1,125 @@
+#!/usr/bin/env python
+
+## csv_to_ln: Convert a comma separated values file into one parseable by
+## LabelNation.
+##
+## Copyright (C) 2008 The Anonymous Text Crank <anontextcrank@gmail.com>
+##
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, write to the Free Software
+## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+import sys
+import csv
+import re
+if sys.hexversion < 0x2030000:
+    sys.stderr.write("ERROR: Python 2.3 or higher required, "
+                     "see www.python.org.\n")
+    sys.exit(1)
+
+from optparse import OptionParser
+
+def explain():
+    """An explanation of what this script expects and does."""
+    print """csv_to_ln converts "comma separated value" (csv) files into a format that is
+readable by LabelNation.
+
+The csv format is a fairly common text format, and most spreadsheets and
+databases can easily export their data to csv format. The format that csv_to_ln
+expects is fairly standard:
+
+  0) There is one record per line; each record is a sequence of fields.
+
+  1) Each field is enclosed is a pair of quotation marks ("'s). Two consecutive
+  quotation marks escapes to a single quotation mark. See the example below.
+
+  2) Each field is separated from the next field by a single comma
+     (NO whitespace between the comma and the next quotation mark).
+
+  3) There is no trailing comma at the end of the line.
+
+The basic idea of csv_to_ln is to convert each record into a series of lines,
+adding a line consisting of a delimeter string (settable with the --delimiter
+option. The default is "XXX") between records. This is the format of the file
+examples/multipage.txt included in the LabelNation tarball. As the labelnation
+script is sensitive to leading whitespace, csv_to_ln allows the user to add a
+constant number of whitespaces before each field through the --num_spaces
+option.
+
+EXAMPLE
+-------
+
+Let us suppose that we have the file addresses.csv, which has contents
+
+  "Ernest and Bertrand Muppet","123 Sesame Street","New York, NY 11123"
+  "Elvis ""The King"" Presley","222 N. Danny Thomas Boulevard","Memphis, TN 37522"
+  "Georgia O'Keefe","The Art Institute of Chicago","111 South Michigan Avenue","Chicago, IL 60603-6404"
+
+We make a call to csv_to_ln:
+
+  prompt$ csv_to_ln --delimiter="#####" --num_spaces=4 --outfile=addresses.txt addresses.csv
+
+Now that the output file has been generated, a typical call to LabelNation
+might be something like
+
+  labelnation --infile addresses.txt --line-input --delimiter="#####" --type=avery5167
+
+If it wasn't immediately obvious, it should be now that it is important to use
+the same delimiter as was used in csv_to_ln to generate the output file
+(addresses.txt). Depending on what you choose as a delimiter, you may need to
+escape it with double or single quotes so as not to be interpreted by the
+shell.
+"""
+
+def main():
+    usage = "usage: %prog [options] csv_file"
+    parser = OptionParser(usage)
+    parser.add_option("-d", "--delimiter", default="XXX", metavar="DELIM",
+                      help="Use DELIM to separate records in the output.")
+    parser.add_option("-n", "--num_spaces", type="int", default=3, metavar="N",
+                      help="Put N spaces before each output line")
+    parser.add_option("-o", "--outfile", metavar="OUTFILE",
+                      help="Write output to OUTFILE. Default is standard output")
+    parser.add_option("-e", "--explain", action="store_true", default=False,
+                      help="Print extensive explantion about how this program works.")
+
+    (options, args) = parser.parse_args()
+
+    if options.explain:
+        explain()
+        parser.print_help()
+        sys.exit(0)
+
+    if len(args) != 1:
+        parser.error("""You must supply an input filename.
+
+Try csv_to_ln --help or --explain for more information""")
+    else:
+        csv_file = args[0]
+        if not options.outfile:
+            f_out = sys.stdout
+        else:
+            f_out = open(options.outfile, 'w')
+
+    spaces = " " * options.num_spaces
+    newline = '\n'
+    reader = csv.reader(open(csv_file, "rb"))
+
+    for row in reader:
+        for line in row:
+            f_out.write(spaces + line + newline)
+        f_out.write(options.delimiter + newline)
+
+if __name__ == "__main__":
+     main()
+

@@ -1,5 +1,5 @@
 
-DISTFILES=labelnation README COPYING
+DISTFILES=labelnation csv_to_ln README COPYING
 EXAMPLEFILES=examples/*.txt
 
 all: www

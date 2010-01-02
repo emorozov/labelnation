@@ -8,26 +8,16 @@ vertically and horizontally.  (And then please send in your
 parameters, so there will be built-in support for those labels in
 future releases.)</p>
 
-<p>LabelNation requires Python, and a user who's comfortable dealing
-with text- and option-based configuration, as opposed to a graphical
-user interface.</p>
-
-<p>Still interested?  Then</p>
-
-<ul>
-<li><a href="labelnation-__VN__.tar.gz"
-    >Download labelnation-__VN__.tar.gz</a></li>
-<li><a href="labelnation"
-    >Download just the single 'labelnation' source file</a></li>
-<li><a href="help.txt">Read the complete documentation</a></li>
-<li><a href="svn.html"
-    >Check out or browse the latest sources using Subversion</a></li>
-</ul>
+<p style="background: lightblue; font-style: italic; text-align: center;"
+><b>Reporting Bugs, Etc</b></p>
 
 <p>If you have a bug to report, or would like to send in parameters
-for a new label type, please email <a
-href="mailto:bug-labelnation@red-bean.com">
-bug-labelnation@red-bean.com</a>.</p>
+for a new label type, please send email to:</p>
+
+<center><p><b><tt>labelnation&nbsp;{HYPHEN}&nbsp;dev&nbsp;{AT}&nbsp;red&nbsp;{HYPHEN}&nbsp;bean&nbsp;{DOT}&nbsp;com</tt></b></p></center>
+
+<p>Sorry for the obscured address; it's necessary to avoid spam.
+Remember that hyphen is "<b>-</b>", not underscore ("<b>_</b>").</p>
 
 <p style="background: lightblue; font-style: italic; text-align: center;"
 ><b>Other Programs That Do Similar Things</b></p>

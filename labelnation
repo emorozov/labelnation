@@ -7,7 +7,7 @@
 ## of regularly-arranged rectangles on a printer-ready sheet.
 ## Run it with the "--help" flag to see usage and options.
 ##
-## Copyright (C) 2000-2005 Karl Fogel <kfogel@red-bean.com>
+## Copyright (C) 2000-2005 Karl Fogel <kfogel {_AT_} red-bean.com>
 ## 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -485,10 +485,9 @@ say "avery-5979" not "5979".'''
 
 # Print a general explanation of how this program works.
 def explain():
-  print '''LabelNation is a program for making labels.  By "label", I mean
-address labels, business cards, or anything else involving
-regularly-arranged rectangles on a printer-ready sheet.  You can even
-use it to make a calendar (that took some work, though).
+  print '''LabelNation is a program for making labels: address labels,
+business cards, or anything else involving regularly-arranged
+rectangles on a printer-ready sheet.
 
 Here's the basic concept: you tell LabelNation what text you want on
 each label (i.e., each rectangle).  You can specify plain lines of
@@ -670,9 +669,9 @@ files.
 One user reported that he had to do some trickery to get encapsulated
 PostScript to work right:
 
-   From: Simon Wood <Simon.Wood{_AT_}pace.co.uk>
+   From: Simon Wood <Simon.Wood {_AT_} pace.co.uk>
    Subject: RE: Graphical Labels with labelnation.
-   To: "'kfogel@red-bean.com'" <kfogel@red-bean.com>
+   To: "'kfogel {_AT_} red-bean.com'" <kfogel {_AT_} red-bean.com>
    Date: Mon, 20 May 2002 08:54:57 +0100
    
    I managed to get some really simple graphics in last year (for a crop 
@@ -684,18 +683,28 @@ PostScript to work right:
    the start of 'labelnation.ps'. 
 
 
+How To Print Labels From CSV (Comma-Separated-Value) Data:
+==========================================================
+
+Someone named Anonymous Textcrank contributed a 'csv_to_ln' script 
+that converts data from the widely-used CSV format to a format
+LabelNation can read: http://www.red-bean.com/labelnation/csv_to_ln
+
+Invoke csv_to_ln with the --help option for more information.
+
+
 How To Report A Bug:
 ====================
 
 Check http://www.red-bean.com/labelnation/ to make sure you have the
-latest version (perhaps your bug has been fixed).  Else, email
-<bug-labelnation@red-bean.com>.
+latest version (perhaps your bug has been fixed).  Else, see the
+instructions there for reporting bugs.
 
 Copyright:
 ==========
 
     LabelNation: command-line label printing
-    Copyright (C) 2000  Karl Fogel <kfogel@red-bean.com>
+    Copyright (C) 2000  Karl Fogel <kfogel {_AT_} red-bean.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

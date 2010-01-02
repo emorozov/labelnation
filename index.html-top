@@ -11,13 +11,36 @@
 <p style="background: lightblue; font-style: italic;" ><i>Latest version: __VN__</i></p>
 </center>
 
-<p>LabelNation is a command-line program for making labels.  By
-"label", I mean address labels, business cards, or anything else
-involving regularly-arranged rectangles on a printer-ready sheet.  You
-can even use it to make a calendar (that took some work, though).
-LabelNation is open source software, licenced under the <a
+<p>LabelNation is a command-line program for making labels: address
+labels, business cards, or anything else involving regularly-arranged
+rectangles on a printer-ready sheet.  It is for users who are
+comfortable dealing with text- and option-based configuration, as
+opposed to a graphical user interface.  LabelNation is free / open
+source software, written in <a href="http://www.python.org/"
+>Python</a>, and licenced under the <a
 href="http://www.fsf.org/licenses/gpl.html">GNU General Public Licence
 (GPL)</a>.</p>
+
+<ul>
+<li><p><a href="labelnation-__VN__.tar.gz"
+    >Download the full distribution: labelnation-__VN__.tar.gz</a><br/>
+    <span style="font-size: 85%; font-style: italic; color:
+    grey;">(includes examples and the supplementary
+    <a href="csv_to_ln" >csv_to_ln</a> script)</span></p></li>
+<li><p><a href="labelnation"
+    >Download just the 'labelnation' script</a></p></li>
+<li><p><a href="csv_to_ln"
+    >Download just the 'csv_to_ln' script</a><br/>
+    <span style="font-size: 85%; font-style: italic; color:
+    grey;">(converts comma-separated-value data to a format
+    LabelNation can read)</span></p></li>
+<li><p><a href="help.txt">Read the complete documentation</a></p></li>
+<li><p><a href="svn.html"
+    >Check out or browse the latest sources using Subversion</a></p></li>
+</ul>
+
+<p style="background: lightblue; font-style: italic; text-align: center;"
+><b>Overview</b></p>
 
 <p>Here's how it works: you tell LabelNation what text you want on
 each label.  You can specify plain lines of text, or even arbitrary
@@ -31,15 +54,20 @@ stores.  Two companies that offer it are Avery Dennison and Maco.
 This is not a recommendation nor an endorsement; Avery and Maco are
 simply the names I've seen.</p>
 
-Here's a good <a
+There's a great <a
 href="http://blog.worldlabel.com/2009/labels-from-the-command-line-with-labelnation-linux.html">blog
-entry at Worldlabel.com</a>, explaining LabelNation usage in detail,
+entry at Worldlabel.com</a> explaining LabelNation usage in detail,
 with lots of examples and pictures.
 
 <p>LabelNation does automatic font resizing to fit all the lines of
 text on the label, supports the usual accented characters
 (<b>&aacute;</b>, <b>&agrave;</b>, <b>&oacute;</b>, etc, from ISO
-8859-1), and has built-in knowledge of the following standard label
+8859-1).</p>
+
+<p style="background: lightblue; font-style: italic; text-align: center;"
+><b>Supported Labels</b></p>
+
+<p>LabelNation has built-in knowledge of the following standard label
 types:</p>
 
 <!-- below is an automatically generated list of label types -->
