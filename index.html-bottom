@@ -2,11 +2,12 @@
 
 <!-- above is an automatically generated list of label types -->
 
-<p>Types not listed above are still supported -- you just have to tell
-LabelNation what sizes the labels are, and how many per page
-vertically and horizontally.  (And then please send in your
+<p>Types not listed above are still supported&nbsp;&mdash;&nbsp;you
+just have to tell LabelNation what sizes the labels are, and how many
+per page vertically and horizontally.  (And then please send in your
 parameters, so there will be built-in support for those labels in
-future releases.)</p>
+future releases.)  This <a href="label-dimensions.html" >chart of
+common label dimensions</a> may help.</p>
 
 <p style="background: lightblue; font-style: italic; text-align: center;"
 ><b>Reporting Bugs, Etc</b></p>
