@@ -736,9 +736,9 @@ def usage():
    --list-types                Show all predefined label types
    -t, --type TYPE             Generate labels of type TYPE
    -p, --parameter-file FILE   Read label parameters from FILE
-   -i, --infile                Take input from FILE
-   -l, --line-input            Infile contains label text lines
-   -c, --code-input            Infile contains PostScript code
+   -i, --infile                Take input from FILE ("-" means stdin)
+   -l, --line-input            Input contains label text lines (default)
+   -c, --code-input            Input contains PostScript code
    -d, --delimiter DELIM       Labels separated by DELIM
    --show-bounding-box         Print rectangle around each label
                                (recommended for testing only)
@@ -878,8 +878,14 @@ def make_labels(spec, infile, input_type, delimiter, outfile,
   If SHOW_BOUNDING_BOX is true, then draw a rectangle around each label.'''
   inner_margin = 1
 
-  input = open(infile, "r")
-  output = open(outfile, "w")
+  if infile == '-':
+    input = sys.stdin
+  else:
+    input = open(infile, "r")
+  if outfile == '-':
+    output = sys.stdout
+  else:
+    output = open(outfile, "w")
 
   # Start off with standard Postscript header
   output.write("%!PS-Adobe-3.0\n")
@@ -1042,10 +1048,7 @@ def main():
   param_file = None           # File containing label dimensions.
   delimiter = None            # Separates labels in multi-label files.
   show_bounding_box = False   # Draw boxes around the labels.
-
-  # After option parsing is complete, set this to "line" or "code"
-  # based on the values of line_input versus code_input.
-  input_type = None
+  input_type = "line"         # The default.
 
   # If this gets set, we encountered unknown options and will exit at
   # the end of this subroutine.
