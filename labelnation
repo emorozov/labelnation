@@ -233,21 +233,6 @@ def sheetspec_for_type(type):
                      font_name="Times-Roman",
                      font_size=12.0)
 
-  # Giorgio Gilestro sent in a type "Avery-L7651".  Not sure if the
-  # "L" is really part of the number or not,  so playing it safe:
-  elif type == "avery7651" or type == "averyl7651":
-    # Apparently medium-small labels, 65 per page.
-    return SheetSpec(left_margin=12.0,
-                     bottom_margin=30.0,
-                     label_width=110.0,
-                     label_height=60.0,
-                     horiz_space=5.0,
-                     vert_space=0.0,
-                     horiz_num_labels=5.0,
-                     vert_num_labels=13.0,
-                     font_name="Times-Roman",
-                     font_size=7.0)
-
   elif type == "avery7162":
     # Large and wide address labels, 16 per page
     # Added by nathanh{_AT_}manu.com.au 20031125
@@ -290,9 +275,27 @@ def sheetspec_for_type(type):
                      font_name="Times-Roman",
                      font_size=7.0)
 
-  elif type == "avery2651":
+  # Giorgio Gilestro sent this in as "Avery-L7651".  Not sure if the
+  # "L" is really part of the number or not,  so playing it safe:
+  elif type == "avery2651" or type == "avery7651" or type == "averyl7651":
     # 65 labels per A4 page
     k = 72.0/25.4             # Convert mm to points
+    # Giorgio Gilestro sent in the same label with absolute values.
+    # I'm reluctant to replace our existing sheetspec, since we haven't
+    # gotten any bug reports on it, but it doesn't hurt to save this
+    # just in case:
+    #
+    #  return SheetSpec(left_margin=12.0,
+    #                   bottom_margin=30.0,
+    #                   label_width=110.0,
+    #                   label_height=60.0,
+    #                   horiz_space=5.0,
+    #                   vert_space=0.0,
+    #                   horiz_num_labels=5.0,
+    #                   vert_num_labels=13.0,
+    #                   font_name="Times-Roman",
+    #                   font_size=7.0)
+    #
     return SheetSpec(left_margin=(k * 4.7),
                      bottom_margin=(k * 10.9),
                      label_width=(k * 38.1),
@@ -303,6 +306,7 @@ def sheetspec_for_type(type):
                      vert_num_labels=13.0,
                      font_name="Times-Roman",
                      font_size=11.0)
+
 
   elif (   type == "avery5167"
         or type == "avery5267"
@@ -491,7 +495,7 @@ def types():
   32 labels per page:          Avery-6571
   21 labels per A4 page:       Avery-7160
   24 labels per A4 page:       Avery-7159
-  65 labels per A4 page:       Avery-2651
+  65 labels per A4 page:       Avery-2651, 7651
   8 labels per 10" page:       Avery-2160, Maverick-ST340817
 
 Remember to include the brand when specifying a label type; for example,
