@@ -12,6 +12,7 @@ common label dimensions</a> may help.</p>
 <p style="background: lightblue; font-style: italic; text-align: center;"
 ><b>Reporting Bugs, Etc</b></p>
 
+<div id="contact" title="contact">
 <p>If you have a bug to report, or would like to send in parameters
 for a new label type, please send email to:</p>
 
@@ -19,6 +20,7 @@ for a new label type, please send email to:</p>
 
 <p>Sorry for the obscured address; it's necessary to avoid spam.
 Remember that hyphen is "<b>-</b>", not underscore ("<b>_</b>").</p>
+</div>
 
 <p style="background: lightblue; font-style: italic; text-align: center;"
 ><b>Other Programs That Do Similar Things</b></p>
