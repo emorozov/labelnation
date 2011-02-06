@@ -4,6 +4,9 @@
 
 <head>
 <style type="text/css">
+  body {
+    background: white;
+  }
   :target {
     border: 2px solid red;
   }
@@ -11,8 +14,6 @@
   .label { font-style: monospace; font-size: 60%; margin: 0 0 0.6% 0; }
 </style>
 </head>
-
-<body fgcolor="000000">
 
 <center>
 <h1>LabelNation: a command-line label-printing program</h1>
