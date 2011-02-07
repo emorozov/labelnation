@@ -12,6 +12,7 @@
   }
   a, img { border: none; }
   .label { font-style: monospace; font-size: 60%; margin: 0 0 0.6% 0; }
+  .note  { font-size: 85%; font-style: italic; color: grey; }
 </style>
 </head>
 
@@ -34,10 +35,10 @@ href="http://www.fsf.org/licenses/gpl.html">GNU General Public Licence
 (GPL)</a>.</p>
 
 <ul>
-<li><p>Download full distribution <span style="font-size: 85%; font-style: italic; color: grey;">(includes examples + supplementary <tt>csv_to_ln</tt> script)</span>:</p>
+<li><p>Download full distribution <span class="note">(includes examples + supplementary <tt>csv_to_ln</tt> script)</span>:</p>
   <ul>
   <li><a href="labelnation-__VN__.tar.gz"
-    >GNU/Linux, Unix, etc: labelnation-__VN__.tar.gz</a></li>
+    >GNU/Linux, Unix, etc: labelnation-__VN__.tar.gz</a> <span class="note">(Mac too?)</span></li>
   <li><a href="labelnation-__VN__.zip"
     >Windows ZIP file: labelnation-__VN__.zip</a></li>
   </ul>
@@ -47,8 +48,7 @@ href="http://www.fsf.org/licenses/gpl.html">GNU General Public Licence
       ><tt>labelnation</tt> standalone program</a></li>
   <li><a href="csv_to_ln"
       ><tt>csv_to_ln</tt> helper program</a><br/>
-      <span style="font-size: 85%; font-style: italic; color:
-      grey;">(<tt>csv_to_ln</tt> converts comma-separated-value
+      <span class="note">(<tt>csv_to_ln</tt> converts comma-separated-value
       data to a format LabelNation can read)</span></li>
   </ul>
 <li><p><a href="help.txt">Read the complete documentation</a></p></li>
@@ -56,8 +56,7 @@ href="http://www.fsf.org/licenses/gpl.html">GNU General Public Licence
     >Check out or browse the latest sources using Subversion</a></p></li>
 <li><p>Grab the <a href="http://aur.archlinux.org/packages.php?ID=45296"
     >Arch Linux package</a> made by Giorgio F. Gilestro.<br/>
-    <span style="font-size: 85%; font-style: italic; color:
-      grey;">(we <a href="#contact" >welcome</a> packages for other
+    <span class="note">(we <a href="#contact" >welcome</a> packages for other
       distributions too)</span>
 </ul>
 
