@@ -34,16 +34,19 @@ href="http://www.fsf.org/licenses/gpl.html">GNU General Public Licence
 (GPL)</a>.</p>
 
 <ul>
-<li><a href="labelnation-__VN__.tar.gz"
-    >Download the full distribution: labelnation-__VN__.tar.gz</a><br/>
-    <span style="font-size: 85%; font-style: italic; color:
-    grey;">(includes examples and the supplementary <tt>csv_to_ln</tt>
-    script), or:</span><br/></li>
+<li><p>Download full distribution <span style="font-size: 85%; font-style: italic; color: grey;">(includes examples + supplementary <tt>csv_to_ln</tt> script)</span>:</p>
+  <ul>
+  <li><a href="labelnation-__VN__.tar.gz"
+    >GNU/Linux, Unix, etc: labelnation-__VN__.tar.gz</a></li>
+  <li><a href="labelnation-__VN__.zip"
+    >Windows ZIP file: labelnation-__VN__.zip</a></li>
+  </ul>
+  <p>Or download just the individual file you need:</p></li>
   <ul>
   <li><a href="labelnation"
-      >Download just the <tt>labelnation</tt> program</a></li>
+      ><tt>labelnation</tt> standalone program</a></li>
   <li><a href="csv_to_ln"
-      >Download just the <tt>csv_to_ln</tt> helper</a><br/>
+      ><tt>csv_to_ln</tt> helper program</a><br/>
       <span style="font-size: 85%; font-style: italic; color:
       grey;">(<tt>csv_to_ln</tt> converts comma-separated-value
       data to a format LabelNation can read)</span></li>

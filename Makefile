@@ -12,6 +12,7 @@ dist:
 	cp ${DISTFILES} labelnation-`cat vn.tmp`
 	cp ${EXAMPLEFILES} labelnation-`cat vn.tmp`/examples
 	tar zcvf labelnation-`cat vn.tmp`.tar.gz labelnation-`cat vn.tmp`
+	zip -r labelnation-`cat vn.tmp`.zip labelnation-`cat vn.tmp`
 	rm -rf labelnation-`cat vn.tmp`
 
 www: dist index
@@ -25,6 +26,11 @@ index: index.html-top index.html-bottom
 
 	(VN=`cat vn.tmp`; \
   sed -e "s/labelnation-__VN__.tar.gz/labelnation-$${VN}.tar.gz/g" \
+      index.html > index.html.tmp)
+	mv index.html.tmp index.html
+
+	(VN=`cat vn.tmp`; \
+  sed -e "s/labelnation-__VN__.zip/labelnation-$${VN}.zip/g" \
       index.html > index.html.tmp)
 	mv index.html.tmp index.html
 
