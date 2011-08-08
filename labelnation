@@ -193,6 +193,19 @@ def sheetspec_for_type(type):
                      font_name="Arial",
                      font_size=33.0)
 
+  elif type == "avery5444":
+    # Really big shipping labels, 2 per page.
+    return SheetSpec(left_margin=164.25,
+                     bottom_margin=408.0,
+                     label_width=290.0,
+                     label_height=145.0,
+                     horiz_space=0.0,
+                     vert_space=54.0,
+                     horiz_num_labels=1.0,
+                     vert_num_labels=2.0,
+                     font_name="Arial",
+                     font_size=18.0)
+
   elif type == "avery5264":
     # Moderately big shipping labels, 6 per page
     return SheetSpec(left_margin=20.0,
@@ -478,6 +491,7 @@ def version():
 def types():
   print '''Predefined label types:
 
+  2 labels per page:           Avery-5444
   4 labels per page:           Avery-5168
   6 labels per page:           Avery-5264                             
   10 labels per page:          Avery-5263, 5663, 5963, 8163
