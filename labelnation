@@ -443,9 +443,16 @@ def parse_param_file(pfile):
   line = ctl.readline()
   while (line):
     ### TODO: Why is it apparently optional to escape the backslash here?
-    if re.match('\s*#', line):
+    if re.match('\s*#|^\s*$', line):
+      # Skip comment lines and blank lines.
+      line = ctl.readline()
       continue
     key, val = line.split()
+    if key[len(key) - 1] == ":":
+      # Strip any trailing colon off the end of the key.  That enables
+      # the output of 'labelnation -t foo --show-parameters' to be
+      # used directly as the input via '--parameter-file'.
+      key = key[0:len(key) - 1]
     key = normalize_string(key)
     if val:
       val = dedelimit_string(val)
@@ -955,6 +962,7 @@ def make_labels(spec, infile, input_type, delimiter, outfile,
   # Vertical position (by label)
   y = int((spec.first_label - 1) % spec.vert_num_labels)
 
+  overlong_label_warning_already_issued = False
   start_new_page = True
   line = input.readline()
   while line or iterate_over_single_page:
@@ -966,6 +974,28 @@ def make_labels(spec, infile, input_type, delimiter, outfile,
       if input_type == "line":
         num_lines = len(label_lines)
    
+        # Sometimes people forget to pass the --delimiter flag.  When
+        # they forget, labelnation naturally interprets all the lines
+        # in the input as being for one label (to be iterated over the
+        # entire page).  However, when any PostScript interpreter
+        # tries to render that label, it will choke, usually giving an
+        # incomprehensible error.  Since labelnation will be long gone
+        # by then, we try to detect this situation here and warn the
+        # user that they probably forgot to pass --delimiter.
+        #
+        # 8 lines per label on a 20-vertical-labels-per-sheet spec, or
+        # 16 lines on a 10-vert spec, seems like a safe threshold at
+        # which to assume the user probably goofed, and warn them.
+        if num_lines >= (160 / spec.vert_num_labels):
+          if not overlong_label_warning_already_issued:
+            sys.stderr.write("WARNING: This label is unusually long; ")
+            sys.stderr.write("it might even cause a PostScript error.\n")
+            sys.stderr.write("WARNING: Did you perhaps forget to pass "
+                             "the --delimiter option?\n")
+            sys.stderr.write("WARNING: (See 'labelnation --help' for "
+                             "more information.)\n")
+            overlong_label_warning_already_issued = True
+
         text_margin = inner_margin + 2.0
         ### TODO: need to be more sophisticated about divining the
         # font sizes and acting accordingly, here.
