@@ -1,0 +1,3 @@
+#!/bin/sh
+
+../../labelnation --csv -t avery-5160 -i in -o out

@@ -26,6 +26,7 @@
 import re
 import os
 import sys
+import csv
 import string
 import getopt
 
@@ -779,6 +780,7 @@ def usage():
    -i, --infile                Take input from FILE ("-" means stdin)
    -l, --line-input            Input contains label text lines (default)
    -c, --code-input            Input contains PostScript code
+   --csv, --csv-input          Input is Comma-Separated Value (CSV) format
    -d, --delimiter DELIM       Labels separated by DELIM
    --show-bounding-box         Print rectangle around each label
                                (recommended for testing only)
@@ -913,7 +915,7 @@ def make_labels(spec, infile, input_type, delimiter, outfile,
   (separated by DELIMITER if there are multiple different labels in
   INFILE, else DELIMITER is None), and write PostScript to OUTFILE.
 
-  INPUT_TYPE is either "line" or "code".
+  INPUT_TYPE is "line", "code", or "csv".
 
   If SHOW_BOUNDING_BOX is true, then draw a rectangle around each label.'''
   inner_margin = 1
@@ -926,6 +928,9 @@ def make_labels(spec, infile, input_type, delimiter, outfile,
     output = sys.stdout
   else:
     output = open(outfile, "w")
+
+  if input_type == "csv":
+    csv_reader = csv.reader(input)
 
   # Start off with standard Postscript header
   output.write("%!PS-Adobe-3.0\n")
@@ -948,7 +953,7 @@ def make_labels(spec, infile, input_type, delimiter, outfile,
                % (spec.font_name, spec.font_size))
 
   # Set up some loop vars.
-  label_lines = [ ]     # Used only for line input
+  label_lines = [ ]     # Used only for line and csv input
   line_idx = 0          # Used only for line input
   code_accum = ''       # Used for both line input and code input
   page_number = 1       # Do you really need a comment?
@@ -964,14 +969,20 @@ def make_labels(spec, infile, input_type, delimiter, outfile,
 
   overlong_label_warning_already_issued = False
   start_new_page = True
-  line = input.readline()
+  if input_type == "csv":
+    line = csv_reader.next() # is actually an array
+  else:
+    line = input.readline()
   while line or iterate_over_single_page:
     if not iterate_over_single_page:
-      line = line.rstrip()
+      if input_type != "csv":
+        line = line.rstrip()
 
-    if ((delimiter is not None and line == delimiter)
+    if (input_type == "csv" or (delimiter is not None and line == delimiter)
         or iterate_over_single_page):
-      if input_type == "line":
+      if input_type == "csv":
+        label_lines = line # cheap trick
+      if input_type != "code":
         num_lines = len(label_lines)
    
         # Sometimes people forget to pass the --delimiter flag.  When
@@ -1047,11 +1058,11 @@ def make_labels(spec, infile, input_type, delimiter, outfile,
         start_new_page = True
 
       # Reset everyone.
-      if delimiter is not None:
+      if (delimiter is not None) or (input_type == "csv"):
         label_lines = [ ]
       code_accum = ''
 
-    elif input_type == "line":
+    elif input_type != "code":
       # PostScript needs (, ), and \ escaped.
       line = line.replace('\\','\\\\')
       line = line.replace('(','\\(')
@@ -1062,7 +1073,13 @@ def make_labels(spec, infile, input_type, delimiter, outfile,
       code_accum += line
       code_accum += "\n"
 
-    line = input.readline()
+    if input_type == "csv":
+      try:
+        line = csv_reader.next()
+      except StopIteration, e:
+        break
+    else:
+      line = input.readline()
 
     # You are not going to believe this... let me explain:
     # 
@@ -1083,7 +1100,8 @@ def make_labels(spec, infile, input_type, delimiter, outfile,
     # stop after one page, otherwise it would go on forever.  It starts
     # out false, but is set to True within the first iteration of the
     # loop if it is going to be set at all.
-    if (line == ""
+    if (input_type != "csv"
+        and line == ""
         and delimiter is None
         and not (y >= spec.vert_num_labels)
         and not (x >= spec.horiz_num_labels)
@@ -1106,7 +1124,8 @@ def main():
   type = None                 # A predefined label type (e.g., avery5160).
   infile = None               # Holds PostScript code or text lines.
   line_input = False          # One kind of input infile can hold.
-  code_input = False          # The other kind of input infile can hold.
+  code_input = False          # Another kind of input infile can hold.
+  csv_input = False           # Yet another kind of input infile can hold.
   outfile = 'labelnation.ps'  # Poor default, but kept for compatibility.
   param_file = None           # File containing label dimensions.
   delimiter = None            # Separates labels in multi-label files.
@@ -1133,6 +1152,8 @@ def main():
                                 'parameter-file=',
                                 'infile=',
                                 'line-input',
+                                'csv',
+                                'csv-input',
                                 'code-input',
                                 'first-label=',
                                 'delimiter=',
@@ -1173,6 +1194,8 @@ def main():
       line_input = True
     elif opt == '-c' or opt == '--code-input':
       code_input = True
+    elif opt == '--csv' or opt == '--csv-input':
+      csv_input = True
     elif opt == '--first-label':
       spec.first_label = int(value)
     elif opt == '-d' or opt == '--delimiter':
@@ -1211,14 +1234,25 @@ def main():
     sys.stderr.write("ERROR: Cannot use both -l and -c.\n")
     exit_with_admonishment = True
 
-  if not code_input and not line_input and not show_parameters:
-    sys.stderr.write("ERROR: Must use one of -l or -c.\n")
+  if csv_input and line_input:
+    sys.stderr.write("ERROR: Cannot use both -l and --csv.\n")
+    exit_with_admonishment = True
+
+  if csv_input and code_input:
+    sys.stderr.write("ERROR: Cannot use both -c and --csv.\n")
+    exit_with_admonishment = True
+
+  if (not code_input and not line_input and not csv_input
+      and not show_parameters):
+    sys.stderr.write("ERROR: Must use one of -l, -c, or --csv.\n")
     exit_with_admonishment = True
 
   if line_input:
     input_type = "line"
-  else:
+  elif code_input:
     input_type = "code"
+  elif csv_input:
+    input_type = "csv"
 
   if show_parameters:
     if type is None:

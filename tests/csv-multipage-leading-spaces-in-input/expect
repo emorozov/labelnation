@@ -1,0 +1,3039 @@
+%!PS-Adobe-3.0
+
+/deffont {
+  findfont exch scalefont def
+} bind def
+
+/reencode_font {
+  findfont reencode 2 copy definefont pop def
+} bind def
+
+% reencode the font
+% <encoding-vector> <fontdict> -> <newfontdict>
+/reencode { %def
+  dup length 5 add dict begin
+    { %forall
+      1 index /FID ne
+      { def }{ pop pop } ifelse
+    } forall
+    /Encoding exch def
+
+    % Use the font's bounding box to determine the ascent, descent,
+    % and overall height; don't forget that these values have to be
+    % transformed using the font's matrix.
+    % We use 'load' because sometimes BBox is executable, sometimes not.
+    % Since we need 4 numbers an not an array avoid BBox from being executed
+    /FontBBox load aload pop
+    FontMatrix transform /Ascent exch def pop
+    FontMatrix transform /Descent exch def pop
+    /FontHeight Ascent Descent sub def
+
+    % Define these in case they're not in the FontInfo (also, here
+    % they're easier to get to.
+    /UnderlinePosition 1 def
+    /UnderlineThickness 1 def
+
+    % Get the underline position and thickness if they're defined.
+    currentdict /FontInfo known {
+      FontInfo
+
+      dup /UnderlinePosition known {
+        dup /UnderlinePosition get
+        0 exch FontMatrix transform exch pop
+        /UnderlinePosition exch def
+      } if
+
+      dup /UnderlineThickness known {
+        /UnderlineThickness get
+        0 exch FontMatrix transform exch pop
+        /UnderlineThickness exch def
+      } if
+
+    } if
+    currentdict
+  end
+} bind def
+
+/ISO-8859-1Encoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright
+/parenleft /parenright /asterisk /plus /comma /minus /period /slash
+/zero /one /two /three /four /five /six /seven
+/eight /nine /colon /semicolon /less /equal /greater /question
+/at /A /B /C /D /E /F /G
+/H /I /J /K /L /M /N /O
+/P /Q /R /S /T /U /V /W
+/X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore
+/quoteleft /a /b /c /d /e /f /g
+/h /i /j /k /l /m /n /o
+/p /q /r /s /t /u /v /w
+/x /y /z /braceleft /bar /braceright /asciitilde /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/space /exclamdown /cent /sterling /currency /yen /brokenbar /section
+/dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen /registered /macron
+/degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph /bullet
+/cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown
+/Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla
+/Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis
+/Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply
+/Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls
+/agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla
+/egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis
+/eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide
+/oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis
+] def
+/ISOTimes-Roman ISO-8859-1Encoding /Times-Roman reencode_font
+/labelclip {
+	newpath
+	1.000000 1.000000 moveto
+	179.000000 1.000000 lineto
+	179.000000 71.000000 lineto
+	1.000000 71.000000 lineto
+	closepath
+	clip
+
+} def
+
+% end prologue
+
+% set font type and size
+ISOTimes-Roman 12 scalefont setfont
+%%Page: labels 1
+
+%%BeginPageSetup
+11.250000 16.000000 translate
+%%EndPageSetup
+
+gsave
+0 0
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 1) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 72
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 2) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 144
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 3) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 216
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 4) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 288
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 5) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 360
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 6) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 432
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 7) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 504
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 8) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 576
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 9) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 648
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 10) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 0
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 11) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 72
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 12) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 144
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 13) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 216
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 14) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 288
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 15) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 360
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 16) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 432
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 17) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 504
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 18) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 576
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 19) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 648
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 20) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 0
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 21) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 72
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 22) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 144
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 23) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 216
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 24) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 288
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 25) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 360
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 26) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 432
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 27) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 504
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 28) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 576
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 29) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 648
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 30) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+showpage
+%%Page: labels 2
+
+%%BeginPageSetup
+11.250000 16.000000 translate
+%%EndPageSetup
+
+gsave
+0 0
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 31) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 72
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 32) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 144
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 33) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 216
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 34) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 288
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 35) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 360
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 36) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 432
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 37) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 504
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 38) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 576
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 39) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 648
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 40) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 0
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 41) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 72
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 42) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 144
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 43) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 216
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 44) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 288
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 45) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 360
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 46) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 432
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 47) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 504
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 48) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 576
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 49) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 648
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 50) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 0
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 51) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 72
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 52) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 144
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 53) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 216
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 54) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 288
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 55) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 360
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 56) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 432
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 57) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 504
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 58) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 576
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 59) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 648
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 60) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+showpage
+%%Page: labels 3
+
+%%BeginPageSetup
+11.250000 16.000000 translate
+%%EndPageSetup
+
+gsave
+0 0
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 61) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 72
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 62) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 144
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 63) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 216
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 64) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 288
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 65) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 360
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 66) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 432
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 67) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 504
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 68) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 576
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 69) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 648
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 70) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 0
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 71) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 72
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 72) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 144
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 73) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 216
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 74) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 288
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 75) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 360
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 76) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 432
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 77) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 504
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 78) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 576
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 79) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 648
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 80) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 0
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 81) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 72
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 82) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 144
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 83) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 216
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 84) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 288
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 85) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 360
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 86) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 432
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 87) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 504
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 88) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 576
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 89) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 648
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 90) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+showpage
+%%Page: labels 4
+
+%%BeginPageSetup
+11.250000 16.000000 translate
+%%EndPageSetup
+
+gsave
+0 0
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 91) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 72
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 92) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 144
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 93) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 216
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 94) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 288
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 95) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 360
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 96) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 432
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 97) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 504
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 98) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 576
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 99) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 648
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 100) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 0
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 101) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 72
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 102) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 144
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 103) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 216
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 104) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 288
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 105) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 360
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 106) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 432
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 107) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 504
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 108) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 576
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 109) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 648
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 110) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 0
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 111) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 72
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 112) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 144
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 113) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 216
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 114) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 288
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 115) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 360
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 116) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 432
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 117) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 504
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 118) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 576
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 119) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 648
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 120) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+showpage
+%%Page: labels 5
+
+%%BeginPageSetup
+11.250000 16.000000 translate
+%%EndPageSetup
+
+gsave
+0 0
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 121) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 72
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 122) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 144
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 123) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 216
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 124) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 288
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 125) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 360
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 126) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 432
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 127) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 504
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 128) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 576
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 129) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 648
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 130) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 0
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 131) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 72
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 132) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 144
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 133) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 216
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 134) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 288
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 135) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 360
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 136) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 432
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 137) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 504
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 138) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 576
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 139) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 648
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 140) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 0
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 141) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 72
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 142) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 144
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 143) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 216
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 144) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 288
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 145) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 360
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 146) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 432
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 147) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 504
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 148) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 576
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 149) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+400 648
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 150) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+showpage
+%%Page: labels 6
+
+%%BeginPageSetup
+11.250000 16.000000 translate
+%%EndPageSetup
+
+gsave
+0 0
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 151) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 72
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 152) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 144
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 153) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 216
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 154) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 288
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 155) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 360
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 156) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 432
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 157) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 504
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 158) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 576
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 159) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+0 648
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 160) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 0
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 161) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 72
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 162) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 144
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 163) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 216
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 164) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 288
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 165) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 360
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 166) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 432
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 167) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 504
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 168) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 576
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 169) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+gsave
+200 648
+translate
+labelclip
+newpath
+ISOTimes-Roman 12 scalefont setfont
+3.000000 57.600000 moveto
+(     This is a sample label) show
+3.000000 45.600000 moveto
+(     Label Number: 170) show
+3.000000 33.600000 moveto
+(     Chicago, IL 60637) show
+3.000000 21.600000 moveto
+(     USA) show
+stroke
+grestore
+
+
+showpage
