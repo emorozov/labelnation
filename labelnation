@@ -781,6 +781,7 @@ def usage():
    -l, --line-input            Input contains label text lines (default)
    -c, --code-input            Input contains PostScript code
    --csv, --csv-input          Input is Comma-Separated Value (CSV) format
+   --leading-spaces N          Left-pad label text by N spaces (CSV & line only)
    -d, --delimiter DELIM       Labels separated by DELIM
    --show-bounding-box         Print rectangle around each label
                                (recommended for testing only)
@@ -909,13 +910,16 @@ def set_up_iso8859(output):
 
 # This comment resets Emacs Python Mode's indentation.  Sigh.
 
-def make_labels(spec, infile, input_type, delimiter, outfile,
-                show_bounding_box):
+def make_labels(spec, infile, input_type, delimiter, leading_spaces,
+                outfile, show_bounding_box):
   '''Using SheetSpec SPEC, read INPUT_TYPE data from INFILE
   (separated by DELIMITER if there are multiple different labels in
   INFILE, else DELIMITER is None), and write PostScript to OUTFILE.
 
   INPUT_TYPE is "line", "code", or "csv".
+
+  LEADING_SPACES is number of spaces by which to left-pad each line of
+  label text; use 0 (not None) to achieve no padding.
 
   If SHOW_BOUNDING_BOX is true, then draw a rectangle around each label.'''
   inner_margin = 1
@@ -985,6 +989,9 @@ def make_labels(spec, infile, input_type, delimiter, outfile,
       if input_type != "code":
         num_lines = len(label_lines)
    
+        # Left-pad each line of text if any such padding requested.
+        label_lines = [" " * leading_spaces + line for line in label_lines]
+
         # Sometimes people forget to pass the --delimiter flag.  When
         # they forget, labelnation naturally interprets all the lines
         # in the input as being for one label (to be iterated over the
@@ -1126,6 +1133,7 @@ def main():
   line_input = False          # One kind of input infile can hold.
   code_input = False          # Another kind of input infile can hold.
   csv_input = False           # Yet another kind of input infile can hold.
+  leading_spaces = 0          # Left-pad each line of label text by this.
   outfile = 'labelnation.ps'  # Poor default, but kept for compatibility.
   param_file = None           # File containing label dimensions.
   delimiter = None            # Separates labels in multi-label files.
@@ -1155,6 +1163,7 @@ def main():
                                 'csv',
                                 'csv-input',
                                 'code-input',
+                                'leading-spaces=',
                                 'first-label=',
                                 'delimiter=',
                                 'font-name=',
@@ -1196,6 +1205,8 @@ def main():
       code_input = True
     elif opt == '--csv' or opt == '--csv-input':
       csv_input = True
+    elif opt == '--leading-spaces':
+      leading_spaces = int(value)
     elif opt == '--first-label':
       spec.first_label = int(value)
     elif opt == '-d' or opt == '--delimiter':
@@ -1240,6 +1251,10 @@ def main():
 
   if csv_input and code_input:
     sys.stderr.write("ERROR: Cannot use both -c and --csv.\n")
+    exit_with_admonishment = True
+
+  if leading_spaces and code_input:
+    sys.stderr.write("ERROR: Cannot use both -c and --leading-spaces.\n")
     exit_with_admonishment = True
 
   if (not code_input and not line_input and not csv_input
@@ -1314,7 +1329,8 @@ def main():
     sys.stderr.write('Run "labelnation --help" to see usage.\n')
     sys.exit(1)
 
-  make_labels(spec, infile, input_type, delimiter, outfile, show_bounding_box)
+  make_labels(spec, infile, input_type, delimiter, leading_spaces,
+              outfile, show_bounding_box)
 
 
 

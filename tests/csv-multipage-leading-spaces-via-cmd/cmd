@@ -1,0 +1,3 @@
+#!/bin/sh
+
+../../labelnation --leading-spaces 5 --csv -t avery-5160 -i in -o out
