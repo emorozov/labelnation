@@ -48,8 +48,7 @@ href="http://www.fsf.org/licenses/gpl.html">GNU General Public Licence
       ><tt>labelnation</tt> standalone program</a></li>
   <li><a href="csv_to_ln"
       ><tt>csv_to_ln</tt> helper program</a><br/>
-      <span class="note">(<tt>csv_to_ln</tt> converts comma-separated-value
-      data to a format LabelNation can read)</span></li>
+      <span class="note">(NOTE: This helper is obsolete now.  csv_to_ln is no longer needed now that labelnation can natively read comma-separated value (CSV) input, but we continue to offer it for those still using older versions of LabelNation.)</span></li>
   </ul>
 <li><p><a href="help.txt">Read the complete documentation</a></p></li>
 <li><p><a href="svn.html"

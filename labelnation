@@ -533,18 +533,19 @@ rectangles on a printer-ready sheet.
 Here's the basic concept: you tell LabelNation what text you want on
 each label (i.e., each rectangle).  You can specify plain lines of
 text, or even arbitrary PostScript code.  You also tell it what kind
-of labels it should print for.  LabelNation takes all this information
-and produces a PostScript file, which you then send to your printer.
+(i.e., brand) of labels it should print for.  LabelNation takes all
+this information and produces a PostScript file, which you then send
+to your printer.
 
 Of course, you'll need a PostScript printer (or a PostScript filter,
 such as GNU GhostScript), and a sheet of special peel-off label paper
 in the tray.  Such paper is widely available at office supply stores.
 Two companies that offer it are Avery Dennison (www.averydennison.com)
 and Maco (www.maco.com).  This is not a recommendation or an
-endorsement -- Avery and Maco are simply the names I've seen.
+endorsement -- Avery and Maco are simply the ones I've used.
 
-PostScript viewing software also helps, so you can see what your
-labels look like before you print.
+PostScript viewing software such as Ghostview also helps, so you can
+see what your labels look like before you print.
 
 How To Use It:
 ==============
@@ -585,31 +586,80 @@ How To Print A Variety Of Addresses:
 An input file can also define many different labels (this is useful if
 you're running a mailing list, for example).  In that case, instead of
 iterating one label over an entire sheet, LabelNation will print each
-label once, using as many sheets as necessary, leaving the unused
+label once, using as many sheets as necessary and leaving the unused
 remainder blank.
 
-To print many labels at once, you must pass a delimiter with the "-d"
-flag.  The delimiter separates each label from the next.  For
-example, if you use a delimiter of "XXX", then you might invoke
-LabelNation like so
+To print many labels at once, you need to communicate all the
+different label texts to LabelNation.  There are two ways to do this:
 
-   prompt$ labelnation -d "XXX" -t avery5167 -l -i addrs.txt -o addrs.ps
+   1) Passing custom-delimited text, using "-d" to specify the delimiter.
+   2) Passing comma-separated value (CSV) text, using the "--csv" option.
 
-where addrs.txt contains this
+We'll cover each way below:
+
+1) Passing custom-delimited text, using "-d" to specify the delimiter.
+
+The delimiter is a special string (sequence of characters) that
+separates each label from the next.  For example, if you use a
+delimiter of "XXXXX", then you might invoke LabelNation like so
+
+   prompt$ labelnation -d "XXXXX" -t avery5167 -l -i addrs.txt -o addrs.ps
+
+where the file addrs.txt contains this:
 
         J. Random User
         1423 W. Rootbeer Ave
         Chicago, IL 60622
         USA
-   XXX
+   XXXXX
         William Lyon Phelps III
         27 Rue d'Agonie
         Paris, France
-   XXX
+   XXXXX
 
-(remember that all my examples are indented three spaces in this help
+Remember that all the examples are indented three spaces in this help
 message, so the content above is actually indented only three spaces
-in the file, while the XXX delimiters are not indented at all). 
+in the file, while the XXXXX delimiters are not indented at all.
+
+2) Passing comma-separated value (CSV) text, using the "--csv" option.
+
+   prompt$ labelnation --leading-spaces 3 --csv -t avery5167 -i addrs.csv -o addrs.ps
+
+where the file addrs.txt contains this:
+
+   "J. Random User","1423 W. Rootbeer Ave","Chicago, IL 60622","USA"
+   "William Lyon Phelps III","27 Rue d'Agonie","Paris, France"
+
+...etc, etc.
+
+The "--leading-spaces 3" part of the command is optional -- it's just
+a way to left-pad the labels with some blank space, to better center
+the text on each label.  Adjust the number to place the text where you
+want it on the label, or leave off the option entirely if your labels
+look fine without the extra padding.
+
+See http://en.wikipedia.org/wiki/Comma-separated_values for more CSV.
+CSV is a fairly common text format, and most spreadsheets and
+databases can easily export their data to it.  The flavor of CSV that
+LabelNation expects is fairly standard:
+
+  * There is one record per line; each record is a sequence of fields.
+
+  * Each field is enclosed is a pair of double-quote marks ("'s).
+    Within the double-quotes marks, a comma is just a comma, and two
+    consecutive double-quotes marks escapes to a single quotation
+    mark (see the example below).
+
+  * Each field is separated from the next field by a single comma
+    (no whitespace between the comma and the next quotation mark).
+
+  * There is no trailing comma at the end of the line.
+
+For example:
+
+  "Ernest and Bertrand Muppet","123 Sesame Street","New York, NY 11123"
+  "Elvis ""The King"" Presley","222 N. Danny Thomas Boulevard","Memphis, TN 37522"
+  "Georgia O'Keefe","The Art Institute of Chicago","111 South Michigan Avenue","Chicago, IL 60603-6404"
 
 
 How To Discover The Predefined Label Types:
@@ -722,16 +772,6 @@ PostScript to work right:
    The trick was to remove the header from the '.ps', run labelnation to 
    size and position the images and then manually re-insert the header into
    the start of 'labelnation.ps'. 
-
-
-How To Print Labels From CSV (Comma-Separated-Value) Data:
-==========================================================
-
-Someone named Anonymous Textcrank contributed a 'csv_to_ln' script 
-that converts data from the widely-used CSV format to a format
-LabelNation can read: http://www.red-bean.com/labelnation/csv_to_ln
-
-Invoke csv_to_ln with the --help option for more information.
 
 
 How To Report A Bug:
