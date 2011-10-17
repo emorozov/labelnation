@@ -618,30 +618,31 @@ where the file addrs.txt contains this:
    XXXXX
 
 Remember that all the examples are indented three spaces in this help
-message, so the content above is actually indented only three spaces
-in the file, while the XXXXX delimiters are not indented at all.
+message, so the address lines above are actually indented only five
+spaces in the file, while the XXXXX delimiters are not indented at all.
 
 2) Passing comma-separated value (CSV) text, using the "--csv" option.
 
+Use a command like this:
+
    prompt$ labelnation --leading-spaces 3 --csv -t avery5167 -i addrs.csv -o addrs.ps
 
-where the file addrs.txt contains this:
+where the file addrs.csv contains this:
 
    "J. Random User","1423 W. Rootbeer Ave","Chicago, IL 60622","USA"
    "William Lyon Phelps III","27 Rue d'Agonie","Paris, France"
 
 ...etc, etc.
 
-The "--leading-spaces 3" part of the command is optional -- it's just
-a way to left-pad the labels with some blank space, to better center
-the text on each label.  Adjust the number to place the text where you
-want it on the label, or leave off the option entirely if your labels
-look fine without the extra padding.
+The "--leading-spaces 3" part of the command is optional.  It's just a
+way to left-pad the labels with some blank space, to better center the
+text on each label.  You can adjust the number as needed, or leave off
+the option entirely if your labels look fine without extra padding.
 
-See http://en.wikipedia.org/wiki/Comma-separated_values for more CSV.
-CSV is a fairly common text format, and most spreadsheets and
-databases can easily export their data to it.  The flavor of CSV that
-LabelNation expects is fairly standard:
+See http://en.wikipedia.org/wiki/Comma-separated_values for more about
+CSV format.  CSV is a fairly common text format, and most spreadsheets
+and databases can easily export their data to it.  The flavor of CSV
+that LabelNation expects is fairly standard:
 
   * There is one record per line; each record is a sequence of fields.
 
