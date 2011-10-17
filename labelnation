@@ -640,9 +640,9 @@ text on each label.  You can adjust the number as needed, or leave off
 the option entirely if your labels look fine without extra padding.
 
 See http://en.wikipedia.org/wiki/Comma-separated_values for more about
-CSV format.  CSV is a fairly common text format, and most spreadsheets
-and databases can easily export their data to it.  The flavor of CSV
-that LabelNation expects is fairly standard:
+CSV.  CSV is a fairly common text format, and most spreadsheets and
+databases can easily export their data to it.  The flavor of CSV that
+LabelNation expects is fairly standard:
 
   * There is one record per line; each record is a sequence of fields.
 
