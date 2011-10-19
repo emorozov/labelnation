@@ -46,16 +46,16 @@ templates</a> for making labels using <a
 href="http://www.openoffice.org/">OpenOffice.org</a>, the open source
 office suite.</a></p>
 
-<p>There seem to be a number of <a
-href="http://docs.google.com/templates?category=20&sort=hottest&pli=1"
->templates at Google Docs</a> that offer label formatting essentially
-as an online service.  I haven't tried this myself.</p>
-
 <p id="maillabel" title="maillabel">You might also want to try the
 <a href="http://www.perl.com/CPAN/modules/by-module/PostScript/"
 >PostScript::MailLabel</a> Perl module.  I've never used it, but it
 looks like it does basically the same thing.  I think it can handle
 bar-codes too.</p>
+
+<p>(This isn't open source, but: there seem to be a number of <a
+href="http://docs.google.com/templates?category=20&sort=hottest&pli=1"
+>templates at Google Docs</a> that offer label formatting essentially
+as an online service.)</p>
 
 <p style="background: lightblue; font-style: italic; text-align: center;"
 ><b>Barcodes</b></p>
