@@ -21,7 +21,7 @@
 </center>
 
 <center>
-<p style="background: lightblue; font-style: italic;" ><i>Latest version: __VN__</i></p>
+<p style="background: lightblue; font-style: italic;" ><i>Latest version: __VN__&nbsp;&nbsp;&nbsp;(__DATE__)</i></p>
 </center>
 
 <p>LabelNation is a command-line program for making labels: address
