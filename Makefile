@@ -39,7 +39,7 @@ index: index.html-top index.html-bottom
       index.html > index.html.tmp)
 	mv index.html.tmp index.html
 
-	(DATE=`svn log -r BASE labelnation | grep -m 1 -E "([a-zA-Z0-9 ]+)" | cut -d "|" -f 3 | cut -c 34-44`; \
+	(DATE=`svn log -rCOMMITTED labelnation | grep -m 1 -E "([a-zA-Z0-9 ]+)" | cut -d "|" -f 3 | cut -c 34-44`; \
   sed -e "s/(__DATE__)/($${DATE})/g" \
       index.html > index.html.tmp)
 	mv index.html.tmp index.html
