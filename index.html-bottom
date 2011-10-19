@@ -10,7 +10,7 @@ future releases.)  This <a href="label-dimensions.html" >chart of
 common label dimensions</a> may help.</p>
 
 <p style="background: lightblue; font-style: italic; text-align: center;"
-><b>Reporting Bugs, Etc</b></p>
+><b>Reporting Bugs / Contributing New Label Types / Etc</b></p>
 
 <div id="contact" title="contact">
 <p>If you have a bug to report, or would like to send in parameters
@@ -30,8 +30,8 @@ href="http://docs.google.com/templates?category=20&sort=hottest&pli=1"
 >templates at Google Docs</a> that offer label formatting essentially
 as an online service.  I haven't tried this myself.</p>
 
-<p>You might also want to try the <a
-href="http://www.perl.com/CPAN/modules/by-module/PostScript/"
+<p id="maillabel" title="maillabel">You might also want to try the
+<a href="http://www.perl.com/CPAN/modules/by-module/PostScript/"
 >PostScript::MailLabel</a> Perl module.  I've never used it, but it
 looks like it does basically the same thing.  I think it can handle
 bar-codes too.</p>
@@ -41,6 +41,19 @@ href="http://www.worldlabel.com/Pages/openoffice-template.htm" >free
 templates</a> for making labels using <a
 href="http://www.openoffice.org/">OpenOffice.org</a>, the open source
 office suite.</a></p>
+
+<p style="background: lightblue; font-style: italic; text-align: center;"
+><b>Barcodes</b></p>
+
+<p>LabelNation does not natively generate barcodes.  However,
+the <a href="http://code.google.com/p/postscriptbarcode/"
+>postscriptbarcode</a> program can generate a wide variety of
+PostScript barcodes, and you could use it together with LabelNation
+(see the latter's <tt>--code-input</tt> option) to create labels
+with barcodes.  The <a href="#maillabel" >PostScript::MailLabel</a>
+Perl module described above also apparently does barcodes.</p>
+
+<p>I would welcome patches to give LabelNation native barcode support.</p>
 
 <hr/>
 
