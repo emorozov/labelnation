@@ -26,6 +26,26 @@ Remember that hyphen is "<b>-</b>", not underscore ("<b>_</b>").</p>
 <p style="background: lightblue; font-style: italic; text-align: center;"
 ><b>Other Programs That Do Similar Things</b></p>
 
+<p>There seem to be a <a
+href="www.google.com/search?q=open+source+label+printing" >lot</a> of
+open source programs that perform a similar function.</p>
+
+<p><a href="http://www.labelgrid.net/" >LabelGrid</a> is an open
+source project to do label printing purely through web-based
+technologies.  I haven't tried it.</p>
+
+<p><a href="http://glabels.sourceforge.net/" >GLabels</a> "is a
+program for creating labels and business cards for the GNOME desktop
+environment. It is designed to work with various laser/ink-jet
+peel-off label and business card sheets that you'll find at most
+office supply stores."  Again, haven't used it myself.</p>
+
+<p><a href="http://worldlabel.com" >Worldlabel.com</a> offers <a
+href="http://www.worldlabel.com/Pages/openoffice-template.htm" >free
+templates</a> for making labels using <a
+href="http://www.openoffice.org/">OpenOffice.org</a>, the open source
+office suite.</a></p>
+
 <p>There seem to be a number of <a
 href="http://docs.google.com/templates?category=20&sort=hottest&pli=1"
 >templates at Google Docs</a> that offer label formatting essentially
@@ -36,12 +56,6 @@ as an online service.  I haven't tried this myself.</p>
 >PostScript::MailLabel</a> Perl module.  I've never used it, but it
 looks like it does basically the same thing.  I think it can handle
 bar-codes too.</p>
-
-<p><a href="http://worldlabel.com" >Worldlabel.com</a> offers <a
-href="http://www.worldlabel.com/Pages/openoffice-template.htm" >free
-templates</a> for making labels using <a
-href="http://www.openoffice.org/">OpenOffice.org</a>, the open source
-office suite.</a></p>
 
 <p style="background: lightblue; font-style: italic; text-align: center;"
 ><b>Barcodes</b></p>
