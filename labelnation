@@ -824,6 +824,7 @@ def usage():
    --csv, --csv-input          Input is Comma-Separated Value (CSV) format
    --leading-spaces N          Left-pad label text by N spaces (CSV & line only)
    -d, --delimiter DELIM       Labels separated by DELIM
+   --min-label-lines N         Pad each label to N lines using blanks if needed
    --show-bounding-box         Print rectangle around each label
                                (recommended for testing only)
    --first-label N             Start printing at label number N
@@ -952,7 +953,7 @@ def set_up_iso8859(output):
 # This comment resets Emacs Python Mode's indentation.  Sigh.
 
 def make_labels(spec, infile, input_type, delimiter, leading_spaces,
-                outfile, show_bounding_box):
+                outfile, show_bounding_box, min_label_lines=0):
   '''Using SheetSpec SPEC, read INPUT_TYPE data from INFILE
   (separated by DELIMITER if there are multiple different labels in
   INFILE, else DELIMITER is None), and write PostScript to OUTFILE.
@@ -962,7 +963,11 @@ def make_labels(spec, infile, input_type, delimiter, leading_spaces,
   LEADING_SPACES is number of spaces by which to left-pad each line of
   label text; use 0 (not None) to achieve no padding.
 
-  If SHOW_BOUNDING_BOX is true, then draw a rectangle around each label.'''
+  If SHOW_BOUNDING_BOX is true, then draw a rectangle around each label.
+
+  MIN_LABEL_LINES sets a minimum number of lines for each label: if
+  the text of a label has fewer than that number of lines, add blank
+  lines to pad it out to MIN_LABEL_LINES.  It defaults to 0.'''
   inner_margin = 1
 
   if infile == '-':
@@ -1029,7 +1034,10 @@ def make_labels(spec, infile, input_type, delimiter, leading_spaces,
         label_lines = line # cheap trick
       if input_type != "code":
         num_lines = len(label_lines)
-   
+        if num_lines < min_label_lines:
+          label_lines += [''] * (min_label_lines - num_lines)
+          num_lines = min_label_lines
+
         # Left-pad each line of text if any such padding requested.
         label_lines = [" " * leading_spaces + line for line in label_lines]
 
@@ -1180,6 +1188,7 @@ def main():
   delimiter = None            # Separates labels in multi-label files.
   show_bounding_box = False   # Draw boxes around the labels.
   input_type = "line"         # The default.
+  min_label_lines = 0         # The default.
 
   # If this gets set, we encountered unknown options and will exit at
   # the end of this subroutine.
@@ -1213,6 +1222,7 @@ def main():
                                 'left-margin=',
                                 'bottom-margin=',
                                 'outfile=',
+                                'min-label-lines=',
                                 ])
   except getopt.GetoptError, e:
     sys.stderr.write("ERROR: " + str(e) + '\n\n')
@@ -1264,6 +1274,8 @@ def main():
       spec.bottom_margin = float(value)
     elif opt == '-o' or opt == '--outfile':
       outfile = value
+    elif opt == '--min-label-lines':
+      min_label_lines = int(value)
     else:
       sys.stderr.write("ERROR: Unrecognized option '%s'.\n" % opt)
       exit_with_admonishment = True
@@ -1371,7 +1383,7 @@ def main():
     sys.exit(1)
 
   make_labels(spec, infile, input_type, delimiter, leading_spaces,
-              outfile, show_bounding_box)
+              outfile, show_bounding_box, min_label_lines)
 
 
 
