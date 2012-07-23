@@ -261,6 +261,20 @@ def sheetspec_for_type(type):
                      font_name="Times-Roman",
                      font_size=12.0)
 
+  elif type == "avery7163":
+    # Large and wide address labels, 14 per page
+    # Added by chrisjrob{_AT_}gmail.com 20120721
+    return SheetSpec(left_margin=14.2,
+                     bottom_margin=42.5,
+                     label_width=280.6,
+                     label_height=107.7,
+                     horiz_space=8.5,
+                     vert_space=0,
+                     horiz_num_labels=2.0,
+                     vert_num_labels=7.0,
+                     font_name="Arial",
+                     font_size=11.0)
+
   elif type == "avery7160":
     # Large address labels, 21 per A4 page
     k = 72.0/25.4             # Convert mm to points
@@ -514,6 +528,7 @@ def types():
   10 business cards per page:  Avery-5371, Maco-LL8550
   84 35mm slides per page:     SlidePro, SlideScribe
   16 labels per page:          Avery-7162
+  14 labels per page:          Avery-7163
   32 labels per page:          Avery-6571
   21 labels per A4 page:       Avery-7160
   24 labels per A4 page:       Avery-7159
