@@ -429,7 +429,7 @@ def sheetspec_for_type(type):
                      font_name="Times-Roman",
                      font_size=12.0)
 
-  elif type == "lsl77" or type == "ls1077s":
+  elif type == "cablelabelslsl77" or type == "cablelabelsls1077s":
     # Cable Labels USA type LSL-77 (LS10-77S on the website)
     # http://www.cablelabelsusa.com/category/PER-SHEET-16
     return SheetSpec(left_margin=29,
