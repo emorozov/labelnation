@@ -429,6 +429,20 @@ def sheetspec_for_type(type):
                      font_name="Times-Roman",
                      font_size=12.0)
 
+  elif type == "lsl77" or type == "ls1077s":
+    # Cable Labels USA type LSL-77 (LS10-77S on the website)
+    # http://www.cablelabelsusa.com/category/PER-SHEET-16
+    return SheetSpec(left_margin=29,
+                     bottom_margin=70,
+                     label_width=73,
+                     label_height=43,
+                     horiz_space=7,
+                     vert_space=60.5,
+                     horiz_num_labels=7,
+                     vert_num_labels=7,
+                     font_name="Courier",
+                     font_size=8)
+
   elif type == "slidepro" or type == "slide-pro" or type == "slidescribe":
     # 84 labels per sheet, for 35mm photographic slides.
     # From http://www.slidescribe.com/llsr.shtml:
@@ -526,6 +540,7 @@ def types():
   80 labels per page:          Avery-5167, 5267, 5667, 6467, 8167
                                Maco-LL8100                            
   10 business cards per page:  Avery-5371, Maco-LL8550
+  49 labels per page:          Cable-Labels-LSL-77 (or "-LS10-77S")
   84 35mm slides per page:     SlidePro, SlideScribe
   16 labels per page:          Avery-7162
   14 labels per page:          Avery-7163
