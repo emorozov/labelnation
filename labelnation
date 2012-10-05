@@ -432,12 +432,12 @@ def sheetspec_for_type(type):
   elif type == "cablelabelslsl77" or type == "cablelabelsls1077s":
     # Cable Labels USA type LSL-77 (LS10-77S on the website)
     # http://www.cablelabelsusa.com/category/PER-SHEET-16
-    return SheetSpec(left_margin=29,
-                     bottom_margin=70,
-                     label_width=73,
-                     label_height=43,
-                     horiz_space=7,
-                     vert_space=60.5,
+    return SheetSpec(left_margin=32.4,
+                     bottom_margin=70.920,
+                     label_width=72,
+                     label_height=36,
+                     horiz_space=7.2,
+                     vert_space=67.68,
                      horiz_num_labels=7,
                      vert_num_labels=7,
                      font_name="Courier",
