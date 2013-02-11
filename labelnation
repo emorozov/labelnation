@@ -629,9 +629,9 @@ We'll cover each way below:
 
 1) Passing custom-delimited text, using "-d" to specify the delimiter.
 
-The delimiter is a special string (sequence of characters) that
-separates each label from the next.  For example, if you use a
-delimiter of "XXXXX", then you might invoke LabelNation like so
+The delimiter is a special string (sequence of characters), on a line
+by itself, that separates each label from the next.  For example, if
+you use a delimiter of "XXXXX", then you might invoke LabelNation like so
 
    prompt$ labelnation -d "XXXXX" -t avery5167 -l -i addrs.txt -o addrs.ps
 
@@ -853,7 +853,7 @@ def usage():
    -c, --code-input            Input contains PostScript code
    --csv, --csv-input          Input is Comma-Separated Value (CSV) format
    --leading-spaces N          Left-pad label text by N spaces (CSV & line only)
-   -d, --delimiter DELIM       Labels separated by DELIM
+   -d, --delimiter DELIM       Labels separated by DELIM lines
    --min-label-lines N         Pad each label to N lines using blanks if needed
    --show-bounding-box         Print rectangle around each label
                                (recommended for testing only)
